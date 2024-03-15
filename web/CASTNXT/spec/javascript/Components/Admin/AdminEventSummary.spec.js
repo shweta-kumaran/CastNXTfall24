@@ -27,6 +27,7 @@ test('AdminEventSummary Load', () =>{
 
 
 test('testing the csv file generating functionality', ()=> {
-    const importedFormat = ['someattribute1', '1'];
-    expect(handleDataToCSV(importedFormat)).toEqual('someattribute1\n 1');
+    const reactComponentObjectForThisComponent= new AdminEventSummary({properties: propsDefault.properties});
+    const importedFormat = ['someattribute1'];
+    expect(reactComponentObjectForThisComponent.convertDataToCSV(importedFormat)).toMatch('s,o,m,e,a,t,t,r,i,b,u,t,e,1');
 })
