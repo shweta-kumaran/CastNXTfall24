@@ -24,3 +24,9 @@ test('AdminEventSummary Load', () =>{
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
 })
+
+
+test('testing the csv file generating functionality', ()=> {
+    const importedFormat = ['someattribute1', '1'];
+    expect(handleDataToCSV(importedFormat)).toEqual('someattribute1\n 1');
+})
