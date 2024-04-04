@@ -21,10 +21,27 @@ jest.mock('../../../../app/javascript/utils/RangeFilter' , () => ({
     extendedNumberOperators: () => []
 }))
 
+
+global.window.open = jest.fn();
+
 test('Admin Table Load', () =>{
     const component = renderer.create(
         <AdminUserTable properties = {propsDefault.properties}/>
     )
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
+})
+
+
+test('testing the payment link mechanism for the paypal version in the successful situation', () => {
+    const reactComponentTypeObjectForThisComponent= new AdminUserTable({properties: propsDefault.properties});
+    reactComponentTypeObjectForThisComponent.handlePayMeLinkClick('https://www.paypal.me/thisisjustforthejestunittesting');
+    expect(window.open).toHaveBeenCalledWith('https://www.paypal.com/paypalme/thisisjustforthejestunittesting', '_blank');   
+})
+
+
+test('testing the csv file generating functionality', ()=> {
+    const reactComponentObjectForThisComponent= new AdminUserTable({properties: propsDefault.properties});
+    const importedFormat = ['someattribute1'];
+    expect(reactComponentObjectForThisComponent.convertDataToCSV(importedFormat)).toMatch('s,o,m,e,a,t,t,r,i,b,u,t,e,1');
 })

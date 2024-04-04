@@ -17,6 +17,8 @@ jest.mock('@material-ui/core', () => ({
     }
 }))
 
+global.window.open = jest.fn();
+
 test('AdminEventSummary Load', () =>{
     const component = renderer.create(
         <AdminEventSummary properties = {propsDefault.properties}/>
@@ -24,3 +26,18 @@ test('AdminEventSummary Load', () =>{
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
 })
+
+
+test('testing the csv file generating functionality', ()=> {
+    const reactComponentObjectForThisComponent= new AdminEventSummary({properties: propsDefault.properties});
+    const importedFormat = ['someattribute1'];
+    expect(reactComponentObjectForThisComponent.convertDataToCSV(importedFormat)).toMatch('s,o,m,e,a,t,t,r,i,b,u,t,e,1');
+})
+
+
+test('testing the payment link mechanism for the paypal version in the successful situation', () => {
+    const reactComponentTypeObjectForThisComponent= new AdminEventSummary({properties: propsDefault.properties});
+    reactComponentTypeObjectForThisComponent.handlePayMeLinkClick('https://www.paypal.me/thisisjustforthejestunittesting');
+    expect(window.open).toHaveBeenCalledWith('https://www.paypal.com/paypalme/thisisjustforthejestunittesting', '_blank');   
+})
+

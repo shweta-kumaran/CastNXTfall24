@@ -1,5 +1,17 @@
 
 # CASTNXT
+
+Spring 2024 Heroku link: https://castnxtspring.herokuapp.com  
+
+Spring 2024 CastNXT code climate report: https://codeclimate.com/github/CSCE-606-Event360/CastNXTs24  
+
+
+======================================================================================================================================================================
+
+
+
+
+
 Web-App to Automate Talent Audition, Placement, Replacement and Tabulate Pay
 
 # How to run?
