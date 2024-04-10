@@ -45,6 +45,13 @@ test('testing the payment link mechanism for the paypal version in the successfu
 })
 
 
+
+test('testing the payment link mechanism for the venmo version in the successful situation', () => {
+    const reactComponentTypeObjectForThisComponent= new AdminEventSummary({properties: propsDefault.properties});
+    reactComponentTypeObjectForThisComponent.handlePayMeLinkClick('https://venmo.com/thisisjustforthejestunittesting');
+    expect(window.open).toHaveBeenCalledWith('https://venmo.com/thisisjustforthejestunittesting', '_blank');   
+})
+
 // These two tests are just for the course requirement of 90%+ coverage
 test('returns default schemas when isPaid is "No"', () => {
     const { dataSchema, uiSchema } = getSchema('No');
@@ -62,4 +69,5 @@ test('adds paymentLink to schemas when isPaid is not "No"', () => {
     });
     expect(uiSchema['ui:order']).toContain('paymentLink');
 });
+
 

@@ -40,6 +40,13 @@ test('testing the payment link mechanism for the paypal version in the successfu
 })
 
 
+test('testing the payment link mechanism for the venmo version in the successful situation', () => {
+    const reactComponentTypeObjectForThisComponent= new AdminUserTable({properties: propsDefault.properties});
+    reactComponentTypeObjectForThisComponent.handlePayMeLinkClick('https://venmo.com/thisisjustforthejestunittesting');
+    expect(window.open).toHaveBeenCalledWith('https://venmo.com/thisisjustforthejestunittesting', '_blank');   
+})
+
+
 test('testing the csv file generating functionality', ()=> {
     const reactComponentObjectForThisComponent= new AdminUserTable({properties: propsDefault.properties});
     const importedFormat = ['someattribute1'];
