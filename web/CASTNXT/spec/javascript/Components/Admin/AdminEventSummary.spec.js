@@ -3,6 +3,9 @@ import {propsDefault} from '../../__mocks__/props.mock';
 import renderer from 'react-test-renderer';
 
 
+import {defaultDataSchema, defaultUiSchema, getSchema} from '../../../../app/javascript/utils/FormsUtils';
+
+
 jest.mock('@material-ui/data-grid',() => ({
     DataGrid: (props) => {
         jest.fn(props);
@@ -42,8 +45,29 @@ test('testing the payment link mechanism for the paypal version in the successfu
 })
 
 
+
 test('testing the payment link mechanism for the venmo version in the successful situation', () => {
     const reactComponentTypeObjectForThisComponent= new AdminEventSummary({properties: propsDefault.properties});
     reactComponentTypeObjectForThisComponent.handlePayMeLinkClick('https://venmo.com/thisisjustforthejestunittesting');
     expect(window.open).toHaveBeenCalledWith('https://venmo.com/thisisjustforthejestunittesting', '_blank');   
 })
+
+// These two tests are just for the course requirement of 90%+ coverage
+test('returns default schemas when isPaid is "No"', () => {
+    const { dataSchema, uiSchema } = getSchema('No');
+    expect(dataSchema).toEqual(defaultDataSchema);
+    expect(uiSchema).toEqual(defaultUiSchema);
+});
+
+test('adds paymentLink to schemas when isPaid is not "No"', () => {
+    const { dataSchema, uiSchema } = getSchema('Yes');
+    expect(dataSchema.properties).toHaveProperty('paymentLink');
+    expect(dataSchema.properties.paymentLink).toEqual({
+        title: "Payment Link",
+        type: "string",
+        description: "Enter your PayPal or Venmo payment link."
+    });
+    expect(uiSchema['ui:order']).toContain('paymentLink');
+});
+
+

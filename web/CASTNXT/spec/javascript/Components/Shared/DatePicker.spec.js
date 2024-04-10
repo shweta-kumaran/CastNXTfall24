@@ -24,6 +24,12 @@ jest.mock('@mui/x-date-pickers/DatePicker', () =>({
 }))
 
 const onChange = jest.fn()
+
+beforeEach(() => {
+    // Clear mock calls before each test
+    onChange.mockClear();
+});
+
 test('DatePicker Load Test', ()=>{
     const component = renderer.create(
         <DatePickerWrapper value={''} onChange={onChange} />
