@@ -7,12 +7,16 @@ bundle install
 ```
 ```
 npm install -g npm@8.5.4
-nvm install 16.13.0
+nvm install --lts
 npm install -g yarn
 ```
 ```
 bundle exec rails webpacker:install
 ```
+
+Then Run your mongodb service (Different platform has different cmd lines)
+
+Finally
 ```
 rails db:migrate RAILS_ENV=development
 rails s -p $PORT -b $IP
