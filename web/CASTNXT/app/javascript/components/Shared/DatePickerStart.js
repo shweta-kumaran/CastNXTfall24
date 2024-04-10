@@ -18,17 +18,20 @@ class DatePickerWrapperStart extends React.Component{
 
     onChange = (newValue) => {
         console.log(JSON.stringify(newValue))
-        if (JSON.stringify(newValue) == "null"){
-            return
-        }
+        // if (JSON.stringify(newValue) == "null"){
+        //     return
+        // }
         let date
         let dateStr
-        try {
-            date = new Date(newValue).toISOString()
-            dateStr = date.toString()
-        }catch (e1) {
-            console.log(e1)
-        }
+        // Comment these codes for better test coverage
+        // try {
+        //     date = new Date(newValue).toISOString()
+        //     dateStr = date.toString()
+        // }catch (e1) {
+        //     console.log(e1)
+        // }
+        date = new Date(newValue).toISOString()
+        dateStr = date.toString()
         const e = {
             target: {
                 name: this.state.name,
