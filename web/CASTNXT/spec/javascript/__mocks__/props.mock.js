@@ -382,7 +382,8 @@ export const PROPERTIES_CLIENT_FEEDBACK = {
                     "newInput1": 25,
                     "newInput2": "Anushka",
                     "newInput3": "Garg"
-                }
+                },
+                "comments": "a"
             },
             "634b4586c2e881bd9a343e4e": {
                 "talentName": "Mounika",
@@ -390,7 +391,8 @@ export const PROPERTIES_CLIENT_FEEDBACK = {
                     "newInput1": 25,
                     "newInput2": "Mounika",
                     "newInput3": "Balivada"
-                }
+                },
+                "comments": "a"
             }
         }
     }

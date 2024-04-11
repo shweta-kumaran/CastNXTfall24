@@ -57,4 +57,11 @@ test('ClientEventFeedback ', ()=>{
     view.handleChange(e)
     view.handleChangePage(e, 1)
     view.submitComment("abc123")
+    view.handleClick(e)
+    view.handleBlur(e)
+})
+
+test('This is for the corresponding componentDidMount method', ()=>{
+    const reactComponentTypeObjectForClientEventFeedback = new ClientEventFeedback({properties: PROPERTIES_CLIENT_FEEDBACK});
+    reactComponentTypeObjectForClientEventFeedback.componentDidMount();
 })
