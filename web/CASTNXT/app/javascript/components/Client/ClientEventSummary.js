@@ -106,6 +106,14 @@ class ClientEventSummary extends Component {
                 }
             })
     }
+
+    onClickStyle = () => {
+       backgroundColor: ;
+    }
+
+    onDoubleClickStyle = () => {
+       backgroundColor: ;
+    }
     
     render() {
         return(
@@ -152,13 +160,13 @@ class ClientEventSummary extends Component {
                                                         )}
                                                         key={row.id}
                                                     >
-                                                        <TableCell align="center">{idx+1}</TableCell>
-                                                        <TableCell align="center">{row.name}</TableCell>
-                                                        <TableCell align="center">{row.gender}</TableCell>
-                                                        <TableCell align="center">{row.birthDate}</TableCell>
-                                                        <TableCell align="center">{row.email}</TableCell>
-                                                        <TableCell align="center">{row.state}</TableCell>
-                                                        <TableCell align="center">{row.city}</TableCell>
+                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{idx+1}</TableCell>
+                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.name}</TableCell>
+                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.gender}</TableCell>
+                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.birthDate}</TableCell>
+                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.email}</TableCell>
+                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.state}</TableCell>
+                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.city}</TableCell>
                                                     </TableRow>
                                                 </Ref>
                                                 )}
