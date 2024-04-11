@@ -42,5 +42,5 @@ test('Testing the drag end method in this component', () => {
         source: { index: 2 },
         reason: ""
     };
-    reactComponentTestObjectClientEventSummary(exampleForDrag);
+    reactComponentTestObjectClientEventSummary.onDragEnd(exampleForDrag);
 })
