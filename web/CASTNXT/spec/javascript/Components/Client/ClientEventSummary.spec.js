@@ -33,3 +33,14 @@ test('ClientEventSummary eventHandlers',()=>{
 
     view.updatePreferences();
 })
+
+
+test('Testing the drag end method in this component', () => {
+    const reactComponentTestObjectClientEventSummary = new ClientEventSummary({properties: PROPERTIES_CLIENT_SUMMARY});
+    const exampleForDrag = {
+        destination: { index: 3 },
+        source: { index: 2 },
+        reason: ""
+    };
+    reactComponentTestObjectClientEventSummary(exampleForDrag);
+})
