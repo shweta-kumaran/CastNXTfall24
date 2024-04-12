@@ -44,3 +44,73 @@ test('Testing the drag end method in this component', () => {
     };
     reactComponentTestObjectClientEventSummary.onDragEnd(exampleForDrag);
 })
+
+
+const exampleEvent1 = {
+      currentTarget: {
+         name: 'a',
+         style: {backgroundColor: 'white'},
+         cursor: 'pointer'
+      }
+}
+
+const exampleEvent2 = {
+    currentTarget: {
+       name: 'a',
+       style: {backgroundColor: 'red'},
+       cursor: 'pointer'
+    }
+}
+
+const exampleEvent3 = {
+    currentTarget: {
+       name: 'a',
+       style: {backgroundColor: 'orange'},
+       cursor: 'pointer'
+    }
+}
+
+const exampleEvent4 = {
+    currentTarget: {
+       name: 'a',
+       style: {backgroundColor: 'yellow'},
+       cursor: 'pointer'
+    }
+}
+
+const exampleEvent5 = {
+    currentTarget: {
+       name: 'a',
+       style: {backgroundColor: 'green'},
+       cursor: 'pointer'
+    }
+}
+
+const exampleEvent6 = {
+    currentTarget: {
+       name: 'a',
+       style: {backgroundColor: 'blue'},
+       cursor: 'pointer'
+    }
+}
+
+const exampleEvent7 = {
+    currentTarget: {
+       name: 'a',
+       style: {backgroundColor: 'indigo'},
+       cursor: 'pointer'
+    }
+}
+
+
+
+test('testing the onclick style changing method',()=>{
+    const reactComponentClassObjectForEventSummary = new ClientEventSummary({properties: PROPERTIES_CLIENT_SUMMARY});
+    reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent1);
+    reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent2);
+    reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent3);
+    reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent4);
+    reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent5);
+    reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent6);
+    reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent7);
+})
