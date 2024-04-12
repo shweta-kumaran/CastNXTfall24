@@ -2,7 +2,10 @@ import AdminUserTable from "../../../../app/javascript/components/Admin/AdminUse
 import {propsDefault} from '../../__mocks__/props.mock';
 import renderer from 'react-test-renderer';
 
+// Import necessary utilities from react-test-renderer
+import renderer, { act } from 'react-test-renderer';
 
+/*
 jest.mock('@material-ui/data-grid',() => ({
     DataGrid: (props) => {
         jest.fn(props);
@@ -23,6 +26,31 @@ jest.mock('../../../../app/javascript/utils/RangeFilter' , () => ({
 
 
 global.window.open = jest.fn();
+*/
+
+jest.mock('@material-ui/data-grid', () => ({
+    DataGrid: (props) => {
+        jest.fn(props);
+        return (<mock-data-grid props={props}>{props.children}</mock-data-grid>);
+    },
+    getGridNumericColumnOperators: () => []
+}));
+
+jest.mock('@material-ui/core', () => ({
+    Paper: (props) => {
+        jest.fn(props);
+        return (<mock-paper props={props}>{props.children}</mock-paper>);
+    }
+}));
+
+jest.mock('../../../../app/javascript/utils/RangeFilter', () => ({
+    extendedNumberOperators: () => []
+}));
+
+global.window.open = jest.fn();
+
+
+
 
 test('Admin Table Load', () =>{
     const component = renderer.create(
@@ -52,3 +80,35 @@ test('testing the csv file generating functionality', ()=> {
     const importedFormat = ['someattribute1'];
     expect(reactComponentObjectForThisComponent.convertDataToCSV(importedFormat)).toMatch('s,o,m,e,a,t,t,r,i,b,u,t,e,1');
 })
+
+
+
+
+test('should correctly find and concatenate assigned clients names', () => {
+    const props = {
+      properties: {
+        data: {
+          clients: {
+            client1: { name: 'Client One', finalizedIds: ['1', '2'] },
+            client2: { name: 'Client Two', finalizedIds: ['2'] },
+            client3: { name: 'Client Three', finalizedIds: ['3'] },
+          }
+        }
+      }
+    };
+  
+    act(() => {
+      const component = renderer.create(<AdminEventSummary {...props} />);
+      const instance = component.getInstance();
+  
+      // Test different scenarios
+      expect(instance.findAssignedClients('1')).toBe('Client One');
+      expect(instance.findAssignedClients('2')).toBe('Client One, Client Two');
+      expect(instance.findAssignedClients('3')).toBe('Client Three');
+      expect(instance.findAssignedClients('4')).toBe(''); // No clients with this ID
+    });
+  });
+  
+
+
+

@@ -46,6 +46,7 @@ test('testing the payment link mechanism for the paypal version in the successfu
 
 
 
+
 test('testing the payment link mechanism for the venmo version in the successful situation', () => {
     const reactComponentTypeObjectForThisComponent= new AdminEventSummary({properties: propsDefault.properties});
     reactComponentTypeObjectForThisComponent.handlePayMeLinkClick('https://venmo.com/thisisjustforthejestunittesting');
