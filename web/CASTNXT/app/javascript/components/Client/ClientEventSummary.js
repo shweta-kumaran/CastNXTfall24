@@ -107,13 +107,37 @@ class ClientEventSummary extends Component {
             })
     }
 
-    onClickStyle = () => {
-       backgroundColor: ;
+    onClickStyle = (event) => {
+        const currentCell = event.currentTarget;
+        const currentCellStyle = currentCell.style.backgroundColor;
+
+        if (currentCellStyle === 'rgb(255, 255, 255)') {
+            currentCell.style.backgroundColor = 'red';
+        } 
+        else if (currentCellStyle === 'red') {
+            currentCell.style.backgroundColor = 'orange';
+        }
+        else if (currentCellStyle === 'orange') {
+            currentCell.style.backgroundColor = 'yellow';
+        }
+        else if (currentCellStyle === 'yellow') {
+            currentCell.style.backgroundColor = 'green';
+        }
+        else if (currentCellStyle === 'green') {
+            currentCell.style.backgroundColor = 'blue';
+        }
+        else if (currentCellStyle === 'blue') {
+            currentCell.style.backgroundColor = 'indigo';
+        }
+        else if (currentCellStyle === 'indigo') {
+            currentCell.style.backgroundColor = 'purple';
+        }
+        else {
+            currentCell.style.backgroundColor = 'rgb(255, 255, 255)';
+        }
     }
 
-    onDoubleClickStyle = () => {
-       backgroundColor: ;
-    }
+    
     
     render() {
         return(
@@ -160,13 +184,13 @@ class ClientEventSummary extends Component {
                                                         )}
                                                         key={row.id}
                                                     >
-                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{idx+1}</TableCell>
-                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.name}</TableCell>
-                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.gender}</TableCell>
-                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.birthDate}</TableCell>
-                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.email}</TableCell>
-                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.state}</TableCell>
-                                                        <TableCell align="center" onClick={onClickStyle} onDoubleClick={onDoubleClickStyle}>{row.city}</TableCell>
+                                                        <TableCell align="center">{idx+1}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.name}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.gender}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.birthDate}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.email}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.state}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.city}</TableCell>
                                                     </TableRow>
                                                 </Ref>
                                                 )}
