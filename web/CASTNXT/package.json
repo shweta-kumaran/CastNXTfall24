@@ -60,7 +60,8 @@
   },
   "scripts": {
     "test": "jest --updateSnapshot --forceExit --silent",
-    "coverage": "jest --collect-coverage --silent --updateSnapshot --forceExit"
+    "coverage": "jest --collect-coverage --silent --updateSnapshot --forceExit",
+    "test:file": "jest --coverage"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.21.5",
