@@ -41,3 +41,4 @@ test('testing the payment link mechanism for the paypal version in the successfu
     expect(window.open).toHaveBeenCalledWith('https://www.paypal.com/paypalme/thisisjustforthejestunittesting', '_blank');   
 })
 
+
