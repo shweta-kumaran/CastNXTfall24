@@ -1,3 +1,4 @@
+// app/javascript/components/Client/ClientEventSummary.js
 import React, {Component} from "react"
 import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@material-ui/core"
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"

@@ -1,3 +1,4 @@
+// app/javascript/utils/FormsUtils.js
 // This schema will act as the default schema for any new event.
 export const EventCategories = {
   "Categories": [
@@ -1165,12 +1166,23 @@ export const defaultDataSchema = {
             enum: [...getCities()],
             type: "string"
         },
+        imageUpload: {
+            title: "Image Upload",
+            type: "string",
+            format: "data-url"
+        },
     }
 }
 
 export const defaultUiSchema = {
-    'ui:order': ['talentName', 'gender', 'birthDate', 'email', 'state', 'city'],
-    'gender': {'ui:widget': 'radio'}
+  'ui:order': ['talentName', 'gender', 'birthDate', 'email', 'state', 'city', 'imageUpload'], 
+
+  'gender': {
+      'ui:widget': 'radio'
+  },
+  'imageUpload': {
+      'ui:widget': 'file' 
+  },
 }
 
 export const getSchema = (isPaid) => {
