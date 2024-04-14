@@ -1,3 +1,4 @@
+// app/javascript/components/Forms/FormBuilder.js
 import React, { Component } from "react";
 import {FormBuilder} from "@ginkgo-bioworks/react-json-schema-form-builder";
 
@@ -5,22 +6,25 @@ import Slide from "./Slide.js";
 import "./Forms.css";
 
 const customFormInputs = {
-  array: {
+  imageUpload: {
     displayName: "Image",
     matchIf: [
       {
         types: ["string"],
-        widget: "file"
+        widget: "file",
+        format: "data-url"
       },
     ],
-    defaultDataSchema: {},
+    defaultDataSchema: {
+      type: "string",
+      format: "data-url"
+    },
     defaultUiSchema: {
       "ui:widget": "file"
     },
-    type: "string",
-    format: "data-url",
   },
 };
+
 
 class FormBuilderContainer extends Component {
   constructor(props) {
