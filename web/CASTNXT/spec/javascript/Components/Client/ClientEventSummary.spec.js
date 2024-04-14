@@ -114,3 +114,12 @@ test('testing the onclick style changing method',()=>{
     reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent6);
     reactComponentClassObjectForEventSummary.onClickStyle(exampleEvent7);
 })
+
+
+test('testing the sorting method', ()=>{
+    const reactComponentClassObjectForSortingTesting = new ClientEventSummary({properties: PROPERTIES_CLIENT_SUMMARY});
+    reactComponentClassObjectForSortingTesting.sortingRowsByName();
+    reactComponentClassObjectForSortingTesting.sortingRowsByEmail();
+    reactComponentClassObjectForSortingTesting.sortingRowsByState();
+    reactComponentClassObjectForSortingTesting.sortingRowsByCity();
+})

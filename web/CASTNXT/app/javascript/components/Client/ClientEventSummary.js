@@ -138,6 +138,30 @@ class ClientEventSummary extends Component {
         }
     }
 
+    sortingRowsByName = () => {
+       const { summaryRows } = this.state;
+       summaryRows.sort((row1,row2) => row1.name.localeCompare(row2.name));
+       this.setState({ summaryRows });
+    }
+
+    sortingRowsByEmail = () => {
+        const { summaryRows } = this.state;
+        summaryRows.sort((row1,row2) => row1.email.localeCompare(row2.email));
+        this.setState({ summaryRows });
+     }
+
+    sortingRowsByState = () => {
+        const { summaryRows } = this.state;
+        summaryRows.sort((row1,row2) => row1.state.localeCompare(row2.state));
+        this.setState({ summaryRows });
+    }
+
+    sortingRowsByCity = () => {
+        const { summaryRows } = this.state;
+        summaryRows.sort((row1,row2) => row1.city.localeCompare(row2.city));
+        this.setState({ summaryRows });
+    }
+
     
     
     render() {
@@ -154,12 +178,12 @@ class ClientEventSummary extends Component {
                             <TableHead style={{ backgroundColor: "#3498DB" }}>
                                 <TableRow>
                                     <TableCell align="center">Preference</TableCell>
-                                    <TableCell align="center">Name</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByName()}} style={{cursor: 'pointer'}}>Name</TableCell>
                                     <TableCell align="center">Gender</TableCell>
                                     <TableCell align="center">BirthDate</TableCell>
-                                    <TableCell align="center">Email</TableCell>
-                                    <TableCell align="center">State</TableCell>
-                                    <TableCell align="center">City</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByEmail()}} style={{cursor: 'pointer'}}>Email</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByState()}} style={{cursor: 'pointer'}}>State</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByCity()}} style={{cursor: 'pointer'}}>City</TableCell>
                                 </TableRow>
                             </TableHead>
                             
