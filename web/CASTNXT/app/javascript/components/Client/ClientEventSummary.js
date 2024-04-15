@@ -168,7 +168,9 @@ class ClientEventSummary extends Component {
         return(
             <div>
                 <div style={{marginTop: "2%", marginBottom: "2%"}}>
-                    <span >Indicate your talent preference by dragging and dropping the rows below</span>
+                    <span> &#x25A0; Indicate your talent preference by dragging and dropping the rows below</span> <br/>
+                    <span>&#x25A0; Try click the data cells to change the color</span> <br/>
+                    <span>&#x25A0; You can click the column names (Name, Email, State, City) to perform sorting on the columns</span> 
                 </div>
                 
                 <div className="row">
