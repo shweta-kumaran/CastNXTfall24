@@ -107,12 +107,70 @@ class ClientEventSummary extends Component {
                 }
             })
     }
+
+    onClickStyle = (event) => {
+        const currentCell = event.currentTarget;
+        const currentCellStyle = currentCell.style.backgroundColor;
+
+        if (currentCellStyle === 'rgb(255, 255, 255)') {
+            currentCell.style.backgroundColor = 'red';
+        } 
+        else if (currentCellStyle === 'red') {
+            currentCell.style.backgroundColor = 'orange';
+        }
+        else if (currentCellStyle === 'orange') {
+            currentCell.style.backgroundColor = 'yellow';
+        }
+        else if (currentCellStyle === 'yellow') {
+            currentCell.style.backgroundColor = 'green';
+        }
+        else if (currentCellStyle === 'green') {
+            currentCell.style.backgroundColor = 'blue';
+        }
+        else if (currentCellStyle === 'blue') {
+            currentCell.style.backgroundColor = 'indigo';
+        }
+        else if (currentCellStyle === 'indigo') {
+            currentCell.style.backgroundColor = 'purple';
+        }
+        else {
+            currentCell.style.backgroundColor = 'rgb(255, 255, 255)';
+        }
+    }
+
+    sortingRowsByName = () => {
+       const { summaryRows } = this.state;
+       summaryRows.sort((row1,row2) => row1.name.localeCompare(row2.name));
+       this.setState({ summaryRows });
+    }
+
+    sortingRowsByEmail = () => {
+        const { summaryRows } = this.state;
+        summaryRows.sort((row1,row2) => row1.email.localeCompare(row2.email));
+        this.setState({ summaryRows });
+     }
+
+    sortingRowsByState = () => {
+        const { summaryRows } = this.state;
+        summaryRows.sort((row1,row2) => row1.state.localeCompare(row2.state));
+        this.setState({ summaryRows });
+    }
+
+    sortingRowsByCity = () => {
+        const { summaryRows } = this.state;
+        summaryRows.sort((row1,row2) => row1.city.localeCompare(row2.city));
+        this.setState({ summaryRows });
+    }
+
+    
     
     render() {
         return(
             <div>
                 <div style={{marginTop: "2%", marginBottom: "2%"}}>
-                    <span >Indicate your talent preference by dragging and dropping the rows below</span>
+                    <span> &#x25A0; Indicate your talent preference by dragging and dropping the rows below</span> <br/>
+                    <span>&#x25A0; Try click the data cells to change the color</span> <br/>
+                    <span>&#x25A0; You can click the column names (Name, Email, State, City) to perform sorting on the columns</span> 
                 </div>
                 
                 <div className="row">
@@ -122,12 +180,12 @@ class ClientEventSummary extends Component {
                             <TableHead style={{ backgroundColor: "#3498DB" }}>
                                 <TableRow>
                                     <TableCell align="center">Preference</TableCell>
-                                    <TableCell align="center">Name</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByName()}} style={{cursor: 'pointer'}}>Name</TableCell>
                                     <TableCell align="center">Gender</TableCell>
                                     <TableCell align="center">BirthDate</TableCell>
-                                    <TableCell align="center">Email</TableCell>
-                                    <TableCell align="center">State</TableCell>
-                                    <TableCell align="center">City</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByEmail()}} style={{cursor: 'pointer'}}>Email</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByState()}} style={{cursor: 'pointer'}}>State</TableCell>
+                                    <TableCell align="center" onClick={()=>{this.sortingRowsByCity()}} style={{cursor: 'pointer'}}>City</TableCell>
                                 </TableRow>
                             </TableHead>
                             
@@ -154,12 +212,12 @@ class ClientEventSummary extends Component {
                                                         key={row.id}
                                                     >
                                                         <TableCell align="center">{idx+1}</TableCell>
-                                                        <TableCell align="center">{row.name}</TableCell>
-                                                        <TableCell align="center">{row.gender}</TableCell>
-                                                        <TableCell align="center">{row.birthDate}</TableCell>
-                                                        <TableCell align="center">{row.email}</TableCell>
-                                                        <TableCell align="center">{row.state}</TableCell>
-                                                        <TableCell align="center">{row.city}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.name}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.gender}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.birthDate}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.email}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.state}</TableCell>
+                                                        <TableCell align="center" style={{backgroundColor: 'rgb(255, 255, 255)', cursor: 'pointer'}} onClick={this.onClickStyle}>{row.city}</TableCell>
                                                     </TableRow>
                                                 </Ref>
                                                 )}
