@@ -108,11 +108,23 @@ test('testing the onclick style changing method',()=>{
     const objectForEventSummary = new ClientEventSummary({properties: PROPERTIES_CLIENT_SUMMARY});
     objectForEventSummary.onClickStyle(exampleEvent1);
     objectForEventSummary.onClickStyle(exampleEvent2);
+    expect(exampleEvent2.currentTarget.style.backgroundColor).toEqual('orange');
+
     objectForEventSummary.onClickStyle(exampleEvent3);
+    expect(exampleEvent3.currentTarget.style.backgroundColor).toEqual('yellow');
+
     objectForEventSummary.onClickStyle(exampleEvent4);
+    expect(exampleEvent4.currentTarget.style.backgroundColor).toEqual('green');
+
     objectForEventSummary.onClickStyle(exampleEvent5);
+    expect(exampleEvent5.currentTarget.style.backgroundColor).toEqual('blue');
+
     objectForEventSummary.onClickStyle(exampleEvent6);
+    expect(exampleEvent6.currentTarget.style.backgroundColor).toEqual('indigo');
+
     objectForEventSummary.onClickStyle(exampleEvent7);
+    expect(exampleEvent7.currentTarget.style.backgroundColor).toEqual('purple');
+
 })
 
 
