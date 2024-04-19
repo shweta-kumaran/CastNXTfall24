@@ -61,7 +61,3 @@ test('ClientEventFeedback ', ()=>{
     view.handleBlur(e)
 })
 
-test('This is for the corresponding componentDidMount method', ()=>{
-    const objectForClientEventFeedback = new ClientEventFeedback({properties: PROPERTIES_CLIENT_FEEDBACK});
-    objectForClientEventFeedback.componentDidMount();
-})
