@@ -130,8 +130,82 @@ test('testing the onclick style changing method',()=>{
 
 test('testing the sorting method', ()=>{
     const objectForSortingTesting = new ClientEventSummary({properties: PROPERTIES_CLIENT_SUMMARY});
+    objectForSortingTesting.state.summaryRows = [
+       {
+          "name": "cc",
+          "email": "ccccccc@ccccccc.ccc",
+          "state": "stateJustForTestingOne",
+          "city": "cityJustForTestingOne"
+       },
+       {
+        "name": "aa",
+        "email": "aaaaaaa@aaaaaaa.aaa",
+        "state": "stateJustForTestingTwo",
+        "city": "cityJustForTestingTwo"
+       }
+    ];
+
     objectForSortingTesting.sortingRowsByName();
+    expect(objectForSortingTesting.state.summaryRows).toEqual([
+        {
+            "name": "aa",
+            "email": "aaaaaaa@aaaaaaa.aaa",
+            "state": "stateJustForTestingTwo",
+            "city": "cityJustForTestingTwo"
+        },
+        {
+            "name": "cc",
+            "email": "ccccccc@ccccccc.ccc",
+            "state": "stateJustForTestingOne",
+            "city": "cityJustForTestingOne"
+         }
+    ]);
+
     objectForSortingTesting.sortingRowsByEmail();
+    expect(objectForSortingTesting.state.summaryRows).toEqual([
+        {
+            "name": "aa",
+            "email": "aaaaaaa@aaaaaaa.aaa",
+            "state": "stateJustForTestingTwo",
+            "city": "cityJustForTestingTwo"
+        },
+        {
+            "name": "cc",
+            "email": "ccccccc@ccccccc.ccc",
+            "state": "stateJustForTestingOne",
+            "city": "cityJustForTestingOne"
+         }
+    ]);
+
     objectForSortingTesting.sortingRowsByState();
+    expect(objectForSortingTesting.state.summaryRows).toEqual([
+        {
+            "name": "cc",
+            "email": "ccccccc@ccccccc.ccc",
+            "state": "stateJustForTestingOne",
+            "city": "cityJustForTestingOne"
+        },
+        {
+            "name": "aa",
+            "email": "aaaaaaa@aaaaaaa.aaa",
+            "state": "stateJustForTestingTwo",
+            "city": "cityJustForTestingTwo"
+        }
+    ]);
+
     objectForSortingTesting.sortingRowsByCity();
+    expect(objectForSortingTesting.state.summaryRows).toEqual([
+        {
+            "name": "cc",
+            "email": "ccccccc@ccccccc.ccc",
+            "state": "stateJustForTestingOne",
+            "city": "cityJustForTestingOne"
+        },
+        {
+            "name": "aa",
+            "email": "aaaaaaa@aaaaaaa.aaa",
+            "state": "stateJustForTestingTwo",
+            "city": "cityJustForTestingTwo"
+        }
+    ]);
 })
