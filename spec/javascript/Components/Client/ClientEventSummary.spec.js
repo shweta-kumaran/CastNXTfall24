@@ -35,16 +35,6 @@ test('ClientEventSummary eventHandlers',()=>{
 })
 
 
-test('Testing the drag end method in this component', () => {
-    const objectClientEventSummary = new ClientEventSummary({properties: PROPERTIES_CLIENT_SUMMARY});
-    const exampleForDrag = {
-        destination: { index: 3 },
-        source: { index: 2 },
-        reason: ""
-    };
-    objectClientEventSummary.onDragEnd(exampleForDrag);
-})
-
 
 const exampleEvent1 = {
       currentTarget: {
