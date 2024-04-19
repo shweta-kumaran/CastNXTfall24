@@ -1,3 +1,16 @@
+## Spring 2024 Information
+
+**Spring 2024 FashioNXT-CastNXT Heroku deployment information**:  https://castnxtspring.herokuapp.com;  
+
+**Sprint 2024 FashioNXT-CastNXT Code Climate Report**: https://codeclimate.com/github/CSCE-606-Event360/CastNXTs24.  
+
+
+
+**Spring 2024 CastNXT Team**
+
+===================================================================================================
+
+
 ## Steps for Local:
 Clone -> Go to web/CASTNXT
 ```
