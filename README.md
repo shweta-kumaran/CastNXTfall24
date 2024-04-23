@@ -16,6 +16,20 @@ be reported in the corresponding debugging_report.txt file.**
 
 
 ## Steps for Local:
+Prerequisites: mongodb:[https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/) \
+create a mongodb admin user
+```
+>use admin;
+>db.createUser(
+  {
+    user: "root",
+    pwd: "example",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+  }
+)
+// The username and password should match the definition in `config/mongoid.yml` 
+```
+
 Clone -> Go to web/CASTNXT
 ```
 /bin/blash --login
