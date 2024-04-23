@@ -82,11 +82,14 @@ heroku logs --tail -a castnxtspring
 
 1. Check your Gemfile.
 
+```
     Check if your Gemfile has gem "pg"
+```
 
 2. Run,
-
+```
     bundle install
+```
 
 3. Now, navigate to your app from the heroku dashboard
 
@@ -95,8 +98,9 @@ heroku logs --tail -a castnxtspring
 5. Click on "Run console"
 
 6. On the command prompt, run the command:
-
+```
     rails db:migrate
+```
 
 7. Now, try opening the app.
 
