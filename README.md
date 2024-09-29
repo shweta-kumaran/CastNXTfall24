@@ -1,4 +1,4 @@
-## Spring 2024 Information
+## Fall 2024 Information
 
 **Spring 2024 FashioNXT-CastNXT Heroku deployment information**:  https://castnxtspring.herokuapp.com;  
 
@@ -10,7 +10,7 @@ be reported in the corresponding debugging_report.txt file.**
 
 
 
-**Spring 2024 CastNXT Team**
+**Fall 2024 CastNXT Team**
 
 ===================================================================================================
 
@@ -30,9 +30,9 @@ create a mongodb admin user
 // The username and password should match the definition in `config/mongoid.yml` 
 ```
 
-Clone -> Go to web/CASTNXT
+Clone -> Go to directory with CASTNXT project
 ```
-/bin/blash --login
+/bin/bash --login
 rvm install “ruby-2.6.6”
 bundle install
 ```
@@ -57,7 +57,7 @@ rails s -p $PORT -b $IP
 > Heroku Build takes a lot of space right now.
 Upgrade volume to >=15GB.
 
-Clone -> Go to web/CASTNXT
+Clone -> Go to directory with CASTNXT project
 
 ### Create heroku project (unnecessary)
 ```
