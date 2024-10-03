@@ -63,19 +63,19 @@ Clone -> Go to directory with CASTNXT project
 ```
 heroku login -i
 heroku container:login
-heroku create -a castnxtspring
+heroku create castnxtfall24
 ```
 
 ### Build repo into container and deploy to heroku
 ```
 heroku container:login
-heroku container:push web -a castnxtspring
-heroku container:release web -a castnxtspring
+heroku container:push web castnxtfall24
+heroku container:release web -a castnxtfall24
 ```
 
 ### Tail the logs:
 ```
-heroku logs --tail -a castnxtspring
+heroku logs --tail -a castnxtfall24
 ```
 
 ### Note: If you notice that your app run into an Application Error.
