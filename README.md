@@ -1,8 +1,8 @@
 ## Fall 2024 Information
 
-**Spring 2024 FashioNXT-CastNXT Heroku deployment information**:  https://castnxtspring.herokuapp.com;  
+**Fall 2024 FashioNXT-CastNXT Heroku deployment information**:  needs to be updated https://castnxtspring.herokuapp.com;  
 
-**Sprint 2024 FashioNXT-CastNXT Code Climate Report**: https://codeclimate.com/github/CSCE-606-Event360/CastNXTs24.  
+**Fall 2024 FashioNXT-CastNXT Code Climate Report**: https://codeclimate.com/github/shweta-kumaran/CastNXTfall24
 
 **NOTIFICATION(!): All the debugging report, issue report, erratum report for the found and reported mistakes, issues, bugs and many other related issues will 
 be reported in the corresponding debugging_report.txt file.** 
