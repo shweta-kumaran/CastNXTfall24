@@ -72,5 +72,8 @@
     "react-test-renderer": "^17.0.2",
     "webpack-dev-server": "^3",
     "yarn": "^1.22.19"
+  },
+  "engines": {
+    "node": "16.13.0"
   }
 }
