@@ -69,7 +69,7 @@ heroku create castnxtfall24
 ### Build repo into container and deploy to heroku
 ```
 heroku container:login
-heroku container:push web castnxtfall24
+heroku container:push web -a castnxtfall24
 heroku container:release web -a castnxtfall24
 ```
 
