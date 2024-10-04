@@ -7,6 +7,8 @@ ruby '2.6.6'
 gem 'rails', '~> 5.2.7'
 # Use mongodb as the database for Active Record
 gem 'mongoid'
+
+gem 'pg'
 # Use Puma as the app server
 gem 'puma', '~> 5.0'
 # Use SCSS for stylesheets
