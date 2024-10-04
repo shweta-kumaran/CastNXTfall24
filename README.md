@@ -1,6 +1,6 @@
 ## Fall 2024 Information
 
-**Fall 2024 FashioNXT-CastNXT Heroku deployment information**:  needs to be updated https://castnxtspring.herokuapp.com;  
+**Fall 2024 FashioNXT-CastNXT Heroku deployment information**:  https://castnxtfall24-7971f7d3d870.herokuapp.com/;  
 
 **Fall 2024 FashioNXT-CastNXT Code Climate Report**: https://codeclimate.com/github/shweta-kumaran/CastNXTfall24
 
