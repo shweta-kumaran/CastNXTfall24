@@ -1,16 +1,16 @@
 ## Fall 2024 Information
 
-**Spring 2024 FashioNXT-CastNXT Heroku deployment information**:  https://castnxtspring.herokuapp.com;  
+**Fall 2024 FashioNXT-CastNXT Heroku deployment information**:  https://castnxtfall24-7971f7d3d870.herokuapp.com/  
 
-**Sprint 2024 FashioNXT-CastNXT Code Climate Report**: https://codeclimate.com/github/CSCE-606-Event360/CastNXTs24.  
+**Fall 2024 FashioNXT-CastNXT Code Climate Report**: https://codeclimate.com/github/shweta-kumaran/CastNXTfall24
 
 **NOTIFICATION(!): All the debugging report, issue report, erratum report for the found and reported mistakes, issues, bugs and many other related issues will 
 be reported in the corresponding debugging_report.txt file.** 
 
 
-
-
 **Fall 2024 CastNXT Team**
+
+[**Team Working Agreement**](https://github.com/shweta-kumaran/CastNXTfall24/blob/main/TWA.md)
 
 ===================================================================================================
 
@@ -63,19 +63,19 @@ Clone -> Go to directory with CASTNXT project
 ```
 heroku login -i
 heroku container:login
-heroku create -a castnxtspring
+heroku create castnxtfall24
 ```
 
 ### Build repo into container and deploy to heroku
 ```
 heroku container:login
-heroku container:push web -a castnxtspring
-heroku container:release web -a castnxtspring
+heroku container:push web -a castnxtfall24
+heroku container:release web -a castnxtfall24
 ```
 
 ### Tail the logs:
 ```
-heroku logs --tail -a castnxtspring
+heroku logs --tail -a castnxtfall24
 ```
 
 ### Note: If you notice that your app run into an Application Error.
