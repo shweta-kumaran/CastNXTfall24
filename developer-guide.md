@@ -14,4 +14,4 @@ docker run --rm -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITD
 
 
 ## With docker compose
-Run `docker compose up`
+Run `docker compose up` and navigate to `http://localhost:3000/` in your browser.
