@@ -1,27 +1,27 @@
 services:
   db:
-    image: mongo
+    image: mongo:8.0.0
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
-  web:
+    networks:
+      - castnxt
+  app:
     build:
       context: .
-      dockerfile: Dockerfile.dev
-    command: "/usr/bin/supervisord -n"
+      dockerfile: dev.Dockerfile
+    command: "rails server -b 0.0.0.0 -p 3000"
     ports:
       - "3000:3000"
-      - "3035:3035"
-    stdin_open: true
-    tty: true
-    links:
-      - db
-    environment:
-      DB_USER: root
-      DB_PWD: example
-      RAILS_ENV: development
+    networks:
+      - castnxt
     volumes:
-      - ./:/home
+      - data:/home/data/db
   
+volumes:
+  data:
+
+networks:
+  castnxt:

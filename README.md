@@ -12,6 +12,9 @@ be reported in the corresponding debugging_report.txt file.**
 
 [**Team Working Agreement**](https://github.com/shweta-kumaran/CastNXTfall24/blob/main/TWA.md)
 
+[**Developer Guide**](/developer-guide.md)
+
+
 ===================================================================================================
 
 
