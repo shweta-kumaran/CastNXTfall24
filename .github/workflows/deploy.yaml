@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env: 
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  HEROKU_APP_NAME: castnxtfall2024
+  
+jobs:
+  build-and-deploy:
+    runs-on: [linux, x64]
+    steps:
+      - uses: actions/checkout@v4.2.1
+      - run: heroku container:login
+      - run: heroku container:push web --app $HEROKU_APP_NAME
+      - run: heroku container:release web --app $HEROKU_APP_NAME

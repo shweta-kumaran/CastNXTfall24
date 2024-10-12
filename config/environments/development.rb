@@ -87,5 +87,7 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.assets.check_precompiled_asset = false
+
+  config.hosts << "castnxtfall2024-a6422e600193.herokuapp.com"
   
 end
