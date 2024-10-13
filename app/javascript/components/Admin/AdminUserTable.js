@@ -19,7 +19,10 @@ class AdminUserTable extends Component {
             eventTalent: [],
             rows: [],
             columns: [],
-            filterModel: {items: []}
+            filterModel: {items: []},
+            currentTab: props.currentTab,
+            currentClient: props.currentClient,
+            currentTalents: props.currentTalents
         }
         this.newRow = null;
     }
@@ -56,8 +59,12 @@ class AdminUserTable extends Component {
 
     createEventTalentData() {
       let slides = this.props.properties.data.slides
+      if(this.props.currentTab != undefined) {
+        console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
+        slides = this.props.currentTalents[this.props.currentClient]
+      }
+      console.log("Slides: ", slides)
       let eventTalent = []
-
       for(var key in slides) {
         eventTalent.push({
             id: key,
@@ -70,9 +77,15 @@ class AdminUserTable extends Component {
     }
 
     componentDidMount() {
+        console.log("Props Properties: ", this.props.properties)
+        console.log("CURRENT TAB: ", this.props.currentTab)
+        console.log("Current Client: ", this.props.currentClient)
+        // if(this.props.currentTab != undefined) {
+        //   console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
+        // }
         let eventTalent = this.createEventTalentData()
         console.log(this.props.filter_curated)
-        console.log(eventTalent)
+        console.log("Event Talent: ",eventTalent)
         if(this.props.filter_curated) {
           eventTalent=eventTalent.filter(row => row["curated"] === true)
         }
@@ -82,6 +95,21 @@ class AdminUserTable extends Component {
             rows: rows,
             columns: columns
         })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      if (prevProps.currentClient !== this.props.currentClient) {
+        let eventTalent = this.createEventTalentData()
+        if(this.props.filter_curated) {
+          eventTalent=eventTalent.filter(row => row["curated"] === true)
+        }
+        let [rows,columns] = this.constructTableData(eventTalent)
+        this.setState({
+            eventTalent: eventTalent,
+            rows: rows,
+            columns: columns
+        })
+      }
     }
 
     onRowClick = (rowData) => {

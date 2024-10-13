@@ -20,11 +20,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 import Slide from "../Forms/Slide";
-
+import AdminUserTable from "./AdminUserTable";
 class AdminClientDecks extends Component {
     constructor(props) {
         super(props)
-        
+        console.log("PROPS: ", this.props.properties)
         this.state = {
             client: "",
             clientOptions: [],
@@ -51,10 +51,9 @@ class AdminClientDecks extends Component {
         let clientDecks = {}
         let clientComments = {}
         let clientSlideComments = {}
-        
-        
+        console.log("State Slide: ", this.state.slides)
         for(var key in clients) {
-          if(clients[key].slideIds.length > 0) {
+          if(clients[key].slideIds.length > 0) { // client has selected talents
             clientOptions.push(
                 <MenuItem key={key} value={key}>{clients[key].name}</MenuItem>    
             )
@@ -91,7 +90,7 @@ class AdminClientDecks extends Component {
             } 
           }
         }
-        
+        console.log("Client Decks: ", clientDecks)
         this.setState({
             clientOptions: clientOptions,
             clientDecks: clientDecks,
@@ -236,7 +235,6 @@ class AdminClientDecks extends Component {
         let selectStyle = {
           backgroundColor: "#B5DDA4"
         }
-      
         return(
             <div>
                 <br />
@@ -254,13 +252,11 @@ class AdminClientDecks extends Component {
                         {this.state.clientOptions}
                     </Select>
                 </FormControl>
-                
                 <br /><br />
-                
                 {this.state.client !== "" &&
                     <div>
                         <div className="col-md-8 offset-md-2">
-                        
+                        <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" currentClient={this.state.client} currentTalents={this.state.clientDecks}/>
                             <TableContainer>
                               <Table size="medium" sx={{ minWidth: 200, width: 250 }}>
                                 <TableHead style={{ backgroundColor: "#3498DB" }}>
