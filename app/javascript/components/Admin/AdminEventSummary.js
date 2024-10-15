@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
-import { Paper } from '@material-ui/core'
-import { DataGrid } from '@material-ui/data-grid';
+import Paper from '@mui/material/Paper';
+import { DataGrid } from '@mui/x-data-grid';
 import {DATA_GRID_TYPES_MAP} from '../../utils/DataParser';
 import { extendedNumberOperators } from '../../utils/RangeFilter';
 import { saveAs } from 'file-saver';
-import IconButton from '@material-ui/core/IconButton';
+import IconButton from '@mui/material/IconButton';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import "./Admin.css";
 

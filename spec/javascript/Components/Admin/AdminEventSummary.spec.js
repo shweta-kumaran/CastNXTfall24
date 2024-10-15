@@ -6,14 +6,14 @@ import renderer from 'react-test-renderer';
 import {defaultDataSchema, defaultUiSchema, getSchema} from '../../../../app/javascript/utils/FormsUtils';
 
 
-jest.mock('@material-ui/data-grid',() => ({
+jest.mock('@mui/x-data-grid',() => ({
     DataGrid: (props) => {
         jest.fn(props);
         return(<mock-data-grid props={props}>{props.children}</mock-data-grid>)
     },
     getGridNumericColumnOperators: () => []
 }));
-jest.mock('@material-ui/core', () => ({
+jest.mock('@mui/material', () => ({
     Paper: (props) => {
         jest.fn(props)
         return (<mock-paper props={props}>{props.children}</mock-paper>)

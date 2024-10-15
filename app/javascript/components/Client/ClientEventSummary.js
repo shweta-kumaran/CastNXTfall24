@@ -1,6 +1,6 @@
 // app/javascript/components/Client/ClientEventSummary.js
 import React, {Component} from "react"
-import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@material-ui/core"
+import { TableContainer, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material"
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 import { Ref } from "semantic-ui-react"
 import Button from "@mui/material/Button";

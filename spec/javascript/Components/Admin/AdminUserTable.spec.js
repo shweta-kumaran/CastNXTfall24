@@ -6,14 +6,14 @@ import renderer from 'react-test-renderer';
 import renderer, { act } from 'react-test-renderer';
 
 /*
-jest.mock('@material-ui/data-grid',() => ({
+jest.mock('@mui/x-data-grid',() => ({
     DataGrid: (props) => {
         jest.fn(props);
         return(<mock-data-grid props={props}>{props.children}</mock-data-grid>)
     },
     getGridNumericColumnOperators: () => []
 }));
-jest.mock('@material-ui/core', () => ({
+jest.mock('@mui/material', () => ({
     Paper: (props) => {
         jest.fn(props)
         return (<mock-paper props={props}>{props.children}</mock-paper>)
@@ -28,7 +28,7 @@ jest.mock('../../../../app/javascript/utils/RangeFilter' , () => ({
 global.window.open = jest.fn();
 */
 
-jest.mock('@material-ui/data-grid', () => ({
+jest.mock('@mui/x-data-grid', () => ({
     DataGrid: (props) => {
         jest.fn(props);
         return (<mock-data-grid props={props}>{props.children}</mock-data-grid>);
@@ -36,7 +36,7 @@ jest.mock('@material-ui/data-grid', () => ({
     getGridNumericColumnOperators: () => []
 }));
 
-jest.mock('@material-ui/core', () => ({
+jest.mock('@mui/material', () => ({
     Paper: (props) => {
         jest.fn(props);
         return (<mock-paper props={props}>{props.children}</mock-paper>);

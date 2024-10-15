@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { TextField, Box } from "@mui/material";
-import { getGridNumericColumnOperators } from "@material-ui/data-grid";
+import { getGridNumericColumnOperators } from "@mui/x-data-grid";
 
 const SUBMIT_FILTER_STROKE_TIME = 500;
 
