@@ -35,8 +35,22 @@ RSpec.describe UserController, type: :controller do
                                 user_type: 'CLIENT')
     @client = Client.create!(name: 'eventtest_client', email: 'eventtest_client@gmail.com')
 
-    @slide = Slide.create(event_id: @event._id, talent_id: @talent._id, client_ids: [@client._id], curated: false,
-                          submission_status: 'UNDER REVIEW', data: '{"name":"aaaa","email":"aaaa@gmail.com","talentName":"aaaa","state":"Kentucky","city":"Ames","paymentLink":"paypal.me/random"}')
+    @slide = Slide.create(
+      event_id: @event._id,
+      talent_id: @talent._id,
+      client_ids: [@client._id],
+      curated: false,
+      submission_status: 'UNDER REVIEW',
+      data: {
+        name: 'aaaa',
+        email: 'aaaa@gmail.com',
+        talentName: 'aaaa',
+        state: 'Kentucky',
+        city: 'Ames',
+        paymentLink: 'paypal.me/random'
+      }.to_json # Convert the Ruby hash to a JSON string
+    )
+
     @client.update(slide_ids: [@slide._id])
     @event.update(slide_ids: [@slide._id])
     @event.update(client_ids: [@client._id])
@@ -44,31 +58,31 @@ RSpec.describe UserController, type: :controller do
                                       intermediateSlides: [@slide._id.to_str], finalSlides: [@slide._id.to_str])
     @comment = Comment.create(slide_id: @slide._id, client_id: @client._id, content: 'hahaaha', owner: @client.name)
   end
-  describe 'get' do
-    it 'should work if logged in' do
-      session[:userType] = 'USER'
-      session[:userName] = 'eventtest_user'
-      session[:userEmail] = 'eventtest_user@gmail.com'
-      session[:userId] = @talent._id.to_str
+
+
+  describe 'GET #index' do
+  before do
+    session[:userType] = 'USER'
+    session[:userName] = 'eventtest_user'
+    session[:userEmail] = 'eventtest_user@gmail.com'
+    session[:userId] = @talent._id.to_str
+  end
+
+  it 'should succeed when logged in' do
+    get :index
+    expect(response).to have_http_status(:success)
+  end
+
+  context 'when the event is finalized' do
+    before { @event.update(status: 'FINALIZED') }
+
+    it 'should succeed if accepted' do
       get :index
       expect(response).to have_http_status(:success)
     end
-    it 'should work is event finalized and accepted' do
-      session[:userType] = 'USER'
-      session[:userName] = 'eventtest_user'
-      session[:userEmail] = 'eventtest_user@gmail.com'
-      session[:userId] = @talent._id.to_str
-      @event = Event.update(status: 'FINALIZED')
-      get :index
-      expect(response).to have_http_status(:success)
-    end
-    it 'should work is event finalized and rejected' do
-      session[:userType] = 'USER'
-      session[:userName] = 'eventtest_user'
-      session[:userEmail] = 'eventtest_user@gmail.com'
-      session[:userId] = @talent._id.to_str
+
+    it 'should succeed if rejected' do
       @negotiation.destroy
-      @event = Event.update(status: 'FINALIZED')
       get :index
       expect(response).to have_http_status(:success)
     end

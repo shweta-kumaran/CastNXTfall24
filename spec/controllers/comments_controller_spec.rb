@@ -35,8 +35,24 @@ RSpec.describe CommentsController, type: :controller do
                                 user_type: 'CLIENT')
     @client = Client.create!(name: 'eventtest_client', email: 'eventtest_client@gmail.com')
 
-    @slide = Slide.create(event_id: @event._id, talent_id: @talent._id, client_ids: [@client._id], curated: false,
-                          submission_status: 'UNDER REVIEW', data: '{"name":"aaaa","email":"aaaa@gmail.com","talentName":"aaaa","state":"Kentucky","city":"Ames","paymentLink":"paypal.me/random"}')
+    data = {
+      name: 'aaaa',
+      email: 'aaaa@gmail.com',
+      talentName: 'aaaa',
+      state: 'Kentucky',
+      city: 'Ames',
+      paymentLink: 'paypal.me/random'
+    }.to_json
+
+    @slide = Slide.create(
+      event_id: @event._id,
+      talent_id: @talent._id,
+      client_ids: [@client._id],
+      curated: false,
+      submission_status: 'UNDER REVIEW',
+      data: data
+    )
+
     @client.update(slide_ids: [@slide._id])
     @event.update(slide_ids: [@slide._id])
     @event.update(client_ids: [@client._id])

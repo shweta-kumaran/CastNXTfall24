@@ -2,7 +2,7 @@
 
 class UserMailer < ApplicationMailer
   default from: 'fashionxtllc@gmail.com'
-  
+
   def send_welcome(email, id)
     link = ENV['HEROKU_URL'] || 'http://localhost:3000'
     mail(
@@ -19,8 +19,6 @@ class UserMailer < ApplicationMailer
       content_type: 'text/html'
     )
   end
-  
-
 
   def client_assigned(email)
     mail(

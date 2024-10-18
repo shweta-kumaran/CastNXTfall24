@@ -67,7 +67,6 @@ class SlidesController < ApplicationController
           talent = Talent.create(name: params[:data][:talentName], email: params[:data][:email])
         end
         get_event(eventId)
-        # formData = "{\"name\":\"#{params[:data][:talentName]}\",\"email\":\"#{params[:data][:email]}\",\"talentName\":\"#{params[:data][:talentName]}\",\"state\":\"#{params[:data][:state]}\",\"city\":\"#{params[:data][:city]}\",\"paymentLink\":\"add your link here\"}"
         formData = "{\"name\":\"#{params[:data][:talentName]}\", " \
             "\"email\":\"#{params[:data][:email]}\", " \
             "\"talentName\":\"#{params[:data][:talentName]}\", " \
