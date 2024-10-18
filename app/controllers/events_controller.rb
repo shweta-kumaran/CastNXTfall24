@@ -59,7 +59,10 @@ class EventsController < ApplicationController
     if is_user_logged_in?('ADMIN')
       eventId = params[:id]
       event = get_event(eventId)
-      if params[:status] == 'DELETED' || params[:status] == 'ACCEPTING' || params[:status] == 'REVIEWING' || params[:status] == 'FINALIZED'
+      if params[:status] == 'DELETED' ||
+         params[:status] == 'ACCEPTING' ||
+         params[:status] == 'REVIEWING' ||
+         params[:status] == 'FINALIZED'
         update_event_status(event, params[:status])
       else
         params[:status] = event[:status]
@@ -321,9 +324,18 @@ class EventsController < ApplicationController
   end
 
   def edit_event(event, params)
-    event.update(form_id: params[:form_id], title: params[:title], description: params[:description],
-                 location: params[:location], statename: params[:statename], eventdate: params[:eventdate], category: params[:category], is_paid_event: params[:is_paid_event])
+    event.update(
+      form_id: params[:form_id],
+      title: params[:title],
+      description: params[:description],
+      location: params[:location],
+      statename: params[:statename],
+      eventdate: params[:eventdate],
+      category: params[:category],
+      is_paid_event: params[:is_paid_event]
+    )
   end
+  
 
   def get_event(eventId)
     Event.find_by(_id: eventId)
@@ -393,7 +405,20 @@ class EventsController < ApplicationController
     Time.now
     # puts("here here yess")
     # puts(timeval)
-    Event.create!(form_id: params[:form_id], producer_id: producerId, status: 'ACCEPTING',
-                  title: params[:title], description: params[:description], location: params[:location], statename: params[:statename], eventdate: params[:eventdate], category: params[:category], delete_time: 'timeval', is_paid_event: params[:is_paid_event])
+    
+    Event.create!(
+      form_id: params[:form_id],
+      producer_id: producerId,
+      status: 'ACCEPTING',
+      title: params[:title],
+      description: params[:description],
+      location: params[:location],
+      statename: params[:statename],
+      eventdate: params[:eventdate],
+      category: params[:category],
+      delete_time: 'timeval',
+      is_paid_event: params[:is_paid_event]
+    )
   end
+  
 end
