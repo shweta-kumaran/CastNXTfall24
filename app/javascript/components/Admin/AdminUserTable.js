@@ -83,8 +83,9 @@ class AdminUserTable extends Component {
       let slides = this.props.properties.data.slides
       
       if(this.props.currentTab != undefined) {
-        // console.log("Client Decks: ", this.props.currentTalents)
-        // console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
+        console.log("Client: ", this.props.currentClient)
+        console.log("Client Decks: ", this.props.currentTalents)
+        console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
         slides = this.props.currentTalents[this.props.currentClient]
       }
       let eventTalent = []
