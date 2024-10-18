@@ -71,4 +71,57 @@ test('adds paymentLink to schemas when isPaid is not "No"', () => {
     expect(uiSchema['ui:order']).toContain('paymentLink');
 });
 
+test('findAssignedClients returns correct assigned clients', () => {
+    const mockProps = {
+        ...propsDefault,
+        properties: {
+            ...propsDefault.properties,
+            data: {
+                ...propsDefault.properties.data,
+                clients: {
+                    client1: {
+                        name: 'Client1',
+                        finalizedIds: [1]
+                    },
+                    client2: {
+                        name: 'Client2',
+                        finalizedIds: [1]
+                    }
+                }
+            }
+        }
+    };
+    const reactComponentObjectForThisComponent = new AdminEventSummary({ properties: mockProps.properties });
+    const assignedClients = reactComponentObjectForThisComponent.findAssignedClients(1);
+    expect(assignedClients).toBe('Client1, Client2');
+});
 
+test('findAssignedClients returns empty string when no clients assigned', () => {
+    const reactComponentObjectForThisComponent = new AdminEventSummary({properties: propsDefault.properties});
+    const assignedClients = reactComponentObjectForThisComponent.findAssignedClients(999); 
+    expect(assignedClients).toBe('');
+});
+
+test('fetchPaymentStatus fetches and returns updated payment status', async () => {
+    global.fetch = jest.fn(() =>
+        Promise.resolve({
+            json: () => Promise.resolve({ been_paid: true }),
+        })
+    );
+
+    const reactComponentObjectForThisComponent = new AdminEventSummary({properties: propsDefault.properties});
+    const talentData = { id: 1, beenPaid: false };
+    const result = await reactComponentObjectForThisComponent.fetchPaymentStatus(talentData);
+
+    expect(result.beenPaid).toBe(true);
+});
+
+test('fetchPaymentStatus handles errors gracefully', async () => {
+    global.fetch = jest.fn(() => Promise.reject('API error'));
+
+    const reactComponentObjectForThisComponent = new AdminEventSummary({properties: propsDefault.properties});
+    const talentData = { id: 1, beenPaid: false };
+    const result = await reactComponentObjectForThisComponent.fetchPaymentStatus(talentData);
+
+    expect(result.beenPaid).toBe(false);
+});

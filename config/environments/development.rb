@@ -88,6 +88,6 @@ Rails.application.configure do
 
   config.assets.check_precompiled_asset = false
 
-  config.hosts << "castnxtfall2024-a6422e600193.herokuapp.com"
+  #config.hosts << "castnxtfall2024-a6422e600193.herokuapp.com"
   
 end
