@@ -172,14 +172,15 @@ describe('testing editing cells', () => {
 
 describe('testing saving data', () => {
     let reactComponentObjectForThisComponent
+    // let mockReload
     beforeEach(() => {
         reactComponentObjectForThisComponent = renderer.create(
             <AdminUserTable properties={propsDefault.properties} />
         ).getInstance();
         jest.spyOn(window, 'alert').mockImplementation(() => {});
-        mockReload = jest.fn();  // Create a mock function
-        delete window.location;  // Delete the existing window.location
-        window.location = { reload: mockReload, href: 'http://localhost/admin/events/1234'};
+        // mockReload = jest.fn();  // Create a mock function
+        // delete window.location;  // Delete the existing window.location
+        // window.location = { reload: jest.fn(), href: 'http://localhost/admin/events/1234'};
     });
     afterEach(() => { 
         jest.restoreAllMocks();
@@ -207,7 +208,7 @@ describe('testing saving data', () => {
     //         data: mockData
     //     });
     //     expect(reactComponentObjectForThisComponent.state.status).toBe(true);
-    //     expect(mockReload).toHaveBeenCalled();
+    //     expect(window.location.reload).toHaveBeenCalled();
     //     // mockReload.mockRestore();
     // })
 })
