@@ -20,11 +20,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 import Slide from "../Forms/Slide";
-
+import AdminUserTable from "./AdminUserTable";
+import AdminCreateStack from "./AdminCreateStack";
 class AdminClientDecks extends Component {
     constructor(props) {
         super(props)
-        
+        console.log("PROPS: ", this.props.properties)
         this.state = {
             client: "",
             clientOptions: [],
@@ -51,10 +52,9 @@ class AdminClientDecks extends Component {
         let clientDecks = {}
         let clientComments = {}
         let clientSlideComments = {}
-        
-        
+        console.log("State Slide: ", this.state.slides)
         for(var key in clients) {
-          if(clients[key].slideIds.length > 0) {
+          if(clients[key].slideIds.length > 0) { // client has selected talents
             clientOptions.push(
                 <MenuItem key={key} value={key}>{clients[key].name}</MenuItem>    
             )
@@ -91,7 +91,7 @@ class AdminClientDecks extends Component {
             } 
           }
         }
-        
+        console.log("Client Decks: ", clientDecks)
         this.setState({
             clientOptions: clientOptions,
             clientDecks: clientDecks,
@@ -172,13 +172,14 @@ class AdminClientDecks extends Component {
     }
     
     finalizeTalent = (talent) => {
+      console.log("Talent in finalizeTalent: ", talent)
       let client = this.state.client
       let clientDecks = this.state.clientDecks
       let finalizedSlides = []
-      
-      
-
+      console.log("Client Decks length: ", clientDecks[client].length)
       for(var i=0; i<clientDecks[client].length; i++) {
+        console.log("In for loop", clientDecks[client][i].slideId)
+        console.log("talent slide ID", talent.slideId)
         if(clientDecks[client][i].slideId === talent.slideId) {
           clientDecks[client][i].finalized = !talent["finalized"]
         }
@@ -236,7 +237,6 @@ class AdminClientDecks extends Component {
         let selectStyle = {
           backgroundColor: "#B5DDA4"
         }
-      
         return(
             <div>
                 <br />
@@ -254,13 +254,12 @@ class AdminClientDecks extends Component {
                         {this.state.clientOptions}
                     </Select>
                 </FormControl>
-                
                 <br /><br />
-                
                 {this.state.client !== "" &&
                     <div>
-                        <div className="col-md-8 offset-md-2">
-                        
+                      <Button variant="contained" onClick={this.expandSlides}>Expand Deck</Button><br /><br />
+                      <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
+                        {/* <div className="col-md-8 offset-md-2">
                             <TableContainer>
                               <Table size="medium" sx={{ minWidth: 200, width: 250 }}>
                                 <TableHead style={{ backgroundColor: "#3498DB" }}>
@@ -329,86 +328,88 @@ class AdminClientDecks extends Component {
                             }
 
                             <br />
-                            <Button variant="contained" onClick={this.expandSlides}>Expand Deck</Button><br /><br />
+                            
+                        </div> */}
+                        <div className="col-md-8 offset-md-2">
 
-                            {this.state.expandSlides &&
-                            <Paper>
-                              <TableContainer>
-                                <Table size="medium">
-                                  <TableBody>
-                                    {this.state.clientDecks[this.state.client]
-                                        .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
-                                        .map((row) => {
-                                          return(
-                                            <TableRow
-                                              key={row.slideId}
-                                              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                                            >
-  
-                                              <TableCell>
-                                                <Slide
-                                                  disabled
-                                                  schema={this.state.schema}
-                                                  uiSchema={this.state.uiSchema}
-                                                  formData={row.formData}
-                                                  children={true}
-                                                />
+                        {this.state.expandSlides &&
+                        <Paper>
+                          <TableContainer>
+                            <Table size="medium">
+                              <TableBody>
+                                {this.state.clientDecks[this.state.client]
+                                    .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
+                                    .map((row) => {
+                                      return(
+                                        <TableRow
+                                          key={row.slideId}
+                                          sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                                        >
 
-                                                <br />
+                                          <TableCell>
+                                            <Slide
+                                              disabled
+                                              schema={this.state.schema}
+                                              uiSchema={this.state.uiSchema}
+                                              formData={row.formData}
+                                              children={true}
+                                            />
 
-                                                Comments:
+                                            <br />
+
+                                            Comments:
+                                            
+                                            <br />     
+
+                                            
+                                            <List>
+                                              {this.state.clientComments[this.state.client][this.state.page].map((comment) =>(
+                                                <ListItem
+                                                  key = {comment.commentContent}
+                                                >
                                                 
-                                                <br />     
+                                                  <ListItemText primary={`${comment.commentContent}`} secondary={`${comment.commentOwner}`} />
 
-                                                
-                                                <List>
-                                                  {this.state.clientComments[this.state.client][this.state.page].map((comment) =>(
-                                                    <ListItem
-                                                      key = {comment.commentContent}
-                                                    >
-                                                    
-                                                      <ListItemText primary={`${comment.commentContent}`} secondary={`${comment.commentOwner}`} />
+                                                </ListItem>
 
-                                                    </ListItem>
+                                              ))}
+                                            </List>
+                                            
 
-                                                  ))}
-                                                </List>
-                                                
+                                            <br />   
 
-                                                <br />   
+                                            <TextField id="title-textfield" name="commentContent" onChange={this.handleChange} onBlur={this.handleBlur} onClick={this.handleClick} defaultValue="Enter Comment" />
 
-                                                <TextField id="title-textfield" name="commentContent" onChange={this.handleChange} onBlur={this.handleBlur} onClick={this.handleClick} defaultValue="Enter Comment" />
+                                            <br />
 
-                                                <br />
+                                            <Button disabled={this.state.disableSubmit} variant="contained" onClick={() => this.submitComment(row.slideId)}>Submit Comment</Button><br />
 
-                                                <Button disabled={this.state.disableSubmit} variant="contained" onClick={() => this.submitComment(row.slideId)}>Submit Comment</Button><br />
+                                          </TableCell>
 
-                                              </TableCell>
-
-                                              
-                                            </TableRow>
-                                          )
-                                      })
-                                    }
-                                  </TableBody>
-                                  
-                                  <TableFooter>
-                                    <TableRow>
-                                      <TablePagination
-                                        rowsPerPageOptions={[1]}
-                                        count={this.state.clientDecks[this.state.client].length}
-                                        rowsPerPage={this.state.rowsPerPage}
-                                        page={this.state.page}
-                                        onRowsPerPageChange={this.handleChangeRowsPerPage}
-                                        onPageChange={this.handleChangePage}
-                                      />
-                                    </TableRow>
-                                  </TableFooter>
-                                  
-                                </Table>
-                              </TableContainer>
-                            </Paper>
-                            }
+                                          
+                                        </TableRow>
+                                      )
+                                  })
+                                }
+                              </TableBody>
+                              
+                              <TableFooter>
+                                <TableRow>
+                                  <TablePagination
+                                    rowsPerPageOptions={[1]}
+                                    count={this.state.clientDecks[this.state.client].length}
+                                    rowsPerPage={this.state.rowsPerPage}
+                                    page={this.state.page}
+                                    onRowsPerPageChange={this.handleChangeRowsPerPage}
+                                    onPageChange={this.handleChangePage}
+                                  />
+                                </TableRow>
+                              </TableFooter>
+                              
+                            </Table>
+                          </TableContainer>
+                        </Paper>
+                        }
                         </div>
                     </div>
                 }

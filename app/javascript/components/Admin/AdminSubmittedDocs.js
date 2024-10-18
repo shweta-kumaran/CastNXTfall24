@@ -4,7 +4,7 @@ import AdminCreateStack from "./AdminCreateStack";
 import AdminUserTable from "./AdminUserTable";
 
 const AdminSubmittedDocs = (props) =>{
-
+    console.log("PROPS: ",props.properties)
     const [rowData, setRowData] = useState(null);
     const [showRowData, setShowRowData] = useState(false);
     const [stack, setStack] = useState(slidesToEntries(props?.properties?.data?.slides, true));
