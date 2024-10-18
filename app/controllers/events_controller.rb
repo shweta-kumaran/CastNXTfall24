@@ -335,7 +335,6 @@ class EventsController < ApplicationController
       is_paid_event: params[:is_paid_event]
     )
   end
-  
 
   def get_event(eventId)
     Event.find_by(_id: eventId)
@@ -405,7 +404,7 @@ class EventsController < ApplicationController
     Time.now
     # puts("here here yess")
     # puts(timeval)
-    
+
     Event.create!(
       form_id: params[:form_id],
       producer_id: producerId,
@@ -420,5 +419,4 @@ class EventsController < ApplicationController
       is_paid_event: params[:is_paid_event]
     )
   end
-  
 end
