@@ -10,4 +10,5 @@ class Producer
   has_many :events
   has_many :forms
   has_many :comments
+  has_many :messages
 end
