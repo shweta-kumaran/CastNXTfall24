@@ -11,4 +11,5 @@ class Slide
   field :curated, type: Boolean
   field :data, type: String
   field :submission_status, type: String
+  field :been_paid, type:Boolean
 end
