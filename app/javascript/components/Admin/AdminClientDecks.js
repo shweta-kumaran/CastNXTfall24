@@ -259,77 +259,7 @@ class AdminClientDecks extends Component {
                     <div>
                       <Button variant="contained" onClick={this.expandSlides}>Expand Deck</Button><br /><br />
                       <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
-                        {/* <div className="col-md-8 offset-md-2">
-                            <TableContainer>
-                              <Table size="medium" sx={{ minWidth: 200, width: 250 }}>
-                                <TableHead style={{ backgroundColor: "#3498DB" }}>
-                                  <TableRow>
-                                    <TableCell align="center">Preference</TableCell>
-                                    <TableCell align="center">Talent Name</TableCell>
-                                    <TableCell align="center">Status</TableCell>
-                                    <TableCell align="center">Action</TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {this.state.clientDecks[this.state.client]
-                                      .map((row, i) => {
-                                        return(
-                                          <TableRow key={i} style={row.finalized ? selectStyle : {}}>
-                                              <TableCell align="center">{row.preference}</TableCell>
-                                              <TableCell align="center">{row.talentName}</TableCell>
-                                              {!row.finalized &&
-                                              <>
-                                                <TableCell align="center">Not Finalized</TableCell>
-                                                <TableCell>
-                                                  <Button 
-                                                    size="small" 
-                                                    color="success" 
-                                                    variant="contained" 
-                                                    onClick={() => this.finalizeTalent(row)} 
-                                                    disableElevation>Finalize</Button>
-                                                </TableCell>
-                                              </>
-                                              }
-                                              {row.finalized &&
-                                              <>
-                                                <TableCell align="center">Finalized</TableCell>
-                                                <TableCell>
-                                                  <Button 
-                                                    size="small" 
-                                                    color="error" 
-                                                    variant="contained" 
-                                                    onClick={() => this.finalizeTalent(row)} 
-                                                    disableElevation>Remove</Button>
-                                                </TableCell>
-                                              </>
-                                              }
-                                          </TableRow>
-                                        )
-                                    })
-                                  }
-                                </TableBody>
-                              </Table>
-                            </TableContainer>
-                            
-                            {(this.state.status !== "" && this.state.status) && 
-                                <div className="col-md-6 offset-md-3">
-                                  <br />
-                                  <Alert severity="success">{this.state.message}</Alert>
-                                  <br />
-                                </div>
-                            }
-                            
-                            {(this.state.status !== "" && !this.state.status) &&
-                                <div className="col-md-6 offset-md-3">
-                                  <br />
-                                  <Alert severity="error">Error: {this.state.message}</Alert>
-                                  <br />
-                                </div>
-                            }
 
-                            <br />
-                            
-                        </div> */}
                         <div className="col-md-8 offset-md-2">
 
                         {this.state.expandSlides &&
