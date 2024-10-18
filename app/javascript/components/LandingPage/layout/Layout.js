@@ -10,7 +10,7 @@ const Layout = (props) => {
             <nav className="header">
                 <div className="nav-wrapper">
                     <div style={{ padding: "1.2%", textAlign: "center", backgroundColor:"black", display: "inline-block" }} >
-                        <img src={require("../../../assets/images/logo.png")} alt="FASHIONXT" style={{ width: "300px" }} />
+                        <img src={require("../../../images/logo.png")} alt="FASHIONXT" style={{ width: "300px" }} />
                     </div>
                     <input className="menu-btn" type="checkbox" id="menu-btn"/>
                     <label className="menu-icon" htmlFor="menu-btn"><span className="navicon"></span></label>

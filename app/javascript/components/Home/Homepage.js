@@ -184,7 +184,7 @@ class Homepage extends Component {
             <div>
                 <div className="container">
                     <div style={imageStyle} className="centered">
-                        <img src={require("../../assets/images/logo.png")} alt="FASHIONXT" style={{ width: "300px" }} />
+                        <img src={require("../../images/logo.png")} alt="FASHIONXT" style={{ width: "300px" }} />
                     </div>
                     <div className="row" style={{ color: "white" }}>
                         <div className="col-md-6 offset-md-3 login-box">

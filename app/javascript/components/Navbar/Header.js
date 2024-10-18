@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { makeStyles } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 import axios from "axios"
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +38,7 @@ const Header = (props) => {
                 <AppBar className="appbar" style={{background: "black"}}>
                     <Toolbar>
                         <IconButton edge="start" color="inherit" aria-label="menu">
-                            <img src={require("../../assets/images/logo.png")} alt="FASHIONXT" style={{ width: "200px" }} />
+                            <img src={require("../../images/logo.png")} alt="FASHIONXT" style={{ width: "200px" }} />
                         </IconButton>
                         <Typography variant="h6" className={classes.title}></Typography>
                         <Typography color="inherit" style={{marginRight: "1%"}}>Welcome, {properties?.name}</Typography>

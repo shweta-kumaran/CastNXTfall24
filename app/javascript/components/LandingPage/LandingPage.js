@@ -14,16 +14,20 @@ class LandingPage extends Component {
     }
 
     render() {
-        return (
-            <Fragment>
-                <Header />
-                <div className="body-wrap">
-                    <Layout>
-                        <Home/>
-                    </Layout>
-                </div>
-            </Fragment>
-        )
+        return React.createElement(
+            Fragment,
+            null,
+            React.createElement(Header, null),
+            React.createElement(
+            "div",
+            { className: "body-wrap" },
+            React.createElement(
+                Layout,
+                null,
+                React.createElement(Home, null)
+            )
+            )
+        );
     }
 }
 

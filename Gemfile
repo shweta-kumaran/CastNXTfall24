@@ -11,8 +11,6 @@ gem 'mongoid', '~> 9.0.2'
 gem 'puma', '~> 6.4.3'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 6.0.0'
-# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker', '~> 5.4.4'
 # Google OAuth Sign In
 gem 'google_sign_in', '~> 1.2.1'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -77,3 +75,11 @@ gem 'sendinblue'
 
 gem 'nokogiri', '~> 1.16.7'
 gem "ostruct", "~> 0.6.0"
+
+gem 'importmap-rails'
+gem 'turbo-rails'
+gem "sprockets-rails", "~> 3.5"
+
+gem "jsbundling-rails", "~> 1.3"
+
+gem "cssbundling-rails", "~> 1.4"

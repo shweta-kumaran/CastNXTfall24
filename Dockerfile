@@ -23,8 +23,8 @@ RUN npm install -g yarn@1.22.22
 COPY . .
 RUN mv config/mongoid.Docker.config config/mongoid.yml
 
-# RUN rails webpacker:install
-# RUN rails webpacker:compile
+RUN rails webpacker:install
+RUN rails webpacker:compile
 
 RUN rm -rf tmp/
 
