@@ -49,7 +49,6 @@ jest.mock('../../../../app/javascript/utils/RangeFilter', () => ({
 
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
-jest.mock('axios')
 global.window.open = jest.fn();
 
 
@@ -142,11 +141,9 @@ describe('testing editing cells', () => {
             ],
         });
         jest.spyOn(window, 'alert').mockImplementation(() => {});
-        jest.spyOn(window.location, 'reload').mockImplementation(() => {});
     });
     afterEach(() => { 
         window.alert.mockRestore();
-        window.location.reload.mockRestore();
     });
 
     test('testing editing cell data', () => {
@@ -178,6 +175,30 @@ describe('testing editing cells', () => {
     });
 });
 
+test('testing onRowClick', () => {
+    const mockHandleRowClick = jest.fn();
+      const component = renderer.create(
+        <AdminUserTable properties = {propsDefault.properties} handleRowClick={mockHandleRowClick}/>
+    ).getInstance();
+    const mockRowData = { id: 1, row: {} };
+    component.onRowClick(mockRowData);
+    expect(mockHandleRowClick).toHaveBeenCalledWith({
+        id: 1,
+        row: {
+            "curated": true,
+            "formData": {
+                "newInput1": 18,
+                "newInput2": "Model",
+                "newInput3": "One"
+            },
+            "id": "634b44f0c2e881bd9a343e48",
+            "name": "Model One",
+            "talentName": "Model One",
+            "uniqId": "634b44f0c2e881bd9a343e48",
+        }
+        
+    });
+})
 // test('should correctly find and concatenate assigned clients names', () => {
 //     const props = {
 //       properties: {
