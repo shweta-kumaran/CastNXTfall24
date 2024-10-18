@@ -111,11 +111,6 @@ class AdminUserTable extends Component {
     }
     handleSave = () => {
       // 取得需要发送的数据
-      // if (!this.newRow) {
-      //   console.error("No row data to save. Please edit a row before saving.");
-      //   alert("No row data to save. Please edit a row before saving.");
-      //   return;
-      // }
       const eventId = window.location.href.split('/').pop();
       console.log("Data to Send: ", this.newRow)
       const dataToSend = this.newRow
@@ -141,7 +136,7 @@ class AdminUserTable extends Component {
           })
           window.location.reload();
         })
-
+        this.state.rows.push(dataToSend)
   }
     handleCellEditCommit = (params) => {
       const { id, field, value } = params;
@@ -153,7 +148,6 @@ class AdminUserTable extends Component {
               rows[rowIndex] = updatedRow;
               // 如果这是新添加的行，则更新 newRow
               if (this.newRow && this.newRow.id === id) {
-                  rows.push(newRow)
                   this.newRow = updatedRow;
                   console.log("new row: ", this.newRow)
               }

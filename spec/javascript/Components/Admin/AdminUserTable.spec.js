@@ -49,6 +49,7 @@ jest.mock('../../../../app/javascript/utils/RangeFilter', () => ({
 
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
+jest.mock('axios')
 global.window.open = jest.fn();
 
 
@@ -128,7 +129,7 @@ test('testing add new row to the table', () => {
     expect(instance.state.rows[0]).toEqual({id: 1,});
 });
 
-describe('testing editing cells and saving updated data', () => {
+describe('testing editing cells', () => {
     let reactComponentObjectForThisComponent
     beforeEach(() => {
         reactComponentObjectForThisComponent = renderer.create(
@@ -140,6 +141,12 @@ describe('testing editing cells and saving updated data', () => {
                 { id: 2, name: 'Test Name 2', email: 'test2@example.com' },
             ],
         });
+        jest.spyOn(window, 'alert').mockImplementation(() => {});
+        jest.spyOn(window.location, 'reload').mockImplementation(() => {});
+    });
+    afterEach(() => { 
+        window.alert.mockRestore();
+        window.location.reload.mockRestore();
     });
 
     test('testing editing cell data', () => {
@@ -151,20 +158,24 @@ describe('testing editing cells and saving updated data', () => {
     });
 
     test('testing adding a new row with data', () => {
-        reactComponentObjectForThisComponent.state.newRow = { id: 3}
+        reactComponentObjectForThisComponent.addNewRow();
         // reactComponentObjectForThisComponent.newRow = { id: 3 };
         const params = { id: 3, field: 'name', value: 'Test Name 3' };
         reactComponentObjectForThisComponent.handleCellEditCommit(params);
         const updatedRows = reactComponentObjectForThisComponent.state.rows;
-        console.log("updated rows: ", updatedRows)
-        console.log("new row: ", reactComponentObjectForThisComponent.state.newRow)
         expect(updatedRows[2]['name']).toBe('Test Name 3')
         expect(updatedRows.find(row => row.id === 3)).toEqual({
-            id: newRowId,
+            id: 3,
             name: 'Test Name 3',
             email: undefined, // Assuming no email was set
         });
-    })
+    });
+
+    test('testing saving data of new row (no email and name included)', () => {
+        reactComponentObjectForThisComponent.addNewRow();
+        reactComponentObjectForThisComponent.handleSave();
+        expect(window.alert).toHaveBeenCalledWith("Name and email should be provided");
+    });
 });
 
 // test('should correctly find and concatenate assigned clients names', () => {
