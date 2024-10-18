@@ -2,6 +2,7 @@ import AdminUserTable from "../../../../app/javascript/components/Admin/AdminUse
 import {propsDefault} from '../../__mocks__/props.mock';
 import renderer, { act }from 'react-test-renderer';
 import { saveAs } from 'file-saver';
+import axios from 'axios';
 // Import necessary utilities from react-test-renderer
 // import renderer, { act } from 'react-test-renderer';
 
@@ -48,7 +49,6 @@ jest.mock('../../../../app/javascript/utils/RangeFilter', () => ({
 }));
 
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
-
 jest.mock('axios')
 global.window.open = jest.fn();
 
@@ -142,11 +142,9 @@ describe('testing editing cells', () => {
             ],
         });
         jest.spyOn(window, 'alert').mockImplementation(() => {});
-        jest.spyOn(window.location, 'reload').mockImplementation(() => {});
     });
     afterEach(() => { 
         window.alert.mockRestore();
-        window.location.reload.mockRestore();
     });
 
     test('testing editing cell data', () => {
@@ -170,14 +168,74 @@ describe('testing editing cells', () => {
             email: undefined, // Assuming no email was set
         });
     });
+});
+
+describe('testing saving data', () => {
+    let reactComponentObjectForThisComponent
+    beforeEach(() => {
+        reactComponentObjectForThisComponent = renderer.create(
+            <AdminUserTable properties={propsDefault.properties} />
+        ).getInstance();
+        jest.spyOn(window, 'alert').mockImplementation(() => {});
+        mockReload = jest.fn();  // Create a mock function
+        delete window.location;  // Delete the existing window.location
+        window.location = { reload: mockReload, href: 'http://localhost/admin/events/1234'};
+    });
+    afterEach(() => { 
+        jest.restoreAllMocks();
+    });
 
     test('testing saving data of new row (no email and name included)', () => {
         reactComponentObjectForThisComponent.addNewRow();
         reactComponentObjectForThisComponent.handleSave();
         expect(window.alert).toHaveBeenCalledWith("Name and email should be provided");
     });
-});
 
+    // test('testing saving data', async () => {
+    //     const mockData = {
+    //         id: 3,
+    //         talentName: 'Test Talent 3',
+    //         email: 'test3@email.com',
+    //         state: 'Texas',
+    //         city: 'Houston'
+    //     };
+    //     reactComponentObjectForThisComponent.newRow = mockData
+    //     // const mockReload = jest.spyOn(window.location, 'reload').mockImplementation(() => {});
+    //     await reactComponentObjectForThisComponent.handleSave()
+    //     expect(axios.post).toHaveBeenCalledWith(`/admin/events/1234/slides`, {
+    //         aName: 'Test Talent 3',
+    //         data: mockData
+    //     });
+    //     expect(reactComponentObjectForThisComponent.state.status).toBe(true);
+    //     expect(mockReload).toHaveBeenCalled();
+    //     // mockReload.mockRestore();
+    // })
+})
+
+test('testing onRowClick', () => {
+    const mockHandleRowClick = jest.fn();
+      const component = renderer.create(
+        <AdminUserTable properties = {propsDefault.properties} handleRowClick={mockHandleRowClick}/>
+    ).getInstance();
+    const mockRowData = { id: 1, row: {} };
+    component.onRowClick(mockRowData);
+    expect(mockHandleRowClick).toHaveBeenCalledWith({
+        id: 1,
+        row: {
+            "curated": true,
+            "formData": {
+                "newInput1": 18,
+                "newInput2": "Model",
+                "newInput3": "One"
+            },
+            "id": "634b44f0c2e881bd9a343e48",
+            "name": "Model One",
+            "talentName": "Model One",
+            "uniqId": "634b44f0c2e881bd9a343e48",
+        }
+        
+    });
+})
 // test('should correctly find and concatenate assigned clients names', () => {
 //     const props = {
 //       properties: {
