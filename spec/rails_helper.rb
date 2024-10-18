@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 require 'mongoid-rspec'
 ENV['RAILS_ENV'] ||= 'test'
-Mongoid.load!(File.expand_path('../../config/mongoid.yml', __FILE__), :test)
+Mongoid.load!(File.expand_path('../config/mongoid.yml', __dir__), :test)
 require 'simplecov'
 SimpleCov.start 'rails' do
   add_filter '/bin/'
@@ -11,7 +13,7 @@ SimpleCov.start 'rails' do
 end
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
-abort("The Rails environment is running in production mode!") if Rails.env.production?
+abort('The Rails environment is running in production mode!') if Rails.env.production?
 Object.send(:remove_const, :ActiveRecord)
 
 require 'rspec/rails'

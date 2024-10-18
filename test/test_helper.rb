@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 
@@ -7,9 +9,11 @@ Object.send(:remove_const, :ActiveRecord)
 
 require 'rails/test_help'
 
-class ActiveSupport::TestCase
-  # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
+module ActiveSupport
+  class TestCase
+    # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
 
-  # fixtures :all
-  # Add more helper methods to be used by all tests here...
+    # fixtures :all
+    # Add more helper methods to be used by all tests here...
+  end
 end

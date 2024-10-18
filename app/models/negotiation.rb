@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class Negotiation
   include Mongoid::Document
   include Mongoid::Timestamps
-  
+
   belongs_to :event
   belongs_to :client
   field :intermediateSlides, type: Array

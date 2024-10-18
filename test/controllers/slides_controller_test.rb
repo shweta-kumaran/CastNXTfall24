@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 class SlidesControllerTest < ActionDispatch::IntegrationTest
@@ -5,40 +7,40 @@ class SlidesControllerTest < ActionDispatch::IntegrationTest
     @slide = slides(:one)
   end
 
-  test "should get index" do
+  test 'should get index' do
     get slides_url
     assert_response :success
   end
 
-  test "should get new" do
+  test 'should get new' do
     get new_slide_url
     assert_response :success
   end
 
-  test "should create slide" do
+  test 'should create slide' do
     assert_difference('Slide.count') do
-      post slides_url, params: { slide: {  } }
+      post slides_url, params: { slide: {} }
     end
 
     assert_redirected_to slide_url(Slide.last)
   end
 
-  test "should show slide" do
+  test 'should show slide' do
     get slide_url(@slide)
     assert_response :success
   end
 
-  test "should get edit" do
+  test 'should get edit' do
     get edit_slide_url(@slide)
     assert_response :success
   end
 
-  test "should update slide" do
-    patch slide_url(@slide), params: { slide: {  } }
+  test 'should update slide' do
+    patch slide_url(@slide), params: { slide: {} }
     assert_redirected_to slide_url(@slide)
   end
 
-  test "should destroy slide" do
+  test 'should destroy slide' do
     assert_difference('Slide.count', -1) do
       delete slide_url(@slide)
     end
