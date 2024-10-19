@@ -25,4 +25,4 @@ RUN rails webpacker:compile
 
 RUN rm -rf tmp/
 
-CMD rails s -b 0.0.0.0 -p 3000
+CMD rails s -b 0.0.0.0 -p $PORT
