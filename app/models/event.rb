@@ -7,6 +7,7 @@ class Event
   has_and_belongs_to_many :clients
   has_many :slides
   has_many :negotiations
+  has_many :messages
   # Add more fields here. To set-up the meta-data.
   field :status, type: String
   field :title, type: String
