@@ -12,12 +12,12 @@ RUN n 16.13.0
 RUN hash -r
 RUN npm install -g yarn
 
-COPY config/mongoid.Docker.config config/mongoid.yml
 RUN gem install bundler -v 2.2.31
 RUN bundle config set force_ruby_platform true
 RUN bundle install
 
 COPY . .
+COPY config/mongoid.Docker.config config/mongoid.yml
 RUN npm install
 
 RUN rails webpacker:install
