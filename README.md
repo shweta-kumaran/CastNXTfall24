@@ -107,6 +107,11 @@ heroku logs --tail -a castnxtfall24
 
 7. Now, try opening the app.
 
+## Executing Testcases 
+```
+    yarn test --coverage
+```
+
 
 ## Common Errors:
 Problem:
