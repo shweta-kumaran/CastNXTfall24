@@ -171,8 +171,9 @@ class AdminUserTable extends Component {
     handleSave = () => {
       // 取得需要发送的数据
       const eventId = window.location.href.split('/').pop();
+      console.log("Data to Send: ", this.newRow)
       const dataToSend = this.newRow
-      console.log(dataToSend)
+  
       if(!dataToSend['state'] || !UsStates.includes(dataToSend['state'])){
         dataToSend['state']="Oregon"
         dataToSend["city"]="Portland"
@@ -194,7 +195,7 @@ class AdminUserTable extends Component {
           })
           window.location.reload();
         })
-
+        this.state.rows.push(dataToSend)
   }
     handleCellEditCommit = (params) => {
       const { id, field, value } = params;
@@ -204,13 +205,17 @@ class AdminUserTable extends Component {
           if (rowIndex > -1) {
               const updatedRow = { ...rows[rowIndex], [field]: value };
               rows[rowIndex] = updatedRow;
-
               // 如果这是新添加的行，则更新 newRow
               if (this.newRow && this.newRow.id === id) {
                   this.newRow = updatedRow;
+                  console.log("new row: ", this.newRow)
               }
           }
+          console.log(rows)
           return { rows };
+      }, () => {
+        console.log("State has been updated: ", this.newRow)
+        console.log("State rows after update: ", this.state.rows)
       });
   }
 
