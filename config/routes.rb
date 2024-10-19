@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     collection do
       resources :events, only: [:show] do
         resources :negotiations, only: [:create]
+        resources :messages, only: [:create]
         resources :slides, only: [:create] do
           resources :comments, only: [:create]
         end
@@ -39,6 +40,7 @@ Rails.application.routes.draw do
     collection do
       resources :events, only: [:show, :update, :new, :create, :edit] do
         resources :negotiations, only: [:create]
+        resources :messages, only: [:create]
         resources :slides, only: [:create] do
           resources :comments, only: [:create]
         end
