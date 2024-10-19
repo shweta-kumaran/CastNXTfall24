@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get '/validation/:id', to: 'home#validation'
   
   get '/api/change_status/:id', to: 'api#change_status'
-  
+
   get '/api/', to: 'api#index'
   
   resources :home, only: [] do
@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     collection do
       resources :events, only: [:show] do
         resources :negotiations, only: [:create]
+        resources :messages, only: [:create]
         resources :slides, only: [:create] do
           resources :comments, only: [:create]
         end
@@ -39,6 +40,7 @@ Rails.application.routes.draw do
     collection do
       resources :events, only: [:show, :update, :new, :create, :edit] do
         resources :negotiations, only: [:create]
+        resources :messages, only: [:create]
         resources :slides, only: [:create] do
           resources :comments, only: [:create]
         end
@@ -47,4 +49,10 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :slides, only: [] do
+    member do
+      post 'update_payment_status'
+      get 'payment_status'
+    end
+  end
 end

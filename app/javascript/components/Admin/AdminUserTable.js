@@ -9,7 +9,7 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import "./Admin.css";
 import axios from "axios";
 import { UsStates, getCities} from '../../utils/FormsUtils';
-
+import Button from "@mui/material/Button";
 class AdminUserTable extends Component {
     constructor(props) {
         super(props)
@@ -19,7 +19,10 @@ class AdminUserTable extends Component {
             eventTalent: [],
             rows: [],
             columns: [],
-            filterModel: {items: []}
+            filterModel: {items: []},
+            currentTab: props.currentTab,
+            currentClient: props.currentClient,
+            currentTalents: props.currentTalents
         }
         this.newRow = null;
     }
@@ -28,6 +31,9 @@ class AdminUserTable extends Component {
       let columns = []
       let rows = []
       let schema = this.props.properties.data.schema.properties
+      let currentTab = this.props.currentTab
+
+      // adding the columns
       Object.keys(schema).forEach(key => {
         if(!key.startsWith('file')){
           const type = DATA_GRID_TYPES_MAP[schema[key].type];
@@ -38,6 +44,19 @@ class AdminUserTable extends Component {
           columns.push(columnConfig);
         }
       })
+      if (currentTab != undefined) {
+        columns.unshift({field: 'preference', headerName: 'Preference', minWidth: 150, type: 'number', filterOperators: extendedNumberOperators})
+        columns.push({field: 'finalized', headerName: 'Status', minWidth: 150, type: 'boolean', renderCell: (params) => params.value ? 'Finalized' : 'Not Finalized'})
+        columns.push({field: 'action', headerName: 'Action', minWidth: 150, 
+          renderCell: (params) =>{
+            let isFinalized = params.row.finalized
+            let talentData = eventTalent[params.row.id - 1]
+            // console.log(talentData)
+            return (<Button onClick={(event) => {event.stopPropagation(); this.props.finalizeTalent(talentData)}} style={{ backgroundColor: isFinalized ? 'red' : 'green', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}>{isFinalized ? 'Remove' : 'Finalize'}</Button>)
+        }})
+      }
+      // filling up table with talent data
+      console.log(eventTalent)
       eventTalent.forEach((talentData, index) => {
         let row = {}
         row['id'] = index + 1;
@@ -45,6 +64,12 @@ class AdminUserTable extends Component {
         row['talentName'] = talentData.name;
         columns.forEach((column) => {
             row[column.field] = ''
+            if (column.field == 'preference') {
+              row[column.field] = talentData.preference
+            }
+            if (column.field == 'finalized') {
+              row[column.field] = talentData.finalized
+            }
             if (talentData.formData[column.field]) {
               row[column.field] = talentData.formData[column.field]
             }
@@ -56,23 +81,42 @@ class AdminUserTable extends Component {
 
     createEventTalentData() {
       let slides = this.props.properties.data.slides
-      let eventTalent = []
-
-      for(var key in slides) {
-        eventTalent.push({
-            id: key,
-            name: slides[key].talentName,
-            curated: slides[key].curated,
-            formData: slides[key].formData
-        })
+      
+      if(this.props.currentTab != undefined) {
+        console.log("Client: ", this.props.currentClient)
+        console.log("Client Decks: ", this.props.currentTalents)
+        console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
+        slides = this.props.currentTalents[this.props.currentClient]
       }
+      let eventTalent = []
+      for (var key in slides) {
+        let talentData = {
+          id: key,
+          slideId: slides[key].slideId,
+          name: slides[key].talentName,
+          curated: slides[key].curated,
+          formData: slides[key].formData
+        }
+        if (this.props.currentTab != undefined) {
+          talentData.preference = slides[key].preference
+          talentData.finalized = slides[key].finalized
+        }
+        eventTalent.push(talentData)
+      }
+      // for(var key in slides) {
+      //   eventTalent.push({
+      //       id: key,
+      //       name: slides[key].talentName,
+      //       curated: slides[key].curated,
+      //       formData: slides[key].formData
+      //   })
+      // }
       return eventTalent;
     }
 
     componentDidMount() {
         let eventTalent = this.createEventTalentData()
         console.log(this.props.filter_curated)
-        console.log(eventTalent)
         if(this.props.filter_curated) {
           eventTalent=eventTalent.filter(row => row["curated"] === true)
         }
@@ -82,6 +126,21 @@ class AdminUserTable extends Component {
             rows: rows,
             columns: columns
         })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      if (prevProps !== this.props) {
+        let eventTalent = this.createEventTalentData()
+        if(this.props.filter_curated) {
+          eventTalent=eventTalent.filter(row => row["curated"] === true)
+        }
+        let [rows,columns] = this.constructTableData(eventTalent)
+        this.setState({
+            eventTalent: eventTalent,
+            rows: rows,
+            columns: columns
+        })
+      }
     }
 
     onRowClick = (rowData) => {
