@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # class RoomsController < ApplicationController
 #   def index
 
@@ -6,7 +8,7 @@
 #     # end
 
 #     # @current_user = session[:userid]
-    
+
 #     # @rooms = Room.public_rooms
 #     # @users = User.all_except(@current_user)
 #   end

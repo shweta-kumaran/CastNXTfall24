@@ -81,50 +81,7 @@ heroku container:release web -a castnxtfall24
 heroku logs --tail -a castnxtfall24
 ```
 
-### Note: If you notice that your app run into an Application Error.
-
-1. Check your Gemfile.
-
-```
-    Check if your Gemfile has gem "pg"
-```
-
-2. Run,
-```
-    bundle install
-```
-
-3. Now, navigate to your app from the heroku dashboard
-
-4. Click on "More" (Top-Right corner, next to 'Open App')
-
-5. Click on "Run console"
-
-6. On the command prompt, run the command:
-```
-    rails db:migrate
-```
-
-7. Now, try opening the app.
-
-
-## Common Errors:
-Problem:
-Webpacker::Manifest::MissingEntryError
-
-Solution:
-bundle exec rake assets
-
----
-Problem:
-Your Ruby version is X, but your Gemfile specified Y
-
-Solution:
-rvm use Y
-
----
-Problem:
-Warning! PATH is not properly set up, /home/user/.rvm/gems/ruby-3.1.2/bin is not at first place.
-
-rvm implode
-reinstall rvm using https://github.com/rvm/ubuntu_rvm
+### executing testcases 
+`````````
+yarn test --coverage
+``````````

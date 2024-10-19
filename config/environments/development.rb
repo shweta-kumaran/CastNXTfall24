@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -12,7 +14,7 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
   config.web_console.whiny_requests = false
-  
+
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
   if Rails.root.join('tmp', 'caching-dev.txt').exist?
@@ -36,7 +38,6 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-
   config.action_mailer.perform_deliveries = true
 
   # config.action_mailer.delivery_method = :smtp
@@ -52,15 +53,16 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-   address:              'smtp.gmail.com',
-   port:                 587,
-   domain:               'example.com',
-   user_name:            "eventnxtapp@gmail.com", # Rails.application.credentials.email_id,
-   password:             "ubpzqicdatyvbjoi", # Rails.application.credentials.email_password,
-   authentication:       'plain',
-   enable_starttls_auto: true,
-   open_timeout:         5,
-   read_timeout:         5 }
+    address: 'smtp.gmail.com',
+    port: 587,
+    domain: 'example.com',
+    user_name: 'eventnxtapp@gmail.com', # Rails.application.credentials.email_id,
+    password: 'ubpzqicdatyvbjoi', # Rails.application.credentials.email_password,
+    authentication: 'plain',
+    enable_starttls_auto: true,
+    open_timeout: 5,
+    read_timeout: 5
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -88,6 +90,5 @@ Rails.application.configure do
 
   config.assets.check_precompiled_asset = false
 
-  config.hosts << "castnxtfall2024-a6422e600193.herokuapp.com"
-  
+  config.hosts << 'castnxtfall2024-a6422e600193.herokuapp.com'
 end
