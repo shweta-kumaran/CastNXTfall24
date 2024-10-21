@@ -40,4 +40,11 @@ class FormsController < ApplicationController
   def create_form producerId, params
     Form.create(:producer_id => producerId, :data => params[:data])
   end
+
+  def generate
+    prompt = params[:prompt]
+    openai_service = OpenAIService.new(ENV['OPENAI_API_KEY'])
+    form_data = openai_service.generate_form(prompt)
+    render json: form_data
+  end
 end

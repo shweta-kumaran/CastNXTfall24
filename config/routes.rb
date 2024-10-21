@@ -48,6 +48,9 @@ Rails.application.routes.draw do
       resources :forms, :only => [:show, :create]
     end
   end
+
+  # Add the new route for form generation
+  post 'forms/generate', to: 'forms#generate'
   
   resources :slides, only: [] do
     member do
