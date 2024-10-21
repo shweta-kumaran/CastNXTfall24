@@ -13,7 +13,8 @@ import axios from "axios";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import JsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -238,38 +239,83 @@ class ClientEventFeedback extends Component {
                                                           
                                                           {message.messageFrom === this.props.properties.name &&
                                                             <Box
-                                                              sx={{
-                                                                borderRadius: "20px",
-                                                                color: "white",
-                                                                padding: "10px",
-                                                                marginRight: "auto",
-                                                                backgroundColor: '#087FFF',
-                                                                maxWidth: "60%",
-                                                                position: "relative",
-                                                                marginBottom: "10%"
-                                                              }}
+                                                            sx={{
+                                                              display: "flex",              // Align the message and timestamp together
+                                                              flexDirection: "column",      // Stack bubble and timestamp vertically
+                                                              alignItems: "flex-start",       // Align to the right
+                                                              marginBottom: "10px",
+                                                              width: '100%'
+                                                            }}
                                                             >
-                                                              <ListItemText 
-                                                                // style={{position: "absolute", left: 400}} 
-                                                                primary={`${message.messageContent}`} 
-                                                                secondary={new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />
+                                                              {/* Timestamp outside and below the bubble */}
+                                                              <Typography 
+                                                                variant="caption"               // Smaller font size for the timestamp
+                                                                sx={{
+                                                                  marginTop: "4px",
+                                                                  color: "gray",                 // Lighter color for the timestamp
+                                                                }}
+                                                              >
+                                                                {`You     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                              </Typography>
+                                                              <Box
+                                                                sx={{
+                                                                  backgroundColor: "#007aff",    // Blue bubble for the current user's messages
+                                                                  color: "white",
+                                                                  padding: "10px",
+                                                                  borderRadius: "20px",
+                                                                  maxWidth: "60%",
+                                                                  wordWrap: "break-word",
+                                                                  whiteSpace: "pre-wrap",
+                                                                  marginRight: "auto",            // Align the bubble to the right
+                                                                  position: "relative",
+                                                                }}
+                                                              >
+                                                                <ListItemText 
+                                                                  primary={message.messageContent}
+                                                                />
+                                                              </Box>
+                                                              
                                                             </Box>
                                                           }
                                                           {message.messageFrom != this.props.properties.name  &&
                                                             <Box
-                                                              style={{
-                                                                borderRadius: "20px",
-                                                                marginLeft: "auto",
-                                                                maxWidth: "60%",
-                                                                position: "relative",
-                                                                backgroundColor: '#d8d8d8',
-                                                                display: "flex",
-                                                              }}
+                                                            sx={{
+                                                              display: "flex",
+                                                              flexDirection: "column",        // Stack bubble and timestamp vertically
+                                                              alignItems: "flex-start",       // Align to the left
+                                                              marginBottom: "10px",
+                                                              width: '100%'
+                                                            }}
                                                             >
+                                                              {/* Timestamp outside and below the bubble */}
+                                                              <Typography 
+                                                                variant="caption"               // Smaller font size for the timestamp
+                                                                sx={{
+                                                                  marginTop: "4px",
+                                                                  color: "gray",                 // Lighter color for the timestamp
+                                                                }}
+                                                              >
+                                                                {`Producer     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                              </Typography>
+
+                                                              <Box
+                                                                sx={{
+                                                                  backgroundColor: "#e5e5ea",    // Gray bubble for other users
+                                                                  color: "black",
+                                                                  padding: "10px",
+                                                                  borderRadius: "20px",
+                                                                  maxWidth: "60%",
+                                                                  wordWrap: "break-word",
+                                                                  whiteSpace: "pre-wrap",
+                                                                  marginRight: "auto",           // Align the bubble to the left
+                                                                  position: "relative",
+                                                                }}
+                                                              >
                                                               <ListItemText 
-                                                                // style={{position: "absolute", left: 20}} 
-                                                                primary={`${message.messageContent}`}
-                                                                secondary={new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />
+                                                                primary={message.messageContent} 
+                                                              />
+                                                              </Box>
+                                                              
                                                             </Box>
                                                           }
 
