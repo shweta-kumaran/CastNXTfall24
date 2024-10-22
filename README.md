@@ -4,6 +4,8 @@
 
 **Fall 2024 FashioNXT-CastNXT Code Climate Report**: https://codeclimate.com/github/shweta-kumaran/CastNXTfall24
 
+**Fall 2024 FashionNXT-CastNXT Github Projects**: https://github.com/users/shweta-kumaran/projects/2
+
 **NOTIFICATION(!): All the debugging report, issue report, erratum report for the found and reported mistakes, issues, bugs and many other related issues will 
 be reported in the corresponding debugging_report.txt file.** 
 
