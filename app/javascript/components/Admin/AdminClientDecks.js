@@ -474,23 +474,6 @@ class AdminClientDecks extends Component {
                                                             >
                                                             
 
-                                                            {lastMessageDate !== new Date(message.timeSent).toLocaleDateString() &&
-                                                              <Typography
-                                                                variant="subtitle2"
-                                                                sx={{
-                                                                  margin: "10px 0",
-                                                                  color: "gray",
-                                                                  textAlign: "center",
-                                                                  width: "100%",
-                                                                }}
-                                                              >
-                                                                {formatDate(message.timeSent)}
-                                                              </Typography>
-
-                                                            }
-
-                                                           
-
                                                             {message.messageFrom === properties.name &&
                                                               <Box
                                                               sx={{
