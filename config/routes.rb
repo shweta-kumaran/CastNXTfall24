@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get '/validation/:id', to: 'home#validation'
   
   get '/api/change_status/:id', to: 'api#change_status'
-  
+
   get '/api/', to: 'api#index'
   
   resources :home, only: [] do
@@ -50,4 +50,10 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :slides, only: [] do
+    member do
+      post 'update_payment_status'
+      get 'payment_status'
+    end
+  end
 end

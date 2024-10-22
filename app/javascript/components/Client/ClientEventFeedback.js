@@ -400,11 +400,13 @@ class ClientEventFeedback extends Component {
 
                                                   <br />
                                                   <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
+
                                                   <br />
                                                   <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
                                                 </div>
                                             } 
                                             </div>
+
                                           </div>
                                         </TableCell>
                                       </TableRow>

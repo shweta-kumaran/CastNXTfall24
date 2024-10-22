@@ -254,11 +254,13 @@ class EventsController < ApplicationController
       data[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
     end
 
+
     data[:announcements] = []
     announcements = get_event_announcements(event._id)
     announcements.each do |announcement|
       data[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :timeSent => announcement.created_at})
     end
+
 
     data[:slides] = build_client_event_slides(event, client)
     
@@ -407,6 +409,7 @@ class EventsController < ApplicationController
     return Message.find_by(:_id => messageId)
   end
 
+
   def get_announcement announcementId
     return Announcement.find_by(:_id => announcementId)
   end
@@ -422,6 +425,7 @@ class EventsController < ApplicationController
   def get_event_client_messages eventId, clientId
     return Message.where(:event_id => eventId, :client_id => clientId)
   end
+
 
   def get_event_announcements eventId
     return Announcement.where(:event_id => eventId)
