@@ -13,7 +13,8 @@ import axios from "axios";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import JsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -36,6 +37,7 @@ class ClientEventFeedback extends Component {
             commentContent: "",
             clientMessages: props.properties.data.messages,
             messageContent: "",
+            announcements: props.properties.data.announcements,
             clientId: props.properties.data.clientId,
             disableSubmit: false
         }
@@ -210,20 +212,94 @@ class ClientEventFeedback extends Component {
                                           <div
                                             style={{
                                               width: "100%",
-                                              height: "700px",
+                                              height: "1000px",
                                               backgroundColor: '#727278',
                                               display: "flex",
-                                              justifyContent: "center",
+                                              flexDirection: 'column',
+                                              justifyContent: "space-between",
                                               alignItems: "center",
                                               position: "relative"
                                             }}
                                           >
+                                            <div
+                                              style={{
+                                                width: '100%',
+                                                height: "100px",
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                backgroundColor: '#075E54',
+                                                color: 'white',
+                                                fontSize: '24px',
+                                                left: 10 
+                                              }}
+                                            >
+                                              Announcements
+                                            </div>   
+
+                                            <div
+                                            style={{
+                                              width: "100%",
+                                              height: "calc(50% - 100px)",
+                                              borderRadius: "5px",
+                                              backgroundColor: '#d3d3d3',
+                                            }}
+                                            >
+                                              <List>
+                                                {this.state.announcements.map((announcement) =>(
+                                                  <ListItem
+                                                    key = {announcement.announcementContent}
+                                                  >
+                                                  
+                                                  
+                                                  <Box
+                                                  sx={{
+                                                    marginBottom: "10px",
+                                                    width: '100%'
+                                                  }}
+                                                  >
+                                                    
+                                                    <Box
+                                                      sx={{
+                                                        backgroundColor: "white", 
+                                                        color: "black",
+                                                        padding: "10px",
+                                                        borderRadius: "10px",
+                                                        wordWrap: "break-word",
+                                                        whiteSpace: "pre-wrap",
+                                                        marginRight: "auto",           
+                                                        position: "relative",
+                                                      }}
+                                                    >
+                                                      <ListItemText 
+                                                        primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
+                                                      />
+                                                    </Box>
+                                                    
+                                                  </Box>
+
+                                                  
+                                                  </ListItem>
+                                                ))}
+                                              </List>
+                                            </div>
+
+                                            <div
+                                              style={{
+                                                width: "100%",
+                                                height: "50%",  // Occupies the bottom half of the gray box
+                                                display: "flex",
+                                                justifyContent: "center", // Adjusts the chat window horizontally
+                                                alignItems: "start",
+                                                position: "relative",
+                                              }}
+                                            >
+
                                             <Button style={{position: "absolute", bottom: 20}} variant="contained" onClick={this.openChatWindow}>Chat with Producer</Button><br/>
                                             {this.state.openChatWindow && 
                                                 <div
                                                   style={{
                                                     width: "80%",
-                                                    height: "300px",
+                                                    height: "425px",
                                                     borderRadius: "5px",
                                                     backgroundColor: 'white',
                                                     display: "flex",
@@ -238,38 +314,83 @@ class ClientEventFeedback extends Component {
                                                           
                                                           {message.messageFrom === this.props.properties.name &&
                                                             <Box
-                                                              sx={{
-                                                                borderRadius: "20px",
-                                                                color: "white",
-                                                                padding: "10px",
-                                                                marginRight: "auto",
-                                                                backgroundColor: '#087FFF',
-                                                                maxWidth: "60%",
-                                                                position: "relative",
-                                                                marginBottom: "10%"
-                                                              }}
+                                                            sx={{
+                                                              display: "flex",              // Align the message and timestamp together
+                                                              flexDirection: "column",      // Stack bubble and timestamp vertically
+                                                              alignItems: "flex-start",       // Align to the right
+                                                              marginBottom: "10px",
+                                                              width: '100%'
+                                                            }}
                                                             >
-                                                              <ListItemText 
-                                                                // style={{position: "absolute", left: 400}} 
-                                                                primary={`${message.messageContent}`} 
-                                                                secondary={new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />
+                                                              {/* Timestamp outside and below the bubble */}
+                                                              <Typography 
+                                                                variant="caption"               // Smaller font size for the timestamp
+                                                                sx={{
+                                                                  marginTop: "4px",
+                                                                  color: "gray",                 // Lighter color for the timestamp
+                                                                }}
+                                                              >
+                                                                {`You     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                              </Typography>
+                                                              <Box
+                                                                sx={{
+                                                                  backgroundColor: "#007aff",    // Blue bubble for the current user's messages
+                                                                  color: "white",
+                                                                  padding: "10px",
+                                                                  borderRadius: "20px",
+                                                                  maxWidth: "60%",
+                                                                  wordWrap: "break-word",
+                                                                  whiteSpace: "pre-wrap",
+                                                                  marginRight: "auto",            // Align the bubble to the right
+                                                                  position: "relative",
+                                                                }}
+                                                              >
+                                                                <ListItemText 
+                                                                  primary={message.messageContent}
+                                                                />
+                                                              </Box>
+                                                              
                                                             </Box>
                                                           }
                                                           {message.messageFrom != this.props.properties.name  &&
                                                             <Box
-                                                              style={{
-                                                                borderRadius: "20px",
-                                                                marginLeft: "auto",
-                                                                maxWidth: "60%",
-                                                                position: "relative",
-                                                                backgroundColor: '#d8d8d8',
-                                                                display: "flex",
-                                                              }}
+                                                            sx={{
+                                                              display: "flex",
+                                                              flexDirection: "column",        // Stack bubble and timestamp vertically
+                                                              alignItems: "flex-start",       // Align to the left
+                                                              marginBottom: "10px",
+                                                              width: '100%'
+                                                            }}
                                                             >
+                                                              {/* Timestamp outside and below the bubble */}
+                                                              <Typography 
+                                                                variant="caption"               // Smaller font size for the timestamp
+                                                                sx={{
+                                                                  marginTop: "4px",
+                                                                  color: "gray",                 // Lighter color for the timestamp
+                                                                }}
+                                                              >
+                                                                {`Producer     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                              </Typography>
+
+                                                              <Box
+                                                                sx={{
+                                                                  backgroundColor: "#e5e5ea",    // Gray bubble for other users
+                                                                  color: "black",
+                                                                  padding: "10px",
+                                                                  borderRadius: "20px",
+                                                                  maxWidth: "60%",
+                                                                  wordWrap: "break-word",
+                                                                  whiteSpace: "pre-wrap",
+                                                                  marginRight: "auto",           // Align the bubble to the left
+                                                                  position: "relative",
+                                                                }}
+                                                              >
                                                               <ListItemText 
-                                                                // style={{position: "absolute", left: 20}} 
-                                                                primary={`${message.messageContent}`}
-                                                                secondary={new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} />
+                                                                primary={message.messageContent} 
+                                                              />
+                                                              </Box>
+                                                              
                                                             </Box>
                                                           }
 
@@ -278,11 +399,14 @@ class ClientEventFeedback extends Component {
                                                   </List>
 
                                                   <br />
-                                                  <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onBlur={this.handleBlur} onClick={this.handleClick} placeholder="Type message here..." />
+                                                  <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
+
                                                   <br />
                                                   <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
                                                 </div>
                                             } 
+                                            </div>
+
                                           </div>
                                         </TableCell>
                                       </TableRow>
