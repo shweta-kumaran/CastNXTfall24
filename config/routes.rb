@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       resources :events, only: [:show, :update, :new, :create, :edit] do
         resources :negotiations, only: [:create]
         resources :messages, only: [:create]
+        resources :announcements, only: [:create]
         resources :slides, only: [:create] do
           resources :comments, only: [:create]
         end
