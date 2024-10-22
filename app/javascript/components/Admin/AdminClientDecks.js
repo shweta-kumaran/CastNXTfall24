@@ -45,6 +45,8 @@ class AdminClientDecks extends Component {
             commentContent: "",
             clientMessages: {},
             messageContent: "",
+            announcements: props.properties.data.announcements,
+            announcementContent: "",
             disableSubmit: false
         }
     } 
@@ -282,6 +284,41 @@ class AdminClientDecks extends Component {
       })
     }
 
+    sendAnnouncement = () => {
+      const payload = {
+        content: this.state.announcementContent,
+        sender: properties.name,
+        event_id: window.location.href.split("/")[-1],
+      }
+
+      const baseURL = window.location.href.split("#")[0]
+      
+      this.setState({
+        disableSubmit: true
+      })
+
+      return axios.post(baseURL + "/announcements", payload)
+      .then((res) => {
+        this.setState({
+          status: true,
+          message: res.data.announcement
+        })
+        setTimeout(() => {
+          window.location.href = ""
+        }, 2500)
+      })
+      .catch((err) => {
+        this.setState({
+          status: false,
+          message: "Failed to send announcement!"
+        })
+        
+        if(err.response.status === 403) {
+          window.location.href = err.response.data.redirect_path
+        }
+      })
+    }
+
     
     render() {
         let selectStyle = {
@@ -403,27 +440,75 @@ class AdminClientDecks extends Component {
                                               position: "relative"
                                             }}
                                           >
+                                            
+                                              
                                             <div
                                               style={{
-                                                width: "100%",
-                                                height: "50%",  // Occupies the top half of the gray box
-                                                display: "flex",
-                                                justifyContent: "center", // Adjust as needed for the content
-                                                alignItems: "start",
+                                                width: '100%',
+                                                height: "100px",
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                backgroundColor: '#075E54',
+                                                color: 'white',
+                                                fontSize: '24px',
+                                                left: 10 
                                               }}
                                             >
-                                              <div
-                                                    style={{
-                                                      width: "100%",
-                                                      height: "500px",
-                                                      borderRadius: "5px",
-                                                      backgroundColor: '#d3d3d3',
-                                                      display: "flex",
-                                                      position: "relative"
-                                                    }}
-                                                  >
+                                              Announcements
+                                            </div>   
+                                                
+                                            <div
+                                            style={{
+                                              width: "100%",
+                                              height: "calc(50% - 100px)",
+                                              borderRadius: "5px",
+                                              backgroundColor: '#d3d3d3',
+                                            }}
+                                            >
 
-                                                  </div>
+                                              <List>
+                                                {this.state.announcements.map((announcement) =>(
+                                                  <ListItem
+                                                    key = {announcement.announcementContent}
+                                                  >
+                                                  
+                                                  
+                                                  <Box
+                                                  sx={{
+                                                    marginBottom: "10px",
+                                                    width: '100%'
+                                                  }}
+                                                  >
+                                                    
+                                                    <Box
+                                                      sx={{
+                                                        backgroundColor: "white", 
+                                                        color: "black",
+                                                        padding: "10px",
+                                                        borderRadius: "10px",
+                                                        wordWrap: "break-word",
+                                                        whiteSpace: "pre-wrap",
+                                                        marginRight: "auto",           
+                                                        position: "relative",
+                                                      }}
+                                                    >
+                                                      <ListItemText 
+                                                        primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
+                                                      />
+                                                    </Box>
+                                                    
+                                                  </Box>
+
+                                                  
+                                                  </ListItem>
+                                                ))}
+                                              </List>
+
+                                              <br />
+                                              <TextField id="title-textfield" name="announcementContent" multiline minRows={1} maxRows={3} style={{backgroundColor: "white", position: "absolute", width: "75%", bottom: 500, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Make announcement here..." />
+                                              <br />
+                                              <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 500, right: 0}} onClick={() => this.sendAnnouncement()}>Send Announcement</Button><br />
+                                              
                                             </div>
 
                                             <div
@@ -443,7 +528,7 @@ class AdminClientDecks extends Component {
                                                   <div
                                                     style={{
                                                       width: "80%",
-                                                      height: "375px",
+                                                      height: "425px",
                                                       borderRadius: "5px",
                                                       backgroundColor: 'white',
                                                       display: "flex",
@@ -456,12 +541,30 @@ class AdminClientDecks extends Component {
                                                               key = {message.messageContent}
                                                             >
                                                             
+
+                                                            {lastMessageDate !== new Date(message.timeSent).toLocaleDateString() &&
+                                                              <Typography
+                                                                variant="subtitle2"
+                                                                sx={{
+                                                                  margin: "10px 0",
+                                                                  color: "gray",
+                                                                  textAlign: "center",
+                                                                  width: "100%",
+                                                                }}
+                                                              >
+                                                                {formatDate(message.timeSent)}
+                                                              </Typography>
+
+                                                            }
+
+                                                           
+
                                                             {message.messageFrom === properties.name &&
                                                               <Box
                                                               sx={{
                                                                 display: "flex",              // Align the message and timestamp together
                                                                 flexDirection: "column",      // Stack bubble and timestamp vertically
-                                                                alignItems: "flex-start",       // Align to the right
+                                                                alignItems: "flex-start",       
                                                                 marginBottom: "10px",
                                                                 width: '100%'
                                                               }}
@@ -544,7 +647,7 @@ class AdminClientDecks extends Component {
                                                     </List>
 
                                                     <br />
-                                                    <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onBlur={this.handleBlur} onClick={this.handleClick} placeholder="Type message here..." />
+                                                    <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "77%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
                                                     <br />
                                                     <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
                                                   </div>

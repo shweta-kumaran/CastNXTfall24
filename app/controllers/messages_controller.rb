@@ -34,8 +34,8 @@ class MessagesController < ApplicationController
     Message.create(:event_id => eventId, :client_id => clientId, :from => messageSender, :to => messageReceiver, :message => messageContent)
   end
 
-  def create_message_talent eventId, talentId, messageContent, messageSender, messageReceiver
-    Message.create(:event_id => eventId, :talent_id => talentId, :from => messageSender, :to => messageReceiver, :message => messageContent)
-  end
+#   def create_message_talent eventId, talentId, messageContent, messageSender, messageReceiver
+#     Message.create(:event_id => eventId, :talent_id => talentId, :from => messageSender, :to => messageReceiver, :message => messageContent)
+#   end
 
 end

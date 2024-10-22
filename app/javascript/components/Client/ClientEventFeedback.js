@@ -37,6 +37,7 @@ class ClientEventFeedback extends Component {
             commentContent: "",
             clientMessages: props.properties.data.messages,
             messageContent: "",
+            announcements: props.properties.data.announcements,
             clientId: props.properties.data.clientId,
             disableSubmit: false
         }
@@ -211,20 +212,94 @@ class ClientEventFeedback extends Component {
                                           <div
                                             style={{
                                               width: "100%",
-                                              height: "700px",
+                                              height: "1000px",
                                               backgroundColor: '#727278',
                                               display: "flex",
-                                              justifyContent: "center",
+                                              flexDirection: 'column',
+                                              justifyContent: "space-between",
                                               alignItems: "center",
                                               position: "relative"
                                             }}
                                           >
+                                            <div
+                                              style={{
+                                                width: '100%',
+                                                height: "100px",
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                backgroundColor: '#075E54',
+                                                color: 'white',
+                                                fontSize: '24px',
+                                                left: 10 
+                                              }}
+                                            >
+                                              Announcements
+                                            </div>   
+
+                                            <div
+                                            style={{
+                                              width: "100%",
+                                              height: "calc(50% - 100px)",
+                                              borderRadius: "5px",
+                                              backgroundColor: '#d3d3d3',
+                                            }}
+                                            >
+                                              <List>
+                                                {this.state.announcements.map((announcement) =>(
+                                                  <ListItem
+                                                    key = {announcement.announcementContent}
+                                                  >
+                                                  
+                                                  
+                                                  <Box
+                                                  sx={{
+                                                    marginBottom: "10px",
+                                                    width: '100%'
+                                                  }}
+                                                  >
+                                                    
+                                                    <Box
+                                                      sx={{
+                                                        backgroundColor: "white", 
+                                                        color: "black",
+                                                        padding: "10px",
+                                                        borderRadius: "10px",
+                                                        wordWrap: "break-word",
+                                                        whiteSpace: "pre-wrap",
+                                                        marginRight: "auto",           
+                                                        position: "relative",
+                                                      }}
+                                                    >
+                                                      <ListItemText 
+                                                        primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
+                                                      />
+                                                    </Box>
+                                                    
+                                                  </Box>
+
+                                                  
+                                                  </ListItem>
+                                                ))}
+                                              </List>
+                                            </div>
+
+                                            <div
+                                              style={{
+                                                width: "100%",
+                                                height: "50%",  // Occupies the bottom half of the gray box
+                                                display: "flex",
+                                                justifyContent: "center", // Adjusts the chat window horizontally
+                                                alignItems: "start",
+                                                position: "relative",
+                                              }}
+                                            >
+
                                             <Button style={{position: "absolute", bottom: 20}} variant="contained" onClick={this.openChatWindow}>Chat with Producer</Button><br/>
                                             {this.state.openChatWindow && 
                                                 <div
                                                   style={{
                                                     width: "80%",
-                                                    height: "300px",
+                                                    height: "425px",
                                                     borderRadius: "5px",
                                                     backgroundColor: 'white',
                                                     display: "flex",
@@ -324,11 +399,12 @@ class ClientEventFeedback extends Component {
                                                   </List>
 
                                                   <br />
-                                                  <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onBlur={this.handleBlur} onClick={this.handleClick} placeholder="Type message here..." />
+                                                  <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
                                                   <br />
                                                   <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
                                                 </div>
                                             } 
+                                            </div>
                                           </div>
                                         </TableCell>
                                       </TableRow>
