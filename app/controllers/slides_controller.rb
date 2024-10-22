@@ -11,6 +11,22 @@ class SlidesController < ApplicationController
     end
   end
 
+  def update_payment_status
+    slide = Slide.find(params[:id])
+    if slide.update(been_paid: params[:been_paid])
+      puts "Slide updated successfully"
+      render json: { success: true }
+    else
+      puts "Slide update failed: #{slide.errors.full_messages}" 
+      render json: { success: false, error: slide.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def payment_status
+    slide = Slide.find(params[:id])
+    render json: { been_paid: slide.been_paid }, status: :ok
+  end
+
   private
   
   def create_client_slide

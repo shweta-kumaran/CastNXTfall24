@@ -21,6 +21,16 @@ class UserMailer < ApplicationMailer
       mail(to: email, subject: "Producer has commented on your Talent.", body:"<!DOCTYPE html><body>Hi, A comment has been posted on a talent that has been assigned to you!<div></div></body>", content_type: "text/html")
     end
 
+    def added_message(email)
+      mail(to: email, subject: "Producer has sent you a message.", body:"<!DOCTYPE html><body>Hi, A message has been sent to you about an event!<div></div></body>", content_type: "text/html")
+    end
+
+
+    def added_announcement(email)
+      mail(to: email, subject: "Producer has made an announcement", body:"<!DOCTYPE html><body>Hi, An announcement has been made about an event!<div></div></body>", content_type: "text/html")
+    end
+
+
     def form_edited(email, event_name)
       mail(to: email, subject: "New fields added to the #{event_name} form.", body:"<!DOCTYPE html><body>Hi, New Fields have been added to the #{event_name} form that you have submitted!<div></div></body>", content_type: "text/html")
     end

@@ -11,4 +11,6 @@ class Client
   has_and_belongs_to_many :slides
   has_many :negotiations
   has_many :comments
+  has_many :messages
+  has_many :announcements
 end
