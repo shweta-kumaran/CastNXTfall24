@@ -190,6 +190,12 @@ class EventsController < ApplicationController
     data[:is_paid_event] = event.is_paid_event
 
     data[:clients] = build_producer_event_clients(event)
+    data[:announcements] = []
+    announcements = get_event_announcements(event._id)
+    announcements.each do |announcement|
+      data[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :timeSent => announcement.created_at})
+    end
+
     data[:slides] = build_producer_event_slides(event)
     formIds = []
 
@@ -242,6 +248,20 @@ class EventsController < ApplicationController
     data[:is_paid_event] = event.is_paid_event
 
     data[:clientId] = client._id.to_str
+    data[:messages] = []
+    messages = get_event_client_messages(event._id, client._id)
+    messages.each do |message|
+      data[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
+    end
+
+
+    data[:announcements] = []
+    announcements = get_event_announcements(event._id)
+    announcements.each do |announcement|
+      data[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :timeSent => announcement.created_at})
+    end
+
+
     data[:slides] = build_client_event_slides(event, client)
     
     @properties = {name: session[:userName], data: data}
@@ -267,6 +287,7 @@ class EventsController < ApplicationController
       clientObject[:finalizedIds] = []
       clientObject[:negotiationId] = ""
       clientObject[:preferenceSubmitted] = false
+      clientObject[:messages] = []
       
       if negotiation_exists?(client._id, event._id)
         negotiation = get_negotiation(client, event)
@@ -276,7 +297,12 @@ class EventsController < ApplicationController
         clientObject[:slideIds] = negotiation.intermediateSlides
         clientObject[:preferenceSubmitted] = true
       end
-      
+
+      messages = get_event_client_messages(event._id, client._id)
+      messages.each do |message|
+        clientObject[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
+      end
+
       clientsObject[client._id.to_str] = clientObject
     end
     
@@ -379,6 +405,15 @@ class EventsController < ApplicationController
     return Comment.find_by(:_id => commentId)
   end
 
+  def get_message messageId
+    return Message.find_by(:_id => messageId)
+  end
+
+
+  def get_announcement announcementId
+    return Announcement.find_by(:_id => announcementId)
+  end
+
   # def get_slide_comment slideId
   #   return Comment.find(:slide_id => slideId)
   # end  
@@ -386,6 +421,15 @@ class EventsController < ApplicationController
   # def get_slide_comments slideId
   #   return Comment.where(:slide_id => slideId)
   # end
+
+  def get_event_client_messages eventId, clientId
+    return Message.where(:event_id => eventId, :client_id => clientId)
+  end
+
+
+  def get_event_announcements eventId
+    return Announcement.where(:event_id => eventId)
+  end
 
   def get_slide_client_comments slideId, clientId
     return Comment.where(:slide_id => slideId, :client_id => clientId)

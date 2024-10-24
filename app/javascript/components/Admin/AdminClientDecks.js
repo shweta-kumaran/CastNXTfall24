@@ -18,13 +18,17 @@ import TextField from "@mui/material/TextField";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
+
+import Box from '@mui/material/Box';
 
 import Slide from "../Forms/Slide";
-
+import AdminUserTable from "./AdminUserTable";
+import AdminCreateStack from "./AdminCreateStack";
 class AdminClientDecks extends Component {
     constructor(props) {
         super(props)
-        
+        console.log("PROPS: ", this.props.properties)
         this.state = {
             client: "",
             clientOptions: [],
@@ -36,10 +40,16 @@ class AdminClientDecks extends Component {
             page:0,
             rowsPerPage: 1,
             expandSlides: false,
+            openChatWindow: false,
             message: "",
             status: "",
             clientComments: {},
             commentContent: "",
+            clientMessages: {},
+            messageContent: "",
+            announcements: props.properties.data.announcements,
+            announcementContent: "",
+
             disableSubmit: false
         }
     } 
@@ -51,10 +61,11 @@ class AdminClientDecks extends Component {
         let clientDecks = {}
         let clientComments = {}
         let clientSlideComments = {}
-        
-        
+        let clientMessages = {}
+
+        console.log("State Slide: ", this.state.slides)
         for(var key in clients) {
-          if(clients[key].slideIds.length > 0) {
+          if(clients[key].slideIds.length > 0) { // client has selected talents
             clientOptions.push(
                 <MenuItem key={key} value={key}>{clients[key].name}</MenuItem>    
             )
@@ -63,7 +74,7 @@ class AdminClientDecks extends Component {
             clientComments[key] = []
 
             clients[key].finalizedIds = clients[key].finalizedIds === null ? [] : clients[key].finalizedIds 
-  
+            clientMessages[key] = clients[key].messages === null ? [] : clients[key].messages 
             for(var i=0; i<clients[key].slideIds.length; i++) {
               clientDecks[key].push({
                 ...this.state.slides[clients[key].slideIds[i]],
@@ -75,15 +86,15 @@ class AdminClientDecks extends Component {
 
               clientSlideComments = []
 
-              if (this.state.slides[clients[key].slideIds[i]].comments) {
+              if (slides[clients[key].slideIds[i]].comments) {
                 // TypeError: Cannot read properties of undefined (reading 'length')
-                for(var j=0; j<this.state.slides[clients[key].slideIds[i]].comments.length; j++){
+                for(var j=0; j<slides[clients[key].slideIds[i]].comments.length; j++){
                   // console.log(this.state.slides[clients[key].slideIds[i]].comments[j].commentClient)
                   // console.log(key)
-                  if (this.state.slides[clients[key].slideIds[i]].comments[j].commentClient === key){
+                  if (slides[clients[key].slideIds[i]].comments[j].commentClient === key){
                   // console.log("haha")
                   clientSlideComments.push(
-                    this.state.slides[clients[key].slideIds[i]].comments[j]
+                    slides[clients[key].slideIds[i]].comments[j]
                   )}
                 }
                 clientComments[key].push(clientSlideComments)
@@ -91,18 +102,20 @@ class AdminClientDecks extends Component {
             } 
           }
         }
-        
+        console.log("Client Decks: ", clientDecks)
         this.setState({
             clientOptions: clientOptions,
             clientDecks: clientDecks,
-            clientComments: clientComments
+            clientComments: clientComments,
+            clientMessages: clientMessages
         })
     }
     
     handleClientChange = (clientSelection) => {
         this.setState({
             client: clientSelection.target.value,
-            expandSlides: false
+            expandSlides: false,
+            openChatWindow: false
         })
     }
     
@@ -141,6 +154,12 @@ class AdminClientDecks extends Component {
         expandSlides: !this.state.expandSlides
       })
     }
+
+    openChatWindow = () => {
+      this.setState({
+        openChatWindow: !this.state.openChatWindow
+      })
+    }
     
     updateFinalizedForClient = (client, clientDecks, finalizedSlides) => {
       const payload = {
@@ -172,13 +191,14 @@ class AdminClientDecks extends Component {
     }
     
     finalizeTalent = (talent) => {
+      console.log("Talent in finalizeTalent: ", talent)
       let client = this.state.client
       let clientDecks = this.state.clientDecks
       let finalizedSlides = []
-      
-      
-
+      console.log("Client Decks length: ", clientDecks[client].length)
       for(var i=0; i<clientDecks[client].length; i++) {
+        console.log("In for loop", clientDecks[client][i].slideId)
+        console.log("talent slide ID", talent.slideId)
         if(clientDecks[client][i].slideId === talent.slideId) {
           clientDecks[client][i].finalized = !talent["finalized"]
         }
@@ -231,12 +251,83 @@ class AdminClientDecks extends Component {
       })
     }
 
+    sendMessage = () => {
+      const payload = {
+        content: this.state.messageContent,
+        sender: properties.name,
+        receiver: this.state.clientList[this.state.client].name,
+        event_id: window.location.href.split("/")[-1],
+        client_id: this.state.client
+      }
+
+      const baseURL = window.location.href.split("#")[0]
+      
+      this.setState({
+        disableSubmit: true
+      })
+
+      return axios.post(baseURL + "/messages", payload)
+      .then((res) => {
+        this.setState({
+          status: true,
+          message: res.data.message
+        })
+        setTimeout(() => {
+          window.location.href = ""
+        }, 2500)
+      })
+      .catch((err) => {
+        this.setState({
+          status: false,
+          message: "Failed to send message!"
+        })
+        
+        if(err.response.status === 403) {
+          window.location.href = err.response.data.redirect_path
+        }
+      })
+    }
+
+    sendAnnouncement = () => {
+      const payload = {
+        content: this.state.announcementContent,
+        sender: properties.name,
+        event_id: window.location.href.split("/")[-1],
+      }
+
+      const baseURL = window.location.href.split("#")[0]
+      
+      this.setState({
+        disableSubmit: true
+      })
+
+      return axios.post(baseURL + "/announcements", payload)
+      .then((res) => {
+        this.setState({
+          status: true,
+          message: res.data.announcement
+        })
+        setTimeout(() => {
+          window.location.href = ""
+        }, 2500)
+      })
+      .catch((err) => {
+        this.setState({
+          status: false,
+          message: "Failed to send announcement!"
+        })
+        
+        if(err.response.status === 403) {
+          window.location.href = err.response.data.redirect_path
+        }
+      })
+    }
+
     
     render() {
         let selectStyle = {
           backgroundColor: "#B5DDA4"
         }
-      
         return(
             <div>
                 <br />
@@ -254,90 +345,235 @@ class AdminClientDecks extends Component {
                         {this.state.clientOptions}
                     </Select>
                 </FormControl>
-                
                 <br /><br />
-                
                 {this.state.client !== "" &&
                     <div>
-                        <div className="col-md-8 offset-md-2">
-                        
-                            <TableContainer>
-                              <Table size="medium" sx={{ minWidth: 200, width: 250 }}>
-                                <TableHead style={{ backgroundColor: "#3498DB" }}>
-                                  <TableRow>
-                                    <TableCell align="center">Preference</TableCell>
-                                    <TableCell align="center">Talent Name</TableCell>
-                                    <TableCell align="center">Status</TableCell>
-                                    <TableCell align="center">Action</TableCell>
-                                  </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                  {this.state.clientDecks[this.state.client]
-                                      .map((row, i) => {
-                                        return(
-                                          <TableRow key={i} style={row.finalized ? selectStyle : {}}>
-                                              <TableCell align="center">{row.preference}</TableCell>
-                                              <TableCell align="center">{row.talentName}</TableCell>
-                                              {!row.finalized &&
-                                              <>
-                                                <TableCell align="center">Not Finalized</TableCell>
-                                                <TableCell>
-                                                  <Button 
-                                                    size="small" 
-                                                    color="success" 
-                                                    variant="contained" 
-                                                    onClick={() => this.finalizeTalent(row)} 
-                                                    disableElevation>Finalize</Button>
-                                                </TableCell>
-                                              </>
-                                              }
-                                              {row.finalized &&
-                                              <>
-                                                <TableCell align="center">Finalized</TableCell>
-                                                <TableCell>
-                                                  <Button 
-                                                    size="small" 
-                                                    color="error" 
-                                                    variant="contained" 
-                                                    onClick={() => this.finalizeTalent(row)} 
-                                                    disableElevation>Remove</Button>
-                                                </TableCell>
-                                              </>
-                                              }
-                                          </TableRow>
-                                        )
-                                    })
-                                  }
-                                </TableBody>
-                              </Table>
-                            </TableContainer>
-                            
-                            {(this.state.status !== "" && this.state.status) && 
-                                <div className="col-md-6 offset-md-3">
-                                  <br />
-                                  <Alert severity="success">{this.state.message}</Alert>
-                                  <br />
-                                </div>
-                            }
-                            
-                            {(this.state.status !== "" && !this.state.status) &&
-                                <div className="col-md-6 offset-md-3">
-                                  <br />
-                                  <Alert severity="error">Error: {this.state.message}</Alert>
-                                  <br />
-                                </div>
-                            }
+                      <Button variant="contained" onClick={this.expandSlides}>Expand Deck</Button><br /><br />
+                      <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
 
-                            <br />
-                            <Button variant="contained" onClick={this.expandSlides}>Expand Deck</Button><br /><br />
+                        <div className="col-md-8 offset-md-2">
 
                             {this.state.expandSlides &&
                             <Paper>
                               <TableContainer>
                                 <Table size="medium">
-                                  <TableBody>
-                                    {this.state.clientDecks[this.state.client]
-                                        .slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage)
+                                  <TableBody> {
+                                    this.state.page === 0 ? (
+                                    // Gray box for the first page
+                                      <TableRow>
+                                        <TableCell>
+                                          <div
+                                            style={{
+                                              width: "100%",
+                                              height: "1000px",
+                                              backgroundColor: '#727278',
+                                              display: "flex",
+                                              flexDirection: 'column',
+                                              justifyContent: "space-between",
+                                              alignItems: "center",
+                                              position: "relative"
+                                            }}
+                                          >                                     
+                                            <div
+                                              style={{
+                                                width: '100%',
+                                                height: "100px",
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                backgroundColor: '#075E54',
+                                                color: 'white',
+                                                fontSize: '24px',
+                                                left: 10 
+                                              }}
+                                            >
+                                              Announcements
+                                            </div>   
+                                                
+                                            <div
+                                            style={{
+                                              width: "100%",
+                                              height: "calc(50% - 100px)",
+                                              borderRadius: "5px",
+                                              backgroundColor: '#d3d3d3',
+                                            }}
+                                            >
+
+                                              <List>
+                                                {this.state.announcements.map((announcement) =>(
+                                                  <ListItem
+                                                    key = {announcement.announcementContent}
+                                                  >
+                                                  
+                                                  
+                                                  <Box
+                                                  sx={{
+                                                    marginBottom: "10px",
+                                                    width: '100%'
+                                                  }}
+                                                  >
+                                                    
+                                                    <Box
+                                                      sx={{
+                                                        backgroundColor: "white", 
+                                                        color: "black",
+                                                        padding: "10px",
+                                                        borderRadius: "10px",
+                                                        wordWrap: "break-word",
+                                                        whiteSpace: "pre-wrap",
+                                                        marginRight: "auto",           
+                                                        position: "relative",
+                                                      }}
+                                                    >
+                                                      <ListItemText 
+                                                        primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
+                                                      />
+                                                    </Box>
+                                                    
+                                                  </Box>
+
+                                                  
+                                                  </ListItem>
+                                                ))}
+                                              </List>
+
+                                              <br />
+                                              <TextField id="title-textfield" name="announcementContent" multiline minRows={1} maxRows={3} style={{backgroundColor: "white", position: "absolute", width: "75%", bottom: 500, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Make announcement here..." />
+                                              <br />
+                                              <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 500, right: 0}} onClick={() => this.sendAnnouncement()}>Send Announcement</Button><br />
+                                              
+                                            </div>
+
+                                            <div
+                                              style={{
+                                                width: "100%",
+                                                height: "50%",  // Occupies the bottom half of the gray box
+                                                display: "flex",
+                                                justifyContent: "center", // Adjusts the chat window horizontally
+                                                alignItems: "start",
+                                                position: "relative",
+                                              }}
+                                            >
+
+                                              <Button style={{position: "absolute", bottom: 20}} variant="contained" onClick={this.openChatWindow}>Chat with {this.state.clientList[this.state.client].name}</Button><br/>
+
+                                              {this.state.openChatWindow && 
+                                                  <div
+                                                    style={{
+                                                      width: "80%",
+                                                      height: "425px",
+                                                      borderRadius: "5px",
+                                                      backgroundColor: 'white',
+                                                      display: "flex",
+                                                      position: "relative"
+                                                    }}
+                                                  >
+                                                    <List>
+                                                      {this.state.clientMessages[this.state.client].map((message) =>(
+                                                            <ListItem
+                                                              key = {message.messageContent}
+                                                            >
+                                                            
+
+                                                            {message.messageFrom === properties.name &&
+                                                              <Box
+                                                              sx={{
+                                                                display: "flex",              // Align the message and timestamp together
+                                                                flexDirection: "column",      // Stack bubble and timestamp vertically
+                                                                alignItems: "flex-start",       
+                                                                marginBottom: "10px",
+                                                                width: '100%'
+                                                              }}
+                                                              >
+                                                                {/* Timestamp outside and below the bubble */}
+                                                                <Typography 
+                                                                  variant="caption"               // Smaller font size for the timestamp
+                                                                  sx={{
+                                                                    marginTop: "4px",
+                                                                    color: "gray",                 // Lighter color for the timestamp
+                                                                  }}
+                                                                >
+                                                                  {`You     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                                </Typography>
+                                                                <Box
+                                                                  sx={{
+                                                                    backgroundColor: "#007aff",    // Blue bubble for the current user's messages
+                                                                    color: "white",
+                                                                    padding: "10px",
+                                                                    borderRadius: "20px",
+                                                                    maxWidth: "60%",
+                                                                    wordWrap: "break-word",
+                                                                    whiteSpace: "pre-wrap",
+                                                                    marginRight: "auto",            // Align the bubble to the left
+                                                                    position: "relative",
+                                                                  }}
+                                                                >
+                                                                  <ListItemText 
+                                                                    primary={message.messageContent}
+                                                                  />
+                                                                </Box>
+                                                                
+                                                              </Box>
+
+                                                            }
+                                                            {message.messageFrom != properties.name &&
+                                                              <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                flexDirection: "column",        // Stack bubble and timestamp vertically
+                                                                alignItems: "flex-start",       // Align to the left
+                                                                marginBottom: "10px",
+                                                                width: '100%'
+                                                              }}
+                                                              >
+
+                                                                {/* Timestamp outside and below the bubble */}
+                                                                <Typography 
+                                                                  variant="caption"               // Smaller font size for the timestamp
+                                                                  sx={{
+                                                                    marginTop: "4px",
+                                                                    color: "gray",                 // Lighter color for the timestamp
+                                                                  }}
+                                                                >
+                                                                  {`${this.state.clientList[this.state.client].name}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                                </Typography>
+                                                                <Box
+                                                                  sx={{
+                                                                    backgroundColor: "#e5e5ea",    // Gray bubble for other users
+                                                                    color: "black",
+                                                                    padding: "10px",
+                                                                    borderRadius: "20px",
+                                                                    maxWidth: "60%",
+                                                                    wordWrap: "break-word",
+                                                                    whiteSpace: "pre-wrap",
+                                                                    marginRight: "auto",           // Align the bubble to the left
+                                                                    position: "relative",
+                                                                  }}
+                                                                >
+                                                                <ListItemText 
+                                                                  primary={message.messageContent} 
+                                                                />
+                                                                </Box>
+                                                                
+                                                              </Box>
+                                                            }
+
+                                                            </ListItem>
+                                                      ))}
+                                                    </List>
+
+                                                    <br />
+                                                    <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "77%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
+                                                    <br />
+                                                    <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
+                                                  </div>
+                                              } 
+                                            </div>
+                                          </div>
+                                        </TableCell>
+                                      </TableRow>
+                                    ) : (
+                                      this.state.clientDecks[this.state.client]
+                                        .slice((this.state.page - 1) * this.state.rowsPerPage, (this.state.page - 1)* this.state.rowsPerPage + this.state.rowsPerPage)
                                         .map((row) => {
                                           return(
                                             <TableRow
@@ -354,49 +590,49 @@ class AdminClientDecks extends Component {
                                                   children={true}
                                                 />
 
-                                                <br />
+                                            <br />
 
-                                                Comments:
-                                                
-                                                <br />     
+                                            Comments:
+                                            
+                                            <br />     
 
                                                 
                                                 <List>
-                                                  {this.state.clientComments[this.state.client][this.state.page].map((comment) =>(
+                                                  {this.state.clientComments[this.state.client][(this.state.page - 1)].map((comment) =>(
                                                     <ListItem
                                                       key = {comment.commentContent}
                                                     >
                                                     
                                                       <ListItemText primary={`${comment.commentContent}`} secondary={`${comment.commentOwner}`} />
 
-                                                    </ListItem>
+                                                </ListItem>
 
-                                                  ))}
-                                                </List>
-                                                
+                                              ))}
+                                            </List>
+                                            
 
-                                                <br />   
+                                            <br />   
 
-                                                <TextField id="title-textfield" name="commentContent" onChange={this.handleChange} onBlur={this.handleBlur} onClick={this.handleClick} defaultValue="Enter Comment" />
+                                            <TextField id="title-textfield" name="commentContent" onChange={this.handleChange} onBlur={this.handleBlur} onClick={this.handleClick} defaultValue="Enter Comment" />
 
-                                                <br />
+                                            <br />
 
-                                                <Button disabled={this.state.disableSubmit} variant="contained" onClick={() => this.submitComment(row.slideId)}>Submit Comment</Button><br />
+                                            <Button disabled={this.state.disableSubmit} variant="contained" onClick={() => this.submitComment(row.slideId)}>Submit Comment</Button><br />
 
-                                              </TableCell>
+                                          </TableCell>
 
                                               
                                             </TableRow>
                                           )
                                       })
-                                    }
+                                    )}
                                   </TableBody>
                                   
                                   <TableFooter>
                                     <TableRow>
                                       <TablePagination
                                         rowsPerPageOptions={[1]}
-                                        count={this.state.clientDecks[this.state.client].length}
+                                        count={this.state.clientDecks[this.state.client].length + 1}
                                         rowsPerPage={this.state.rowsPerPage}
                                         page={this.state.page}
                                         onRowsPerPageChange={this.handleChangeRowsPerPage}
