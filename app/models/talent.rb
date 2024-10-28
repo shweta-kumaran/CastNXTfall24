@@ -9,4 +9,5 @@ class Talent
   field :is_active, type: Boolean, default: true
   
   has_many :slides
+  has_many :messages
 end

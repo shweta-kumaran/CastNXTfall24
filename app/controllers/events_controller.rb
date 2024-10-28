@@ -423,7 +423,7 @@ class EventsController < ApplicationController
   # end
 
   def get_event_client_messages eventId, clientId
-    return Message.where(:event_id => eventId, :client_id => clientId)
+    return Message.where(:event_id => eventId, :user_id => clientId)
   end
 
 
