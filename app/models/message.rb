@@ -3,9 +3,9 @@ class Message
   include Mongoid::Timestamps::Created
   
   belongs_to :event
-  belongs_to :client
   
   field :from, type: String
   field :to, type: String
   field :message, type: String
+  field :user_id, type: BSON::ObjectId
 end
