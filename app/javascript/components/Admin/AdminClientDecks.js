@@ -398,7 +398,13 @@ class AdminClientDecks extends Component {
                                             }}
                                             >
 
-                                              <List>
+                                              <List
+                                                style={{
+                                                  flex: 1, // Takes all available vertical space above the input area
+                                                  overflowY: "auto", // Enables scrolling for messages
+                                                  height: "342px"
+                                                }}
+                                              >
                                                 {this.state.announcements.map((announcement) =>(
                                                   <ListItem
                                                     key = {announcement.announcementContent}
@@ -464,10 +470,16 @@ class AdminClientDecks extends Component {
                                                       borderRadius: "5px",
                                                       backgroundColor: 'white',
                                                       display: "flex",
-                                                      position: "relative"
+                                                      position: "relative",
                                                     }}
                                                   >
-                                                    <List>
+                                                    <List
+                                                      style={{
+                                                        flex: 1, // Takes all available vertical space above the input area
+                                                        overflowY: "auto", // Enables scrolling for messages
+                                                        height: "368px"
+                                                      }}
+                                                    >
                                                       {this.state.clientMessages[this.state.client].map((message) =>(
                                                             <ListItem
                                                               key = {message.messageContent}

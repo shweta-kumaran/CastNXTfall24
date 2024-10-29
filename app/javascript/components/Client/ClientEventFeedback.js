@@ -242,6 +242,7 @@ class ClientEventFeedback extends Component {
                                               height: "calc(50% - 100px)",
                                               borderRadius: "5px",
                                               backgroundColor: '#d3d3d3',
+                                              overflowY: "auto"
                                             }}
                                             >
                                               <List>
@@ -303,10 +304,16 @@ class ClientEventFeedback extends Component {
                                                     borderRadius: "5px",
                                                     backgroundColor: 'white',
                                                     display: "flex",
-                                                    position: "relative"
+                                                    position: "relative",
                                                   }}
                                                 >
-                                                  <List>
+                                                  <List
+                                                    style={{
+                                                      height: "368px",
+                                                      flex: 1, // Takes all available vertical space above the input area
+                                                      overflowY: "auto", // Enables scrolling for messages
+                                                    }}
+                                                  >
                                                     {this.state.clientMessages.map((message) =>(
                                                           <ListItem
                                                             key = {message.messageContent}
