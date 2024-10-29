@@ -203,7 +203,7 @@ class Homepage extends Component {
                                         type="email" label="Email" value={this.state.loginEmail} onChange={this.handleChange} /><br /><br />
                                     <TextField focused style={{ width: "60%" }} name="loginPassword" 
                                         type="password" label="Password" value={this.state.loginPassword} onChange={this.handleChange} /><br /><br />
-                                    <Button disabled={this.state.disableSubmit} variant="contained" onClick={this.login}>Login</Button>
+                                    <Button disabled={this.state.disableSubmit} variant="contained" id="login" onClick={this.login}>Login</Button>
                                     
                                     {(this.state.status !== "" && !this.state.status) &&
                                         <div>
