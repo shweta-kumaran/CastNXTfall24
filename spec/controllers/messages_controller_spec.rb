@@ -59,8 +59,7 @@ RSpec.describe MessagesController, type: :controller do
           receiver: @admin.email
         }
 
-        ##expect(response).to have_http_status(:success)
-        ##expect(response.body).to include("Successfully sent Message as Client!")
+        expect(response).to have_http_status(:success)
       end
     end
 
@@ -74,8 +73,7 @@ RSpec.describe MessagesController, type: :controller do
           receiver: "admin@example.com"
         }
 
-        ##expect(response).to have_http_status(:success) # Adjust this according to your logic
-        ##expect(response.body).to include("Successfully sent Message as Talent!") # Adjust this according to your logic
+        expect(response).to have_http_status(:success) # Adjust this according to your logic
       end
     end
 

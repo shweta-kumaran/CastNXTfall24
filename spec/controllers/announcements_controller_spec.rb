@@ -68,7 +68,10 @@ RSpec.describe AnnouncementsController, type: :controller do
 
     context "when an exception is raised" do
       before do
-        session[:userType] = "ADMIN"
+        session[:userType]="ADMIN"
+        session[:userName]="admintest_admin"
+        session[:userEmail]="admintest_admin@gmail.com"
+        session[:userId]=@admin._id.to_str
         allow_any_instance_of(AnnouncementsController).to receive(:create_announcement).and_raise(StandardError)
       end
 
@@ -79,7 +82,7 @@ RSpec.describe AnnouncementsController, type: :controller do
           sender: @admin.email
         }
 
-        #expect(response).to have_http_status(:internal_server_error)
+        expect(response).to have_http_status(:internal_server_error)
       end
     end
   end
