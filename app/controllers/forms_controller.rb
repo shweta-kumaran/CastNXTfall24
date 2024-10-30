@@ -26,7 +26,7 @@ class FormsController < ApplicationController
       else
         render json: {redirect_path: "/"}, status: 403
       end
-    rescue Exception
+    rescue Exception 
       render json: {comment: "Internal Error!"}, status: 500
     end
   end
