@@ -153,9 +153,44 @@ describe('UserHomepage component', () => {
     // renderAcceptingEventList, and renderSubmittedEventList methods
   });
 
-test('UserHomePage eventHandlers', ()=> {
-    const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
-    view.onSubmit()
+test('Selected filter is updated in state', ()=> {
+    const mock_prop = {
+      name: "test 1",
+      acceptingTableData: [],
+      categoryFilterTextValue: 'Performing Arts',
+      submittedTableData: [
+        {
+          title: 'Event 1',
+          id: 1,
+          accepting: true,
+          category: 'Fashion',
+          status: 'SUBMITTED'
+        }
+      ]
+    }
+    const view = ReactTestUtils.renderIntoDocument(<UserHomepage {...mock_prop}/>);
+    view.onCategoryFilterValueSelected('Fashion')
+    expect(view.state.categoryFilterTextValue).toBe('Fashion')
+})
+
+test('Paid filter is updated in state', ()=> {
+  const mock_prop = {
+    name: "test 1",
+    acceptingTableData: [],
+    isPaidFilterValue: 'Yes',
+    submittedTableData: [
+      {
+        title: 'Event 1',
+        id: 1,
+        accepting: true,
+        category: 'Fashion',
+        status: 'SUBMITTED'
+      }
+    ]
+  }
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage {...mock_prop}/>);
+  view.onIsPaidFilterSelected('No')
+  expect(view.state.isPaidFilterValue).toBe('No')
 })
 
 test('Filter events by category', () => {
@@ -192,6 +227,15 @@ test('Filter by start date', () => {
   view.setState({ eventdateStart: startDate})
   view.onSubmit()
   expect(view.state.filteredTableData.length).toBe(2);
+})
+
+
+test('Filter by end date', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const endDate = new Date(2023, 9, 26, 0, 0, 0)
+  view.setState({ eventdateEnd: endDate})
+  view.onSubmit()
+  expect(view.state.filteredTableData.length).toBe(1);
 })
 // test('checks if event was deleted within the last 7 days', () => {
 //     // Create a mock event with a delete_time within the last 7 days
