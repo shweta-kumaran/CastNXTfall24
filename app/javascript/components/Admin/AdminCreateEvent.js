@@ -42,7 +42,8 @@ class AdminCreateEvent extends Component {
             newFormId: "",
             disableSubmit: false,
             status: "",
-            message: ""
+            message: "",
+            isAdmin: props.userRole === 'admin', // Assuming userRole is passed as a prop
         }
     }
     
@@ -55,8 +56,14 @@ class AdminCreateEvent extends Component {
     handleChange = (e, value) => {
         this.setState({
             [e.target.name]: e.target.value
-        })
-    }
+        });
+    };
+
+    // Add the handleGenerateAIForm method here
+    handleGenerateAIForm = () => {
+    // Logic to generate AI form
+    console.log("Generating AI Form...");
+    };
 
     handleRadioChange = (e, value) => {
         const {dataSchema, uiSchema} = getSchema(e.target.value)
@@ -104,6 +111,8 @@ class AdminCreateEvent extends Component {
         })
     }
     
+
+
     onCreateEventClick = () => {
        // Check if all required fields are filled
         if (
@@ -328,6 +337,16 @@ class AdminCreateEvent extends Component {
                             }
                             
                             <br /><br />
+
+                            {/* Conditional rendering for AI form generation button */}
+                            {this.state.isAdmin && (
+                                <Button
+                                    variant="contained"
+                                    onClick={this.handleGenerateAIForm}
+                                >
+                                Generate AI Form
+                                </Button>
+                            )}
                             
                             <Button disabled={this.state.disableSubmit} variant="contained" onClick={this.onCreateEventClick}>Create Event</Button>
                             

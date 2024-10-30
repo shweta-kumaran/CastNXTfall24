@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function FormGenerator() {
+function FormGenerator({ isAdmin }) {
   const [formFields, setFormFields] = useState([]);
 
   const generateForm = async (prompt) => {
@@ -17,7 +17,9 @@ function FormGenerator() {
 
   return (
     <div>
-      <button onClick={() => generateForm('Your prompt here')}>Generate Form</button>
+      {isAdmin && (
+        <button onClick={() => generateForm('Your prompt here')}>Generate Form</button>
+      )}
       {/* Render form fields here */}
     </div>
   );
