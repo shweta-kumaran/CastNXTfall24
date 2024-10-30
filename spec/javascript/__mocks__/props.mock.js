@@ -471,6 +471,7 @@ export const PROPERTIES_CLIENT_SUMMARY ={
 export const PROPERTIES_CLIENT_FEEDBACK = {
     "name": "Sid",
     "data": {
+        "announcements": [],
         "schema": {
             "type": "object",
             "properties": {
@@ -514,7 +515,7 @@ export const PROPERTIES_CLIENT_FEEDBACK = {
         "statename": null,
         "eventdate": null,
         "category": null,
-        "is_paid_event": null,
+        "is_paid_event": 'yes',
         "slides": {
             "634b4541c2e881bd9a343e4b": {
                 "talentName": "Anushka Garg",
