@@ -158,51 +158,87 @@ test('UserHomePage eventHandlers', ()=> {
     view.onSubmit()
 })
 
+test('Filter events by category', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  view.setState({ categoryFilterTextValue: 'Performing Arts'})
+  view.onSubmit()
+  expect(view.state.filteredTableData.length).toBe(2);
+})
 
-test('checks if event was deleted within the last 7 days', () => {
-    // Create a mock event with a delete_time within the last 7 days
-    const event = {
-      delete_time: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000) // 6 days ago
-    };
+test('Filter events by state', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  view.setState({ stateName: 'Texas'})
+  view.onSubmit()
+  expect(view.state.filteredTableData.length).toBe(2);
+})
+
+test('Filter events by city', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  view.setState({ cityName: 'Houston'})
+  view.onSubmit()
+  expect(view.state.filteredTableData.length).toBe(1);
+})
+
+test('Filter events by title', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  view.setState({ title: 'Paris'})
+  view.onSubmit()
+  expect(view.state.filteredTableData.length).toBe(1);
+})
+
+test('Filter by start date', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const startDate = new Date(2024, 9, 26, 0, 0, 0)
+  view.setState({ eventdateStart: startDate})
+  view.onSubmit()
+  expect(view.state.filteredTableData.length).toBe(2);
+})
+// test('checks if event was deleted within the last 7 days', () => {
+//     // Create a mock event with a delete_time within the last 7 days
+//     const event = {
+//       delete_time: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000) // 6 days ago
+//     };
   
-    // Create a new UserHomepage component (assuming it's within the scope of the test)
-   // const component = new UserHomepage({});
-   const eventIdToCheck = 'event1'; // Specify the event ID to look for
+//     // Create a new UserHomepage component (assuming it's within the scope of the test)
+//    // const component = new UserHomepage({});
+//   //  const eventIdToCheck = 'event1'; // Specify the event ID to look for
     
 
-    // Render the UserHomepage component with mocked properties
-    //render(<UserHomepage properties={{ submittedTableData, eventId: eventIdToCheck }} />);
-    const submittedTableData = [
-      {
-          id: 'event1',
-          status: 'DELETED',
-          delete_time: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() // 6 days ago
-      },
-      {
-          id: 'event2',
-          status: 'ACTIVE',
-          delete_time: new Date().toISOString()
-      }
-  ];
+//     // Render the UserHomepage component with mocked properties
+//     //render(<UserHomepage properties={{ submittedTableData, eventId: eventIdToCheck }} />);
+//     const submittedTableData = [
+//       {
+//           id: 'event1',
+//           status: 'DELETED',
+//           delete_time: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString() // 6 days ago
+//       },
+//       {
+//           id: 'event2',
+//           status: 'ACTIVE',
+//           delete_time: new Date().toISOString()
+//       }
+//   ];
 
-  // Snapshot testing using react-test-renderer
-  const component = renderer.create(
-      <UserHomepage properties={{ submittedTableData, eventId: 'event1' }} />
-  );
-  const instance = component.getInstance();
-  let tree = component.toJSON();
-  //const jsonString = JSON.stringify(tree, null, 2); // Pretty print with 2 spaces
+//   // Snapshot testing using react-test-renderer
+//   const component = renderer.create(
+//       <UserHomepage properties={{ submittedTableData, eventId: 'event1' }} />
+//   );
+//   // const instance = component.getInstance();
+//   let tree = component.toJSON();
+//   // const jsonString = JSON.stringify(tree, null, 2); // Pretty print with 2 spaces
    
   
-  //console.log(UserHomepage);
-    // Check if the message about deletion is displayed
-    //const messageElement = screen.getByText(/An event has been deleted within the last 7 days/i);
-    //expect(messageElement).toBeInTheDocument();
-  
-    // Call the function that contains the lines we want to test
-    //const isEventDeletedWithin7Days = component.isEventDeletedWithin7Days(event);
-  
-    // Assertion
-    //expect(isEventDeletedWithin7Days).toBe(true);
+//   //console.log(UserHomepage);
+//     // Check if the message about deletion is displayed
+//     // const messageElement = screen.getByText(/Note: Certain events have been cancelled. Please check submissions for more details. Sorry for the inconvenience./i);
+//     // expect(/Note: Certain events have been cancelled. Please check submissions for more details. Sorry for the inconvenience./).toBeInTheDocument();
+//     // expect(jsonString).toContain("Note: Certain events have been cancelled. Please check submissions for more details. Sorry for the inconvenience.")
 
-  });
+
+//     // Call the function that contains the lines we want to test
+//     //const isEventDeletedWithin7Days = component.isEventDeletedWithin7Days(event);
+  
+//     // Assertion
+//     //expect(isEventDeletedWithin7Days).toBe(true);
+
+//   });

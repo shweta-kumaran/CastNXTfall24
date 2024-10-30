@@ -346,7 +346,30 @@ export const USER_PROPERTIES_WITH_SUBMISSIONS = {
             "title": "Paris Fashion Week",
             "id": "634b4470c2e881bd9a343e45",
             "accepting": true,
-            "status": "SUBMITTED"
+            "category": 'Fashion',
+            "status": "SUBMITTED",
+            "statename": 'Hawaii',
+            "date": new Date('10-26-2024')
+        },
+        {
+            "title": "Deleted Event",
+            "id": "634b4470c2e881bd9a343e46",
+            "accepting": false,
+            "category": 'Performing Arts',
+            "status": "DELETED",
+            "statename": 'Texas',
+            "location": 'Irving',
+            "date": new Date('10-26-2023')
+        }, 
+        {
+            "title": "Houston Orchestra",
+            "id": "634b4470c2e881bd9a343e47",
+            "accepting": true,
+            "category": 'Performing Arts',
+            "status": "SUBMITTED",
+            "statename": 'Texas',
+            "location": 'Houston',
+            "date": new Date('01-11-2025')
         }
     ]
 }
@@ -515,7 +538,7 @@ export const PROPERTIES_CLIENT_FEEDBACK = {
         "statename": null,
         "eventdate": null,
         "category": null,
-        "is_paid_event": 'yes',
+        "is_paid_event": null,
         "slides": {
             "634b4541c2e881bd9a343e4b": {
                 "talentName": "Anushka Garg",
