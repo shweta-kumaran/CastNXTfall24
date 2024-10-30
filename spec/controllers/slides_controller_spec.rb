@@ -78,6 +78,30 @@ RSpec.describe SlidesController, type: :controller do
             expect(response).to have_http_status(:success)
         end
 
+        it "should create a new user and slide in anonymous mode" do
+            session[:userType]="ADMIN"
+            session[:userName]="eventtest"
+            session[:userEmail]="eventest@gmail.com"
+            session[:userId]=@admin._id.to_str
+            # data1={ @client._id.to_str => {slideIds: [@slide._id.to_str]}}
+            data={email:"tabletest@gmail",talentName:"tabletest"}
+            post :create,params:{event_id: @event._id.to_str,aName:"test",data: data}
+            expect(response).to have_http_status(:success)
+        end
+       
+      it 'returns success response and updates been_paid status' do
+        put :update_payment_status, params: { id: @slide._id.to_str, been_paid: true }
+        
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)["success"]).to eq(true)
+      end
+      it 'returns the current payment status of the slide' do
+        get :payment_status, params: { id: @slide._id.to_str}
+  
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)["been_paid"]).to eq(@slide.been_paid)
+      end
+
     end
 end
 
