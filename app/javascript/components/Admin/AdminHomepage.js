@@ -69,13 +69,13 @@ class AdminHomepage extends Component {
                         </div>
                         <div className="row">
                             <div style={{marginBottom: 20}}>
-                                <Button variant="contained" onClick={this.createEventRedirection}>Create New Event</Button>
+                                <Button variant="contained" id="createEvent" onClick={this.createEventRedirection}>Create New Event</Button>
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-md-6 offset-md-3">
                                 <TableContainer component={Paper}>
-                                    <Table aria-label="simple table">
+                                    <Table aria-label="simple table" id="events">
                                         <TableHead style={{ backgroundColor: "#3498DB" }}>
                                             <TableRow>
                                                 <TableCell align="center">Event</TableCell>
