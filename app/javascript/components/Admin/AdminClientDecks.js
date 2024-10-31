@@ -349,7 +349,7 @@ class AdminClientDecks extends Component {
                 {this.state.client !== "" &&
                     <div>
                       <Button variant="contained" onClick={this.expandSlides}>Expand Deck</Button><br /><br />
-                      <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
+                      <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" showCheckbox={false} currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
 
                         <div className="col-md-8 offset-md-2">
 

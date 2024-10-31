@@ -23,11 +23,9 @@ class MessagesController < ApplicationController
 
   private
 
-  def create_message_producer eventId, clientId, messageContent, messageSender, messageReceiver
-    client = Client.find_by(:_id => clientId)
-    
+  def create_message_producer eventId, userId, messageContent, messageSender, messageReceiver
     # UserMailer.added_message(client.email).deliver_now	
-    Message.create(:event_id => eventId, :user_id => clientId, :from => messageSender, :to => messageReceiver, :message => messageContent)
+    Message.create(:event_id => eventId, :user_id => userId, :from => messageSender, :to => messageReceiver, :message => messageContent)
   end
 
   def create_message_client eventId, clientId, messageContent, messageSender, messageReceiver

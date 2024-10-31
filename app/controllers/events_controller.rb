@@ -321,12 +321,17 @@ class EventsController < ApplicationController
       slideObject[:formData] = JSON.parse(slide.data)
       slideObject[:curated] = slide.curated
       slideObject[:comments] = []
+      slideObject[:messages] = []
 
       slide.comment_ids.each do |commentId|
         clientFound=get_comment(commentId)
         slideObject[:comments].push({:commentContent => clientFound.content, :commentOwner => clientFound.owner, :commentClient =>clientFound.client_id.to_str})        
       end
-      
+
+      slide.message_ids.each do |messageId|
+        message = get_message(messageId)
+        slideObject[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
+      end
       slidesObject[slideId.to_str] = slideObject
     end
     
