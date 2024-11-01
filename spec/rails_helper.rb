@@ -4,6 +4,8 @@ require 'mongoid-rspec'
 ENV['RAILS_ENV'] ||= 'test'
 Mongoid.load!(File.expand_path('../../config/mongoid.yml', __FILE__), :test)
 require 'simplecov'
+require 'simplecov_json_formatter'
+SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
 SimpleCov.start 'rails' do
   add_filter '/bin/'
   add_filter '/db/'
