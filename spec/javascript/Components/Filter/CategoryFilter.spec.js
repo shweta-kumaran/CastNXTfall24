@@ -7,3 +7,17 @@ test('CategoryFilter Load', () => {
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
 })
+
+test("calls categoryFilterValueSelected with selected value", () => {
+    const mockCategoryFilterValueSelected = jest.fn();
+    const component = renderer.create(
+        <CategoryFilter categoryFilterValueSelected={mockCategoryFilterValueSelected} />
+    );
+    const instance = component.root;
+
+    const selectElement = instance.findByType("select");
+    selectElement.props.onChange({ target: { value: "Music" } });
+    expect(mockCategoryFilterValueSelected).toHaveBeenCalledWith("Music");
+    selectElement.props.onChange({ target: { value: "Other" } });
+    expect(mockCategoryFilterValueSelected).toHaveBeenCalledWith("Other");
+})

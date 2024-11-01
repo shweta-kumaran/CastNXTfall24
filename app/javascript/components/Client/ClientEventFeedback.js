@@ -48,7 +48,7 @@ class ClientEventFeedback extends Component {
       let entries = []
       let clientComments = []
       let slideComments = []
-      
+      console.log("properties: ", this.props.properties)
       for(var key in slides) {
         entries.push({
           ...slides[key],
