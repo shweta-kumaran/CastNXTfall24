@@ -157,3 +157,5 @@ gem 'nokogiri', '1.13.10'
 
 # gem 'nokogiri', '~> 1.16.7'
 # gem "ostruct", "~> 0.6.0"
+
+gem "simplecov_json_formatter", "~> 0.1.4"
