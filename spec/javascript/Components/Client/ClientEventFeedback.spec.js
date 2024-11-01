@@ -116,7 +116,6 @@ test('generates pdf', async () => {
 
 test('submitting a comment to producer', async () => {
     const view = ReactTestUtils.renderIntoDocument(<ClientEventFeedback properties={PROPERTIES_CLIENT_FEEDBACK}/>);
-    let testId = "634b4541c2e881bd9a343e4b"
     view.setState({
         commentContent: "hello"
     })
