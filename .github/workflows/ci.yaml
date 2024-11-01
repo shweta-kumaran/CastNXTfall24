@@ -28,7 +28,7 @@ jobs:
         run: |
           gem install bundler -v 2.4.22
           bundle install
-          yarn install --pure-lockfile
+          yarn install
       
       - name: Run Rubocop
         run: |
