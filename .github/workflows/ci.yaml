@@ -29,18 +29,21 @@ jobs:
           gem install bundler -v 2.4.22
           bundle install
           yarn install
-      
-      - name: Run Rubocop
-        run: |
           gem install rubocop-ast -v 1.30.0
           gem install parallel -v 1.24.0
           gem install rubocop -v 1.21.0
+      
+      - name: Run Rubocop
+        run: |
           rubocop --parallel --fail-level error
       
       - name: Run Jest tests
         run: yarn test --coverage
       
-      - name: Run Rails tests
+      - name: Run MongoDB
+        run: docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=example mongo:8.0.0
+      
+      - name: Run RSpec tests
         run: bundle exec rspec
 
       - uses: paambaati/codeclimate-action@v9
