@@ -482,11 +482,17 @@ export const PROPERTIES_CLIENT_SUMMARY ={
         "finalizedIds": [],
         "slides": {
             "6371988eed22d5ed037d39d0": {
-                "talentName": "efsedfsd",
+                "talentName": "harris",
                 "formData": {
                     "plp": "nfjkdsnkjfds"
                 }
-            }
+            },
+            "6371988eed22d5ed037d49d1": {
+                "talentName": "alex",
+                "formData": {
+                    "plp": "nfjkdsnkjfds"
+                }
+            },
         }
     }
 }
@@ -533,6 +539,9 @@ export const PROPERTIES_CLIENT_FEEDBACK = {
         "description": "Some Description",
         "status": "ACCEPTING",
         "negotiationId": "634b4956c2e881bec01f8fea",
+        "messageContent": "",
+        "commentContent": "",
+        "messages": [],
         "finalizedIds": [],
         "location": null,
         "statename": null,
