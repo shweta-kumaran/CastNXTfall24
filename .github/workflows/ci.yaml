@@ -46,7 +46,7 @@ jobs:
       - name: Run RSpec tests
         run: bundle exec rspec
 
-      - uses: paambaati/codeclimate-action@v9
+      - uses: paambaati/codeclimate-action@v3.0.0
         # if: github.ref == 'refs/heads/main'
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
