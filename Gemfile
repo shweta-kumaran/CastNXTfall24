@@ -69,7 +69,7 @@ group :test do
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
   gem 'mongoid-rspec'
-  gem 'simplecov'
+  gem 'simplecov', '~> 0.21.2', require: false
   gem "simplecov_json_formatter", "~> 0.1.4", require: false
 end
 
