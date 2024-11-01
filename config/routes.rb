@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     collection do
       resources :events, only: [:show] do
         resources :slides, only: [:create]
+        resources :messages, only: [:create]
       end
     end
   end
