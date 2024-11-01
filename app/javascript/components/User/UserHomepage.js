@@ -14,6 +14,10 @@ import Button from "@mui/material/Button";
 import LocationFilter from "../Filter/LocationFilter";
 import IsPaidFilter from "../Filter/IsPaidFilter";
 import TextField from "@mui/material/TextField";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 import Header from "../Navbar/Header";
 import FormControl from "@mui/material/FormControl";
 import DatePickerWrapperStart from "../Shared/DatePickerStart";
@@ -54,7 +58,11 @@ class UserHomepage extends Component {
             eventdateStart:'',
             eventdateEnd:'',
             filteredTableData: savedTabValue===0 ? (properties.acceptingTableData ? properties.acceptingTableData : []):(properties.submittedTableData ? properties.submittedTableData : []),
-            isPaidFilterValue: 'None'
+            isPaidFilterValue: 'None',
+            openChatWindow: false,
+            disableSubmit: false,
+            messageContent: '',
+            eventToMessage: null
         }
     }
     
@@ -65,6 +73,7 @@ class UserHomepage extends Component {
             tabValue: value,
 
             filteredTableData: value===0 ? this.state.acceptingTableData:this.state.submittedTableData,
+            openChatWindow: false,
         })
         location.reload();
     }
@@ -116,6 +125,55 @@ class UserHomepage extends Component {
             });
         }
     };
+
+    openChatWindow = () => {
+        this.setState({
+          openChatWindow: !this.state.openChatWindow
+        })
+      }
+  
+      handleChange = (e, value) => {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+      }
+  
+      sendMessage = () => {
+        const payload = {
+          content: this.state.messageContent,
+          sender: this.props.properties.name,
+          receiver: 'Producer',
+          event_id: this.state.eventToMessage.id,
+          user_id: this.state.eventToMessage.slideId,
+        }
+  
+        const baseURL = window.location.href.split("#")[0]
+        
+        this.setState({
+          disableSubmit: true
+        })
+  
+        return axios.post(baseURL + "/event/" + this.state.event.id + "/messages", payload)
+        .then((res) => {
+          this.setState({
+            status: true,
+            message: res.data.message
+          })
+          setTimeout(() => {
+            window.location.href = ""
+          }, 2500)
+        })
+        .catch((err) => {
+          this.setState({
+            status: false,
+            message: "Failed to send message!"
+          })
+          
+          if(err.response.status === 403) {
+            window.location.href = err.response.data.redirect_path
+          }
+        })
+      }
     
 
     onSubmit = () => {  
@@ -244,7 +302,7 @@ class UserHomepage extends Component {
         if (!filteredTableData.length) {
             rows.push(
                  <TableRow key={0}>
-                    <TableCell colSpan={2} align="center">
+                    <TableCell colSpan={3} align="center">
                         No Events submitted to right now.
                     </TableCell>
                  </TableRow>
@@ -260,6 +318,9 @@ class UserHomepage extends Component {
                             <TableCell align="center">
                                 {event.status}
                             </TableCell>
+                            <TableCell align="center">
+                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openChatWindow();}}>Chat with Producer of {event.title}</Button>
+                            </TableCell>
                         </TableRow>
                     )
                 } else {
@@ -270,6 +331,9 @@ class UserHomepage extends Component {
                             </TableCell>
                             <TableCell align="center">
                                 {event.status}
+                            </TableCell>
+                            <TableCell align="center">
+                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openChatWindow();}}>Chat with Producer of {event.title}</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -344,12 +408,14 @@ class UserHomepage extends Component {
                                 }
                                 
                                 {this.state.tabValue === 1 &&
+                                    <div>
                                     <TableContainer component={Paper}>
                                         <Table aria-label="simple table">
                                             <TableHead style={{ backgroundColor: "#3498DB" }}>
                                                 <TableRow>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Event</TableCell>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Status</TableCell>
+                                                    <TableCell align="center" style={{fontSize: "12pt"}}>Chat</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -357,6 +423,139 @@ class UserHomepage extends Component {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
+                                    <div>
+                                    {this.state.openChatWindow && 
+                                        <div
+                                        style={{
+                                            width: "540px",
+                                            height: "550px",
+                                            backgroundColor: '#727278',
+                                            display: "flex",
+                                            flexDirection: 'column',
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            position: "relative",
+                                        }}
+                                        >  
+                                        <div
+                                            style={{
+                                            width: "90%",
+                                            height: "450px",
+                                            borderRadius: "5px",
+                                            backgroundColor: 'white',
+                                            display: "flex",
+                                            position: "relative",
+                                            }}
+                                        >
+                                            <List
+                                            style={{
+                                                flex: 1, // Takes all available vertical space above the input area
+                                                overflowY: "auto", // Enables scrolling for messages
+                                                height: "368px"
+                                            }}
+                                            >
+                                            {this.state.eventToMessage.messages.map((message) =>(
+                                                    <ListItem
+                                                    key = {message.messageContent}
+                                                    >
+                                                    
+
+                                                    {message.messageFrom === properties.name &&
+                                                    <Box
+                                                    sx={{
+                                                        display: "flex",              // Align the message and timestamp together
+                                                        flexDirection: "column",      // Stack bubble and timestamp vertically
+                                                        alignItems: "flex-start",       
+                                                        marginBottom: "10px",
+                                                        width: '100%'
+                                                    }}
+                                                    >
+                                                        {/* Timestamp outside and below the bubble */}
+                                                        <Typography 
+                                                        variant="caption"               // Smaller font size for the timestamp
+                                                        sx={{
+                                                            marginTop: "4px",
+                                                            color: "gray",                 // Lighter color for the timestamp
+                                                        }}
+                                                        >
+                                                        {`You     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                        </Typography>
+                                                        <Box
+                                                        sx={{
+                                                            backgroundColor: "#007aff",    // Blue bubble for the current user's messages
+                                                            color: "white",
+                                                            padding: "10px",
+                                                            borderRadius: "20px",
+                                                            maxWidth: "60%",
+                                                            wordWrap: "break-word",
+                                                            whiteSpace: "pre-wrap",
+                                                            marginRight: "auto",            // Align the bubble to the left
+                                                            position: "relative",
+                                                        }}
+                                                        >
+                                                        <ListItemText 
+                                                            primary={message.messageContent}
+                                                        />
+                                                        </Box>
+                                                        
+                                                    </Box>
+
+                                                    }
+                                                    {message.messageFrom != properties.name &&
+                                                    <Box
+                                                    sx={{
+                                                        display: "flex",
+                                                        flexDirection: "column",        // Stack bubble and timestamp vertically
+                                                        alignItems: "flex-start",       // Align to the left
+                                                        marginBottom: "10px",
+                                                        width: '100%'
+                                                    }}
+                                                    >
+
+                                                        {/* Timestamp outside and below the bubble */}
+                                                        <Typography 
+                                                        variant="caption"               // Smaller font size for the timestamp
+                                                        sx={{
+                                                            marginTop: "4px",
+                                                            color: "gray",                 // Lighter color for the timestamp
+                                                        }}
+                                                        >
+                                                        {`Producer     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                        </Typography>
+                                                        <Box
+                                                        sx={{
+                                                            backgroundColor: "#e5e5ea",    // Gray bubble for other users
+                                                            color: "black",
+                                                            padding: "10px",
+                                                            borderRadius: "20px",
+                                                            maxWidth: "60%",
+                                                            wordWrap: "break-word",
+                                                            whiteSpace: "pre-wrap",
+                                                            marginRight: "auto",           // Align the bubble to the left
+                                                            position: "relative",
+                                                        }}
+                                                        >
+                                                        <ListItemText 
+                                                        primary={message.messageContent} 
+                                                        />
+                                                        </Box>
+                                                        
+                                                    </Box>
+                                                    }
+
+                                                    </ListItem>
+                                            ))}
+                                            </List>
+
+                                            <br />
+                                            <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "69%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
+                                            <br />
+                                            <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
+                                        </div>
+                                        </div>
+                                    }
+                                    </div>
+                                    </div>
                                 }
                             </div>
                         </div>

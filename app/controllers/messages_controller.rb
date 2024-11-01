@@ -7,14 +7,13 @@ class MessagesController < ApplicationController
     begin
       if is_user_logged_in?("ADMIN")
 
-        create_message_producer(params[:event_id], params[:client_id],  params[:content], params[:sender], params[:receiver])
+        create_message_producer(params[:event_id], params[:user_id],  params[:content], params[:sender], params[:receiver])
         render json: {comment: "Successfully sent Message as Admin!"}, status: 200
-        
       elsif is_user_logged_in?("CLIENT")
-      	create_message_client(params[:event_id], params[:client_id], params[:content], params[:sender], params[:receiver])
+      	create_message_client(params[:event_id], params[:user_id], params[:content], params[:sender], params[:receiver])
         render json: {comment: "Successfully sent Message as Client!"}, status: 200
       else
-        create_message_talent(params[:event_id], params[:talent_id], params[:content], params[:sender], params[:receiver])
+        create_message_talent(params[:event_id], params[:user_id], params[:content], params[:sender], params[:receiver])
       end
     rescue Exception
       render json: {comment: Exception}, status: 500

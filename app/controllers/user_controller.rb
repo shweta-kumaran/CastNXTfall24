@@ -24,6 +24,9 @@ class UserController < ApplicationController
       }
       
       if talent_slide_exists?(event._id, talent._id)
+        slide = get_talent_slide(event._id, talent._id)
+        object["slideId"] = slide._id.to_str
+        messages = get_event_user_messages(event._id, slide._id)
         if "ACCEPTING".casecmp? event.status
           object["accepting"] = true
           object["status"] = "SUBMITTED"
@@ -38,7 +41,10 @@ class UserController < ApplicationController
           object["accepting"] = false
           object["status"] = event.status
         end
-        
+        object[:messages] = []
+        messages.each do |message|
+          object[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
+        end
         submittedTableData << object
       else
         if "ACCEPTING".casecmp? event.status
@@ -57,6 +63,10 @@ class UserController < ApplicationController
   
   def get_event_negotiations eventId
     return Negotiation.where(:event_id => eventId)
+  end
+
+  def get_event_user_messages eventId, userId
+    return Message.where(:event_id => eventId, :user_id => userId)
   end
   
   def get_talent_slide eventId, talentId

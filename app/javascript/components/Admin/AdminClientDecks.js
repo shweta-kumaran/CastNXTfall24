@@ -257,7 +257,7 @@ class AdminClientDecks extends Component {
         sender: properties.name,
         receiver: this.state.clientList[this.state.client].name,
         event_id: window.location.href.split("/")[-1],
-        client_id: this.state.client
+        user_id: this.state.client
       }
 
       const baseURL = window.location.href.split("#")[0]

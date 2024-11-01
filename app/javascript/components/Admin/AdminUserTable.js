@@ -11,6 +11,10 @@ import axios from "axios";
 import { UsStates, getCities} from '../../utils/FormsUtils';
 import Button from "@mui/material/Button";
 import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
+import TextField from "@mui/material/TextField";
 class AdminUserTable extends Component {
     constructor(props) {
         super(props)
@@ -87,6 +91,7 @@ class AdminUserTable extends Component {
 
     createEventTalentData() {
       let slides = this.props.properties.data.slides
+      let talentMessages = {}
       
       if(this.props.currentTab != undefined) {
         console.log("Client: ", this.props.currentClient)
@@ -107,6 +112,7 @@ class AdminUserTable extends Component {
           talentData.preference = slides[key].preference
           talentData.finalized = slides[key].finalized
         }
+        talentMessages[key] = slides[key].messages === null ? [] : slides[key].messages
         eventTalent.push(talentData)
       }
       // for(var key in slides) {
@@ -117,6 +123,7 @@ class AdminUserTable extends Component {
       //       formData: slides[key].formData
       //   })
       // }
+      this.setState({ talentMessages: talentMessages })
       return eventTalent;
     }
 
@@ -243,13 +250,19 @@ class AdminUserTable extends Component {
       })
     }
 
+    handleChange = (e, value) => {
+      this.setState({
+          [e.target.name]: e.target.value
+      })
+    }
+
     sendMessage = () => {
       const payload = {
         content: this.state.messageContent,
         sender: properties.name,
-        receiver: this.state.selectedRows[0]['uniqId'],
+        receiver: this.state.rows[this.state.selectedRow - 1]['talentName'],
         event_id: window.location.href.split("/")[-1],
-        talent_id: this.state.selectedRows[0]['talentName']
+        user_id: this.state.rows[this.state.selectedRow - 1]['uniqId']
       }
 
       const baseURL = window.location.href.split("#")[0]
@@ -332,7 +345,7 @@ class AdminUserTable extends Component {
                           </IconButton>
                         </div>
                       </div>
-                      {this.state.selectedRows.length > 0 && (<Button variant="contained" onClick={this.openChatWindow}>Send Message</Button>)}
+                      {this.state.selectedRow > -1 && (<Button variant="contained" onClick={this.openChatWindow}>Chat with {this.state.rows[this.state.selectedRow - 1]['talentName']}</Button>)}
                       <button onClick={this.addNewRow}>Add Row</button>
                       <button onClick={this.handleSave}>Save Data</button>
                       <DataGrid
@@ -369,8 +382,14 @@ class AdminUserTable extends Component {
                         rowsPerPageOptions={[10]}
                         autoHeight
                         checkboxSelection={this.props.showCheckbox}
-                        disableMultipleSelection={true}
-                        onSelectionModelChange={(newSelection) => {this.setState({ selectedRow: newSelection[0], openChatWindow: false });}}
+                        selectionModel={this.state.selectedRow ? [this.state.selectedRow] : []}
+                        onSelectionModelChange={(newSelection) => {
+                          if (newSelection[0] == this.state.selectedRow) {
+                            this.setState({ selectedRow: newSelection.slice(-1)[0], openChatWindow: false });
+                          } else {
+                            this.setState({ selectedRow: newSelection[0], openChatWindow: false });
+                          }
+                        }}
                         onRowClick = {this.onRowClick}
                         filterModel = {this.state.filterModel}
                         onFilterModelChange={(model) => this.onFilterModelChange(model)}
@@ -379,118 +398,131 @@ class AdminUserTable extends Component {
                       {this.state.openChatWindow && 
                         <div
                           style={{
-                            width: "80%",
-                            height: "425px",
-                            borderRadius: "5px",
-                            backgroundColor: 'white',
+                            width: "100%",
+                            height: "500px",
+                            backgroundColor: '#727278',
                             display: "flex",
-                            position: "relative",
+                            flexDirection: 'column',
+                            justifyContent: "center",
+                            alignItems: "center",
+                            position: "relative"
                           }}
-                        >
-                          <List
+                        >  
+                          <div
                             style={{
-                              flex: 1, // Takes all available vertical space above the input area
-                              overflowY: "auto", // Enables scrolling for messages
-                              height: "368px"
+                              width: "80%",
+                              height: "425px",
+                              borderRadius: "5px",
+                              backgroundColor: 'white',
+                              display: "flex",
+                              position: "relative",
                             }}
                           >
-                            {this.state.talentMessages[this.state.selectedRows[0]['uniqId']].map((message) =>(
-                                  <ListItem
-                                    key = {message.messageContent}
-                                  >
-                                  
-
-                                  {message.messageFrom === properties.name &&
-                                    <Box
-                                    sx={{
-                                      display: "flex",              // Align the message and timestamp together
-                                      flexDirection: "column",      // Stack bubble and timestamp vertically
-                                      alignItems: "flex-start",       
-                                      marginBottom: "10px",
-                                      width: '100%'
-                                    }}
+                            <List
+                              style={{
+                                flex: 1, // Takes all available vertical space above the input area
+                                overflowY: "auto", // Enables scrolling for messages
+                                height: "368px"
+                              }}
+                            >
+                              {this.state.talentMessages[this.state.rows[this.state.selectedRow - 1]['uniqId']].map((message) =>(
+                                    <ListItem
+                                      key = {message.messageContent}
                                     >
-                                      {/* Timestamp outside and below the bubble */}
-                                      <Typography 
-                                        variant="caption"               // Smaller font size for the timestamp
-                                        sx={{
-                                          marginTop: "4px",
-                                          color: "gray",                 // Lighter color for the timestamp
-                                        }}
-                                      >
-                                        {`You     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-                                      </Typography>
+                                    
+
+                                    {message.messageFrom === properties.name &&
                                       <Box
-                                        sx={{
-                                          backgroundColor: "#007aff",    // Blue bubble for the current user's messages
-                                          color: "white",
-                                          padding: "10px",
-                                          borderRadius: "20px",
-                                          maxWidth: "60%",
-                                          wordWrap: "break-word",
-                                          whiteSpace: "pre-wrap",
-                                          marginRight: "auto",            // Align the bubble to the left
-                                          position: "relative",
-                                        }}
+                                      sx={{
+                                        display: "flex",              // Align the message and timestamp together
+                                        flexDirection: "column",      // Stack bubble and timestamp vertically
+                                        alignItems: "flex-start",       
+                                        marginBottom: "10px",
+                                        width: '100%'
+                                      }}
                                       >
+                                        {/* Timestamp outside and below the bubble */}
+                                        <Typography 
+                                          variant="caption"               // Smaller font size for the timestamp
+                                          sx={{
+                                            marginTop: "4px",
+                                            color: "gray",                 // Lighter color for the timestamp
+                                          }}
+                                        >
+                                          {`You     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            backgroundColor: "#007aff",    // Blue bubble for the current user's messages
+                                            color: "white",
+                                            padding: "10px",
+                                            borderRadius: "20px",
+                                            maxWidth: "60%",
+                                            wordWrap: "break-word",
+                                            whiteSpace: "pre-wrap",
+                                            marginRight: "auto",            // Align the bubble to the left
+                                            position: "relative",
+                                          }}
+                                        >
+                                          <ListItemText 
+                                            primary={message.messageContent}
+                                          />
+                                        </Box>
+                                        
+                                      </Box>
+
+                                    }
+                                    {message.messageFrom != properties.name &&
+                                      <Box
+                                      sx={{
+                                        display: "flex",
+                                        flexDirection: "column",        // Stack bubble and timestamp vertically
+                                        alignItems: "flex-start",       // Align to the left
+                                        marginBottom: "10px",
+                                        width: '100%'
+                                      }}
+                                      >
+
+                                        {/* Timestamp outside and below the bubble */}
+                                        <Typography 
+                                          variant="caption"               // Smaller font size for the timestamp
+                                          sx={{
+                                            marginTop: "4px",
+                                            color: "gray",                 // Lighter color for the timestamp
+                                          }}
+                                        >
+                                          {`${this.state.rows[this.state.selectedRow - 1]['talentName']}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                        </Typography>
+                                        <Box
+                                          sx={{
+                                            backgroundColor: "#e5e5ea",    // Gray bubble for other users
+                                            color: "black",
+                                            padding: "10px",
+                                            borderRadius: "20px",
+                                            maxWidth: "60%",
+                                            wordWrap: "break-word",
+                                            whiteSpace: "pre-wrap",
+                                            marginRight: "auto",           // Align the bubble to the left
+                                            position: "relative",
+                                          }}
+                                        >
                                         <ListItemText 
-                                          primary={message.messageContent}
+                                          primary={message.messageContent} 
                                         />
+                                        </Box>
+                                        
                                       </Box>
-                                      
-                                    </Box>
+                                    }
 
-                                  }
-                                  {message.messageFrom != properties.name &&
-                                    <Box
-                                    sx={{
-                                      display: "flex",
-                                      flexDirection: "column",        // Stack bubble and timestamp vertically
-                                      alignItems: "flex-start",       // Align to the left
-                                      marginBottom: "10px",
-                                      width: '100%'
-                                    }}
-                                    >
+                                    </ListItem>
+                              ))}
+                            </List>
 
-                                      {/* Timestamp outside and below the bubble */}
-                                      <Typography 
-                                        variant="caption"               // Smaller font size for the timestamp
-                                        sx={{
-                                          marginTop: "4px",
-                                          color: "gray",                 // Lighter color for the timestamp
-                                        }}
-                                      >
-                                        {`${this.state.selectedRows[0]['talentName']}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-                                      </Typography>
-                                      <Box
-                                        sx={{
-                                          backgroundColor: "#e5e5ea",    // Gray bubble for other users
-                                          color: "black",
-                                          padding: "10px",
-                                          borderRadius: "20px",
-                                          maxWidth: "60%",
-                                          wordWrap: "break-word",
-                                          whiteSpace: "pre-wrap",
-                                          marginRight: "auto",           // Align the bubble to the left
-                                          position: "relative",
-                                        }}
-                                      >
-                                      <ListItemText 
-                                        primary={message.messageContent} 
-                                      />
-                                      </Box>
-                                      
-                                    </Box>
-                                  }
-
-                                  </ListItem>
-                            ))}
-                          </List>
-
-                          <br />
-                          <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "77%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
-                          <br />
-                          <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
+                            <br />
+                            <TextField id="title-textfield" name="messageContent" multiline minRows={1} maxRows={3} style={{position: "absolute", width: "69%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Type message here..." />
+                            <br />
+                            <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
+                          </div>
                         </div>
                     }
                     </Paper>
