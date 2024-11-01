@@ -46,12 +46,12 @@ jobs:
       - name: Run RSpec tests
         run: bundle exec rspec
 
-      - uses: paambaati/codeclimate-action@v3.0.0
+      - uses: paambaati/codeclimate-action@v9
         # if: github.ref == 'refs/heads/main'
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageLocations: |
-            coverage/.resultset.json:simplecov
             coverage/lcov.info:lcov
           debug: true
+        # coverage/.resultset.json:simplecov
