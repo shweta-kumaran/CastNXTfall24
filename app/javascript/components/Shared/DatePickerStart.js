@@ -17,6 +17,7 @@ class DatePickerWrapperStart extends React.Component{
     }
 
     onChange = (newValue) => {
+        console.log(newValue)
         let date
         let dateStr
         try {
@@ -39,7 +40,7 @@ class DatePickerWrapperStart extends React.Component{
         let date
         let dateStr
         try {
-            date = new Date(this.state.value).toISOString()
+            // date = new Date(this.state.value).toISOString()
             dateStr = date.toString()
         }catch (error) {
             this.setState({

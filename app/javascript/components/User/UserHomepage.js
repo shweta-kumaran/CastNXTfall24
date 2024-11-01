@@ -180,10 +180,10 @@ class UserHomepage extends Component {
     onSubmit = () => {  
         
         let tableDataCopy = this.state.tabValue===0 ? this.state.acceptingTableData:this.state.submittedTableData;
-        
+        console.log("table data", tableDataCopy)
         // Category Based Filtering
         let categoryFilterValues = tableDataCopy.filter((event) => this.state.categoryFilterTextValue === 'All' ? true: this.state.categoryFilterTextValue === event.category)
-        
+        console.log("Category filter: ", categoryFilterValues)
         let finalFilterValues = categoryFilterValues
         let stateFilterValues = null
         let cityFilterValues = null
