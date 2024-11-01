@@ -18,11 +18,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import Header from "../Navbar/Header";
 import FormControl from "@mui/material/FormControl";
 import DatePickerWrapperStart from "../Shared/DatePickerStart";
 import DatePickerWrapperEnd from "../Shared/DatePickerEnd";
-
+import axios from "axios";
 const commonStyle = {marginTop: "20px", marginBottom: "20px"}
 
 class UserHomepage extends Component {
@@ -141,7 +142,7 @@ class UserHomepage extends Component {
       sendMessage = () => {
         const payload = {
           content: this.state.messageContent,
-          sender: this.props.properties.name,
+          sender: properties.name,
           receiver: 'Producer',
           event_id: this.state.eventToMessage.id,
           user_id: this.state.eventToMessage.slideId,
@@ -153,7 +154,7 @@ class UserHomepage extends Component {
           disableSubmit: true
         })
   
-        return axios.post(baseURL + "/event/" + this.state.event.id + "/messages", payload)
+        return axios.post(baseURL + "/events/" + this.state.eventToMessage.id + "/messages", payload)
         .then((res) => {
           this.setState({
             status: true,

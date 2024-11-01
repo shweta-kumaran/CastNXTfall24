@@ -26,6 +26,7 @@ class UserController < ApplicationController
       if talent_slide_exists?(event._id, talent._id)
         slide = get_talent_slide(event._id, talent._id)
         object["slideId"] = slide._id.to_str
+        
         messages = get_event_user_messages(event._id, slide._id)
         if "ACCEPTING".casecmp? event.status
           object["accepting"] = true

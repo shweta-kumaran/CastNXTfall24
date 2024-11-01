@@ -12,8 +12,9 @@ class MessagesController < ApplicationController
       elsif is_user_logged_in?("CLIENT")
       	create_message_client(params[:event_id], params[:user_id], params[:content], params[:sender], params[:receiver])
         render json: {comment: "Successfully sent Message as Client!"}, status: 200
-      else
+      elsif is_user_logged_in?("USER")
         create_message_talent(params[:event_id], params[:user_id], params[:content], params[:sender], params[:receiver])
+        render json: {comment: "Successfully sent Message as Talent!"}, status: 200
       end
     rescue Exception
       render json: {comment: Exception}, status: 500
