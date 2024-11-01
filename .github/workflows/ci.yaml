@@ -35,7 +35,7 @@ jobs:
           gem install rubocop-ast -v 1.30.0
           gem install parallel -v 1.24.0
           gem install rubocop -v 1.21.0
-          rubocop --parallel
+          rubocop --parallel --fail-level error
       
       - name: Run Jest tests
         run: yarn test --coverage
