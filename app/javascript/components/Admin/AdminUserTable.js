@@ -177,6 +177,13 @@ class AdminUserTable extends Component {
             rows: [...prevState.rows, newRow]
         }));
     }
+    deleteRow = () => {
+      this.setState(prevState => ({
+        rows: prevState.rows.filter(row => row.id !== this.state.selectedRow),
+        selectedRow: -1
+      }));
+      axios.delete('/admin/events/'+window.location.href.split('/').pop()+'/slides/'+this.state.selectedRow)
+    }
     handleRowChange = (newData, id) => {
       this.setState(prevState => ({
           rows: prevState.rows.map(row => row.id === id ? newData : row)
@@ -346,9 +353,21 @@ class AdminUserTable extends Component {
                           </IconButton>
                         </div>
                       </div>
+      
+                      <Button variant="outlined" onClick={this.addNewRow}>Add User</Button>
+                      <Button variant="outlined" onClick={this.handleSave}>Save Data</Button>
+                      {this.state.selectedRow > -1 && (<Button
+                        variant="outlined"
+                        onClick={() => {
+                          if (window.confirm("This action is irreversible, are you sure?")) {
+                            this.deleteRow();
+                          }
+                        }}
+                      >
+                        Delete User
+                      </Button>)}
+                      <br />
                       {this.state.selectedRow > -1 && (<Button variant="contained" onClick={this.openChatWindow}>Chat with {this.state.rows[this.state.selectedRow - 1]['talentName']}</Button>)}
-                      <button onClick={this.addNewRow}>Add Row</button>
-                      <button onClick={this.handleSave}>Save Data</button>
                       <DataGrid
                         onCellEditCommit={this.handleCellEditCommit}
                         testId='userTableDataGrid'
