@@ -44,6 +44,7 @@ jobs:
         run: bundle exec rspec
 
       - uses: paambaati/codeclimate-action@v9
+        if: github.ref == 'refs/heads/main'
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
