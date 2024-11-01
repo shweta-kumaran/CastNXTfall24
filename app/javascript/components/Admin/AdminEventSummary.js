@@ -164,6 +164,7 @@ class AdminEventSummary extends Component {
     const updatedPaymentStatus = !row.paymentCompleted;
 
     if (!row.slideId) { // Ensure we are using the actual slideId
+      console.error('Slide ID is undefined for row:', row)
       return;
     }
 

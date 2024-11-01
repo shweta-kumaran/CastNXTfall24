@@ -1,7 +1,7 @@
 import AdminEventSummary from "../../../../app/javascript/components/Admin/AdminEventSummary";
-import {propsDefault} from '../../__mocks__/props.mock';
+import {propsDefault, ADMIN_EVENT_PROPERTIES} from '../../__mocks__/props.mock';
 import renderer from 'react-test-renderer';
-import { act } from 'react-dom/test-utils';
+import ReactTestUtils, { act } from 'react-dom/test-utils';
 import { saveAs } from 'file-saver';
 import {defaultDataSchema, defaultUiSchema, getSchema} from '../../../../app/javascript/utils/FormsUtils';
 // import { saveAs } from 'file-saver';
@@ -271,7 +271,100 @@ describe('AdminEventSummary Component', () => {
         expect(result.beenPaid).toBe(true);
         expect(global.fetch).toHaveBeenCalledWith(`/slides/1/payment_status`);
     });
-
+    test('handlePaymentCompletedToggle success', async () => {
+        const view = ReactTestUtils.renderIntoDocument(<AdminEventSummary properties={ADMIN_EVENT_PROPERTIES}/>);
+        view.setState({
+            rows: [
+                {
+                    id: 1,
+                    slideId: "634b44f0c2e881bd9a343e48",
+                    clients: "",
+                    paymentCompleted: false
+                }
+            ]
+        })
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ success: true})
+        })
+        await act(async () => {
+            await view.handlePaymentCompletedToggle(1);
+        });
+        expect(fetch).toHaveBeenCalledWith('/slides/634b44f0c2e881bd9a343e48/update_payment_status', expect.objectContaining({
+            method: 'POST', headers: {'Content-Type': 'application/json' }, body: JSON.stringify({ been_paid: true })
+        }))
+    
+    })
+    
+    
+    test('handlePaymentCompletedToggle unsuccessful', async () => {
+        const view = ReactTestUtils.renderIntoDocument(<AdminEventSummary properties={ADMIN_EVENT_PROPERTIES}/>);
+        view.setState({
+            rows: [
+                {
+                    id: 1,
+                    slideId: "634b44f0c2e881bd9a343e48",
+                    clients: "",
+                    paymentCompleted: false
+                }
+            ]
+        })
+        global.fetch = jest.fn(() =>
+            Promise.reject(new Error('API error'))
+        );
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+        // Trigger the toggle
+        await act(async () => {
+            await view.handlePaymentCompletedToggle(1);
+        });
+    
+        // Wait for all state updates to complete
+        await new Promise(resolve => setTimeout(resolve, 0));
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Error:', expect.any(Error));
+        // Payment status should remain unchanged due to error
+        // expect(view.state.rows[0].paymentCompleted).toBe(false);
+        // fetch.mockResolvedValueOnce({
+        //     ok: false,
+        //     statusText: 'Internal Server Error',
+        //     text: async () => 'Failed to process the request'
+        // })
+        // const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+        // await expect(view.handlePaymentCompletedToggle(1)).rejects.toThrow('Failed to update payment status: Internal Server Error');
+        // expect(consoleErrorSpy).toHaveBeenCalledWith('Server error:', 'Failed to process the request');
+        // consoleErrorSpy.mockRestore();
+    
+    })
+    
+    test('handlePaymentCompletedToggle failed with slideID', async () => {
+        const view = ReactTestUtils.renderIntoDocument(<AdminEventSummary properties={ADMIN_EVENT_PROPERTIES}/>);
+        view.setState({
+            rows: [
+                {
+                    id: 1,
+                    slideId: undefined,
+                    clients: "",
+                    paymentCompleted: false
+                }
+            ]
+        })
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+        await view.handlePaymentCompletedToggle(1);
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Slide ID is undefined for row:', view.state.rows[0]);
+        consoleErrorSpy.mockRestore();
+    
+        // Payment status should remain unchanged due to error
+        // expect(view.state.rows[0].paymentCompleted).toBe(false);
+        // fetch.mockResolvedValueOnce({
+        //     ok: false,
+        //     statusText: 'Internal Server Error',
+        //     text: async () => 'Failed to process the request'
+        // })
+        // const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+        // await expect(view.handlePaymentCompletedToggle(1)).rejects.toThrow('Failed to update payment status: Internal Server Error');
+        // expect(consoleErrorSpy).toHaveBeenCalledWith('Server error:', 'Failed to process the request');
+        // consoleErrorSpy.mockRestore();
+    
+    })
     // test('constructTableData handles event talent and schema properties correctly', () => {
     //     const component = new AdminEventSummary({ properties: propsDefault.properties });
     //     const eventTalent = [
