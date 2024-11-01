@@ -3,12 +3,11 @@ import {propsDefault} from '../../__mocks__/props.mock';
 import renderer from 'react-test-renderer';
 import { act } from 'react-dom/test-utils';
 import { saveAs } from 'file-saver';
-jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
-
-
-
 import {defaultDataSchema, defaultUiSchema, getSchema} from '../../../../app/javascript/utils/FormsUtils';
 // import { saveAs } from 'file-saver';
+
+jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
+global.fetch = jest.fn();
 
 jest.mock('@material-ui/data-grid',() => ({
     DataGrid: (props) => {
@@ -247,208 +246,6 @@ test('handleDownloadClick triggers file download', () => {
     expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'table_data.csv'); // Confirms file name and Blob format
 });
 
-// failing
-// test('componentDidMount initializes state with filtered eventTalent and calls fetchPaymentStatus', async () => {
-//     const mockSlides = {
-//         slide1: { 
-//             talentName: 'Talent1', 
-//             curated: true, 
-//             formData: { name: 'Test1' }, 
-//             been_paid: false 
-//         }
-//     };
-
-//     const mockProps = {
-//         properties: {
-//             data: {
-//                 slides: mockSlides,
-//                 schema: {
-//                     properties: {
-//                         name: { type: 'string', title: 'Name' }
-//                     }
-//                 },
-//                 clients: {
-//                     client1: {
-//                         name: 'Client1',
-//                         finalizedIds: ['slide1']
-//                     }
-//                 }
-//             }
-//         }
-//     };
-
-//     const component = new AdminEventSummary(mockProps);
-
-//     // Mock fetchPaymentStatus to resolve with updated payment status
-//     const mockFetchPaymentStatus = jest.fn().mockResolvedValue({
-//         id: 'slide1',
-//         name: 'Talent1',
-//         curated: true,
-//         formData: { name: 'Test1' },
-//         beenPaid: true
-//     });
-
-//     component.fetchPaymentStatus = mockFetchPaymentStatus;
-
-//     // Debugging in componentDidMount
-//     console.log("Mock Slides:", mockSlides);
-
-//     await act(async () => {
-//         await component.componentDidMount();
-//     });
-
-//     // Additional debug log to inspect the state after componentDidMount
-//     console.log('State after componentDidMount:', component.state);
-
-//     // Check if fetchPaymentStatus was called and eventTalent was updated
-//     expect(mockFetchPaymentStatus).toHaveBeenCalledTimes(1);
-//     expect(component.state.eventTalent).toHaveLength(1);
-//     expect(component.state.eventTalent[0].beenPaid).toBe(true);
-// });
-
-
-
-// test('handlePaymentCompletedToggle toggles payment status correctly', async () => {
-//     const mockProps = {
-//         properties: {
-//             data: {
-//                 slides: {},
-//                 schema: { properties: {} },
-//                 clients: {}
-//             }
-//         }
-//     };
-
-//     const component = new AdminEventSummary(mockProps);
-    
-//     // Setup initial state with a mock row
-//     const mockRow = { 
-//         id: 1, 
-//         slideId: 'slide1', 
-//         paymentCompleted: false 
-//     };
-
-//     // Set initial state using setState
-//     await act(async () => {
-//         await component.setState({
-//             rows: [mockRow]
-//         });
-//     });
-
-//     // Mock successful API response
-//     global.fetch = jest.fn(() =>
-//         Promise.resolve({
-//             ok: true,
-//             json: () => Promise.resolve({ success: true })
-//         })
-//     );
-
-//     // Trigger the toggle
-//     await act(async () => {
-//         await component.handlePaymentCompletedToggle(1);
-//     });
-
-//     // Wait for all state updates to complete
-//     await new Promise(resolve => setTimeout(resolve, 0));
-
-//     expect(component.state.rows[0].paymentCompleted).toBe(true);
-//     expect(fetch).toHaveBeenCalledWith(
-//         '/slides/slide1/update_payment_status',
-//         expect.objectContaining({
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ been_paid: true })
-//         })
-//     );
-// });
-
-// test('handlePaymentCompletedToggle handles fetch errors', async () => {
-//     const mockProps = {
-//         properties: {
-//             data: {
-//                 slides: {},
-//                 schema: { properties: {} },
-//                 clients: {}
-//             }
-//         }
-//     };
-
-//     const component = new AdminEventSummary(mockProps);
-    
-//     // Setup initial state with a mock row
-//     const mockRow = { 
-//         id: 1, 
-//         slideId: 'slide1', 
-//         paymentCompleted: false 
-//     };
-
-//     // Set initial state
-//     await act(async () => {
-//         await component.setState({
-//             rows: [mockRow]
-//         });
-//     });
-
-//     // Mock failed API response
-//     global.fetch = jest.fn(() =>
-//         Promise.reject(new Error('API error'))
-//     );
-
-//     // Trigger the toggle
-//     await act(async () => {
-//         await component.handlePaymentCompletedToggle(1);
-//     });
-
-//     // Wait for all state updates to complete
-//     await new Promise(resolve => setTimeout(resolve, 0));
-
-//     // Payment status should remain unchanged due to error
-//     expect(component.state.rows[0].paymentCompleted).toBe(false);
-// });
-
-// test('handlePaymentCompletedToggle toggles payment status correctly with state update', async () => {
-//     const mockProps = {
-//         properties: {
-//             data: {
-//                 slides: {},
-//                 schema: { properties: {} },
-//                 clients: {}
-//             }
-//         }
-//     };
-
-//     const component = new AdminEventSummary(mockProps);
-//     const mockRow = { 
-//         id: 1, 
-//         slideId: 'slide1', 
-//         paymentCompleted: false 
-//     };
-
-//     await act(async () => {
-//         component.setState({
-//             rows: [mockRow]
-//         });
-//     });
-
-//     global.fetch = jest.fn(() =>
-//         Promise.resolve({
-//             ok: true,
-//             json: () => Promise.resolve({ success: true })
-//         })
-//     );
-
-//     await component.handlePaymentCompletedToggle(1);
-
-//     // Wait for all state updates to complete
-//     await new Promise(resolve => setTimeout(resolve, 0));
-
-//     expect(component.state.rows[0].paymentCompleted).toBe(true);
-//     expect(fetch).toHaveBeenCalledWith(
-//         '/slides/slide1/update_payment_status',
-//         expect.any(Object)
-//     );
-// });
-
 beforeEach(() => {
     jest.clearAllMocks();
 });
@@ -457,91 +254,97 @@ afterEach(() => {
     jest.resetAllMocks();
 });
 
-// test('constructTableData constructs rows and columns correctly', () => {
-//     const mockProps = {
-//         properties: {
-//             data: {
-//                 schema: {
-//                     properties: {
-//                         name: { title: 'Name', type: 'string' },
-//                         age: { title: 'Age', type: 'number' },
-//                     },
-//                 },
-//                 clients: {
-//                     client1: { name: 'Client1', finalizedIds: [1] },
-//                     client2: { name: 'Client2', finalizedIds: [2] }
-//                 }
-//             }
-//         }
-//     };
+describe('AdminEventSummary Component', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+    test('fetchPaymentStatus updates beenPaid correctly when API returns data', async () => {
+        global.fetch.mockResolvedValue({
+            json: jest.fn().mockResolvedValue({ been_paid: true })
+        });
 
-//     const reactComponentObjectForThisComponent = new AdminEventSummary(mockProps);
-//     const eventTalent = [
-//         { id: 1, formData: { name: 'Talent1', age: 30 }, beenPaid: true },
-//         { id: 2, formData: { name: 'Talent2', age: 25 }, beenPaid: false },
-//     ];
+        const component = new AdminEventSummary({ properties: propsDefault.properties });
+        const talentData = { id: 1, beenPaid: false };
 
-//     const [rows, columns] = reactComponentObjectForThisComponent.constructTableData(eventTalent);
+        const result = await component.fetchPaymentStatus(talentData);
 
-//     expect(rows.length).toBe(2);
-//     expect(columns).toEqual(
-//         expect.arrayContaining([
-//             { field: 'clients', headerName: 'Clients assigned', minWidth: 200 },
-//             { field: 'paymentCompleted', headerName: 'Payment Completed', minWidth: 200, type: 'boolean' },
-//             { field: 'name', headerName: 'Name', minWidth: 150, type: 'string' },
-//             { field: 'age', headerName: 'Age', minWidth: 150, type: 'number' }
-//         ])
-//     );
-//     expect(rows[0].paymentCompleted).toBe(true);
-//     expect(rows[1].paymentCompleted).toBe(false);
-// });
+        expect(result.beenPaid).toBe(true);
+        expect(global.fetch).toHaveBeenCalledWith(`/slides/1/payment_status`);
+    });
 
+    // test('constructTableData handles event talent and schema properties correctly', () => {
+    //     const component = new AdminEventSummary({ properties: propsDefault.properties });
+    //     const eventTalent = [
+    //         {
+    //             id: '123',
+    //             formData: { name: 'Test' },
+    //             beenPaid: true,
+    //             curated: true // Ensuring curated is true for filtering
+    //         },
+    //     ];
 
-// test('handleDownloadClick triggers CSV download', () => {
-//     const reactComponentObjectForThisComponent = new AdminEventSummary({ properties: propsDefault.properties });
-//     reactComponentObjectForThisComponent.state.rows = [{ id: 1, name: 'Sample Data' }];
-//     const convertDataToCSVSpy = jest.spyOn(reactComponentObjectForThisComponent, 'convertDataToCSV');
+    //     const [rows, columns] = component.constructTableData(eventTalent);
 
-//     reactComponentObjectForThisComponent.handleDownloadClick();
+    //     // Expect the first row to have id, clients, name, and paymentCompleted properties
+    //     expect(rows[0]).toEqual(
+    //         expect.objectContaining({
+    //             id: 1,
+    //             clients: '',
+    //             name: 'Test',
+    //             paymentCompleted: true,
+    //         })
+    //     );
 
-//     expect(convertDataToCSVSpy).toHaveBeenCalled();
-//     expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'table_data.csv');
-// });
+    //     // Expect the columns to include specific fields and types
+    //     expect(columns).toEqual(
+    //         expect.arrayContaining([
+    //             expect.objectContaining({ field: 'name', type: 'string' }),
+    //             expect.objectContaining({ field: 'paymentCompleted', type: 'boolean' })
+    //         ])
+    //     );
+    // });
 
+    // test('handlePaymentCompletedToggle toggles payment status on success', async () => {
+    //     global.fetch.mockResolvedValue({
+    //         ok: true,
+    //         json: jest.fn().mockResolvedValue({ success: true })
+    //     });
 
-// test('handlePaymentCompletedToggle updates payment status correctly', async () => {
-//     global.fetch = jest.fn(() =>
-//         Promise.resolve({
-//             ok: true,
-//             json: () => Promise.resolve({ success: true }),
-//         })
-//     );
+    //     const component = renderer.create(<AdminEventSummary properties={propsDefault.properties} />);
+    //     const instance = component.getInstance();
 
-//     const reactComponentObjectForThisComponent = new AdminEventSummary({ properties: propsDefault.properties });
-//     reactComponentObjectForThisComponent.setState({
-//         rows: [{ id: 1, slideId: 'slide1', paymentCompleted: false }],
-//     });
+    //     // Ensure slideId is set for the row to mock an actual update
+    //     instance.setState({
+    //         rows: [
+    //             { id: 1, slideId: '123', paymentCompleted: false }
+    //         ]
+    //     });
 
-//     await reactComponentObjectForThisComponent.handlePaymentCompletedToggle(1);
+    //     await act(async () => {
+    //         await instance.handlePaymentCompletedToggle(1);
+    //     });
 
-//     expect(reactComponentObjectForThisComponent.state.rows[0].paymentCompleted).toBe(true);
-// });
+    //     const updatedRow = instance.state.rows.find(row => row.id === 1);
+    //     expect(updatedRow.paymentCompleted).toBe(true);  // Confirm the state update
+    // });   
 
-// test('componentDidMount initializes eventTalent with curated talent only', async () => {
-//     const mockSlides = {
-//         slide1: { talentName: 'Talent1', curated: true, formData: {}, been_paid: true },
-//         slide2: { talentName: 'Talent2', curated: false, formData: {}, been_paid: false },
-//     };
-//     const mockProps = {
-//         properties: {
-//             data: {
-//                 slides: mockSlides,
-//             },
-//         },
-//     };
+    // test('handlePaymentCompletedToggle handles API error gracefully', async () => {
+    //     global.fetch.mockRejectedValueOnce(new Error('Network error'));
 
-//     const component = new AdminEventSummary(mockProps);
-//     await component.componentDidMount();
+    //     const component = renderer.create(<AdminEventSummary properties={propsDefault.properties} />);
+    //     const instance = component.getInstance();
 
-//     expect(component.state.eventTalent).toEqual([{ id: 'slide1', name: 'Talent1', curated: true, formData: {}, beenPaid: true }]);
-// });
+    //     // Set a slideId for the row to trigger the fetch call in handlePaymentCompletedToggle
+    //     instance.setState({
+    //         rows: [
+    //             { id: 1, slideId: '123', paymentCompleted: false }
+    //         ]
+    //     });
+
+    //     await act(async () => {
+    //         await instance.handlePaymentCompletedToggle(1);
+    //     });
+
+    //     expect(console.error).toHaveBeenCalledWith(expect.anything(), expect.stringContaining('Network error'));
+    // });
+});
