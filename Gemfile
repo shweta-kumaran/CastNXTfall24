@@ -70,6 +70,7 @@ group :test do
   gem 'chromedriver-helper'
   gem 'mongoid-rspec'
   gem 'simplecov'
+  gem "simplecov_json_formatter", "~> 0.1.4", require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -158,4 +159,3 @@ gem 'nokogiri', '1.13.10'
 # gem 'nokogiri', '~> 1.16.7'
 # gem "ostruct", "~> 0.6.0"
 
-gem "simplecov_json_formatter", "~> 0.1.4"
