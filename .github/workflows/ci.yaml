@@ -50,4 +50,4 @@ jobs:
           coverageLocations: |
             coverage/.resultset.json:simplecov
             coverage/lcov.info:lcov
-        debug: true
+          debug: true
