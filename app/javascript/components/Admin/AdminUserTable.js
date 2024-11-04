@@ -180,9 +180,13 @@ class AdminUserTable extends Component {
     deleteRow = () => {
       this.setState(prevState => ({
         rows: prevState.rows.filter(row => row.id !== this.state.selectedRow),
-        selectedRow: -1
+        selectedRow: -1,
+        openChatWindow: false
       }));
-      axios.delete('/admin/events/'+window.location.href.split('/').pop()+'/slides/'+this.state.selectedRow)
+
+      const baseURL = window.location.href.split("#")[0]
+      const uniqId = this.state.rows[this.state.selectedRow - 1]['uniqId']
+      axios.delete(baseURL + '/slides/'+ uniqId)
     }
     handleRowChange = (newData, id) => {
       this.setState(prevState => ({

@@ -11,9 +11,9 @@ class SlidesController < ApplicationController
     end
   end
 
-  # DELETE /admin/events/:id/slides/:id
-  def delete
-    delete_producer_slide
+  # DELETE /admin/events/:event_id/slides/:id
+  def destroy
+    delete_producer_slide params[:id]
   end
 
   def update_payment_status
@@ -109,13 +109,10 @@ class SlidesController < ApplicationController
     end
   end
 
-  def delete_producer_slide
+  def delete_producer_slide slide_id
     begin
       if is_user_logged_in?("ADMIN")
-        eventId = params[:event_id]
-        # talent = Talent.find_by(:email => params[:email])
-        talent = Talent.find_by(:_id => params[:talent_id])
-        slide = get_talent_slide(eventId, talent._id)
+        slide = Slide.find_by(:_id => slide_id)
         slide.destroy
         render json: {comment: "Deleted slide!"}, status: 200
       else
