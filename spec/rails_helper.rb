@@ -4,6 +4,8 @@ require 'mongoid-rspec'
 ENV['RAILS_ENV'] ||= 'test'
 Mongoid.load!(File.expand_path('../../config/mongoid.yml', __FILE__), :test)
 require 'simplecov'
+require 'simplecov_json_formatter'
+SimpleCov.formatter = SimpleCov::Formatter::JSONFormatter
 SimpleCov.start 'rails' do
   add_filter '/bin/'
   add_filter '/db/'
@@ -11,7 +13,6 @@ SimpleCov.start 'rails' do
 end
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
-# abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!

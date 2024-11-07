@@ -48,7 +48,7 @@ class ClientEventFeedback extends Component {
       let entries = []
       let clientComments = []
       let slideComments = []
-      
+      console.log("properties: ", this.props.properties)
       for(var key in slides) {
         entries.push({
           ...slides[key],
@@ -146,7 +146,7 @@ class ClientEventFeedback extends Component {
         receiver: 'Producer',
         sender: this.props.properties.name,
         event_id: window.location.href.split("/")[-1],
-        client_id: this.state.clientId
+        user_id: this.state.clientId
       }
 
       const baseURL = window.location.href.split("#")[0]

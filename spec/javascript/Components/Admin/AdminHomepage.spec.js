@@ -55,3 +55,55 @@ test('AdminHomepage Load test: NO events', ()=>{
     expect(tree).toMatchSnapshot();
 })
 
+const findTextInTree = (tree, text) => {
+    if (typeof tree === 'string') {
+        return tree.includes(text);
+    }
+    if (Array.isArray(tree)) {
+        return tree.some(child => findTextInTree(child, text));
+    }
+    if (tree && tree.children) {
+        return findTextInTree(tree.children, text);
+    }
+    return false;
+}
+
+test('Displays "No ongoing Events right now" when there are no events', () => {
+    global.properties = ADMIN_PROPERTIES_EVENT_NONE;
+    const component = renderer.create(<AdminHomepage />);
+    const tree = component.toJSON();
+
+    const noEventsMessage = findTextInTree(tree, "No ongoing Events right now.");
+    expect(noEventsMessage).toBe(true);
+})
+
+test('Displays event list when events are present and not DELETED', () => {
+    global.properties = ADMIN_PROPERTIES_EVENT_ACCEPTING;
+    const component = renderer.create(<AdminHomepage />);
+    const tree = component.toJSON();
+
+    const hasEventHeading = findTextInTree(tree, "Event");
+    const hasStatusHeading = findTextInTree(tree, "Status");
+    const hasCategoryHeading = findTextInTree(tree, "category");
+
+    expect(hasEventHeading).toBe(true);
+    expect(hasStatusHeading).toBe(true);
+    expect(hasCategoryHeading).toBe(true);
+})
+
+test('Redirects to create event page on button click', () => {
+    global.properties = ADMIN_PROPERTIES_EVENT_ACCEPTING;
+
+    const originalLocation = window.location;
+    delete window.location;
+    window.location = { href: '' };
+
+    const component = renderer.create(<AdminHomepage />);
+    const buttonInstance = component.root.findByProps({ children: "Create New Event" });
+
+    buttonInstance.props.onClick();
+    
+    expect(window.location.href).toBe("/admin/events/new");
+
+    window.location = originalLocation;
+})

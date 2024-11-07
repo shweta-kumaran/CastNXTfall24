@@ -52,6 +52,18 @@ RSpec.describe NegotiationsController, type: :controller do
             post :create,params:{event_id: @event._id.to_str,client_id:@client._id,finalSlides:[@slide._id.to_str]}
             expect(Negotiation.find_by(_id:@negotiation._id).finalSlides).to_not be_empty 
         end
+        it "should not when exception is raised as a admin" do
+            session[:userType]="ADMIN"
+            session[:userName]="eventtest"
+            session[:userEmail]="eventtest@gmail.com"
+            session[:userId]=@admin._id.to_str
+            allow(controller).to receive(:is_user_logged_in?).and_return(true)
+
+            allow(controller).to receive(:get_negotiation).and_raise(StandardError, "Some error")
+    
+            post :create,params:{event_id: @event._id.to_str,client_id:@client._id,finalSlides:[@slide._id.to_str]}
+            expect(response).to_not have_http_status(:success)
+        end
         it "should create as a client" do
             session[:userType]="CLIENT"
             session[:userName]="eventtest_client"
@@ -71,8 +83,21 @@ RSpec.describe NegotiationsController, type: :controller do
             session.clear
             session[:userId]=@client._id.to_str
             session[:userType]="client"
+
             post :create,params:{event_id:@event._id.to_str,client_id:@client._id.to_str}
             expect(response).to_not have_http_status(:success)
         end
+        it "should not when exception is raised as a client" do
+            session.clear
+            session[:userId]=@client._id.to_str
+            session[:userType]="client"
+            allow(controller).to receive(:is_user_logged_in?).and_return(true)
+
+            allow(controller).to receive(:get_negotiation).and_raise(StandardError, "Some error")
+    
+            post :create,params:{event_id:@event._id.to_str,client_id:@client._id.to_str}
+            expect(response).to_not have_http_status(:success)
+        end
+        
     end
 end

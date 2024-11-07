@@ -23,7 +23,7 @@ class AnnouncementsController < ApplicationController
       private
     
       def create_announcement eventId, messageContent, messageSender
-        # UserMailer.added_announcement(client.email).deliver_now	
+        #UserMailer.added_announcement(client.email).deliver_now	
         Announcement.create(:event_id => eventId, :from => messageSender, :announcement => messageContent)
       end
     

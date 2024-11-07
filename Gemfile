@@ -69,7 +69,8 @@ group :test do
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
   gem 'mongoid-rspec'
-  gem 'simplecov'
+  gem 'simplecov', '~> 0.21.2', require: false
+  gem "simplecov_json_formatter", "~> 0.1.4", require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -157,3 +158,4 @@ gem 'nokogiri', '1.13.10'
 
 # gem 'nokogiri', '~> 1.16.7'
 # gem "ostruct", "~> 0.6.0"
+
