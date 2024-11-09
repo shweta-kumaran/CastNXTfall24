@@ -30,7 +30,8 @@ class FormBuilderContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fileKey: ''
+      fileKey: '',
+      isPreview: true, // Set to true if you want to start in preview mode
     }
   }
 
@@ -71,7 +72,15 @@ class FormBuilderContainer extends Component {
     this.props.onUISchemaChange(JSON.stringify(uiSchemaObj));
   }
   
+  togglePreviewMode = () => {
+    this.setState((prevState) => ({
+      isPreview: !prevState.isPreview,
+    }));
+  };
+
   render() {
+    const { isPreview } = this.state;
+
     return (
       <>
         <h4>Add fields to the following form.</h4>
@@ -96,6 +105,8 @@ class FormBuilderContainer extends Component {
                   uiSchema={JSON.parse(this.props.uischema)}
                   formData={this.props.formData}
                   onFormDataChange={this.props.onFormDataChange}
+                  onSubmit={this.props.onSubmit} // Pass onSubmit if needed
+                  isPreview={isPreview} // Pass isPreview state to Slide
                 />
             </div>
         </div>
