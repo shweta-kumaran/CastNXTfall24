@@ -148,7 +148,8 @@ class Slide extends Component {
             type="submit"
             style={
               {
-              backgroundColor: isPreview ? "#e9ecef" : "#1976d2", // Change color based on preview
+              backgroundColor: "#1976d2", // Change color based on preview
+              color: "white", // Set text color to white
               cursor: isPreview ? "not-allowed" : "pointer",
             }
           }
