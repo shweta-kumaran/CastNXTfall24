@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  devise_for :dusers
   root 'home#landing_page'
   get 'home', to: 'home#index'
   get '/logout', to: 'application#logout'
