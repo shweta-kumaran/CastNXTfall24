@@ -16,6 +16,19 @@ Rails.application.routes.draw do
     post 'signup', :on => :collection
     post 'forgotPassword', :on => :collection
   end
+
+  # ## == Devise OAuth ==
+  # devise_for :dusers, skip: [:sessions],
+  #   controllers: { omniauth_callbacks: 'dusers/omniauth_callbacks' },
+  #   omniauth_providers: %i[events360]
+
+  
+
+  # # Define custom devise routes for OmniAuth-based authentication failures
+  # get '/dusers/auth/failure', to: 'dusers/omniauth_callbacks#failure'
+  # # these routes are already created - how ?
+  #duser_events360_omniauth_authorize GET|POST /dusers/auth/events360(.:format)                             devise/omniauth_callbacks#passthru
+  #duser_events360_omniauth_callback GET|POST /dusers/auth/events360/callback(.:format)                    devise/omniauth_callbacks#events360
   
   resources :user, only: [:index] do
     collection do

@@ -166,3 +166,4 @@ gem 'omniauth-oauth2'
 gem 'omniauth-rails_csrf_protection'
 
 gem 'devise'
+gem 'dotenv-rails', groups: [:development, :test]

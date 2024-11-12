@@ -273,11 +273,20 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
  
+  require 'devise/orm/active_record'
 
   config.omniauth :events360,
-    ENV['EVENT360_CLIENT_ID'],
-    ENV['EVENT360_CLIENT_SECRET'],
-    strategy_class: OmniAuth::Strategies::Events360
+  ENV['EVENT360_CLIENT_ID'],
+  ENV['EVENT360_CLIENT_SECRET'],
+  strategy_class: OmniAuth::Strategies::Events360,
+  client_options: {
+    site: ENV['EVENT360_URL'],
+    authorize_url: "#{ENV['EVENT360_URL']}/oauth/authorize",
+    token_url: "#{ENV['EVENT360_URL']}/oauth/token"
+  },
+  scope: 'public'
+
+   
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.
