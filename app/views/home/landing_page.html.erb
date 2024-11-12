@@ -111,7 +111,16 @@
             </div>
           </div>
         </section>
+        
         <hr class="my-5" />
+        <section class="mb-5" >
+        <!-- Add the "Login with Event 360" button here -->
+  <div class="text-center mt-5">
+  
+   <%= button_to 'Sign in with Events360', user_events360_omniauth_authorize_path, 
+            method: :post, data: {turbo: false}, form: { id: 'events360_login_form' }, class: 'btn btn-success fw-bold' %>
+        
+     </section>
       </div>
   </body>
 </html>

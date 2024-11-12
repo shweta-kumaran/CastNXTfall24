@@ -31,6 +31,10 @@ gem 'coffee-rails', '~> 4.2'
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
+gem 'omniauth'
+gem 'omniauth-oauth2'
+gem 'devise'
+#gem 'omniauth-rails_csrf_protection'
 
 # Use tp to display tables in tabular format on rails console
 gem 'table_print'

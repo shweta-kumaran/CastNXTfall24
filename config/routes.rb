@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  devise_for :users
   root 'home#landing_page'
   get 'home', to: 'home#index'
   get '/logout', to: 'application#logout'
@@ -10,11 +11,16 @@ Rails.application.routes.draw do
 
   get '/api/', to: 'api#index'
   
+  devise_for :users,
+  controllers: { omniauth_callbacks: 'user/omniauth_callbacks' },
+  omniauth_providers: %i[events360]
+
   resources :home, only: [] do
     post 'login', :on => :collection
     post 'signup', :on => :collection
     post 'forgotPassword', :on => :collection
   end
+  # config/routes.rb
   
   resources :user, only: [:index] do
     collection do
