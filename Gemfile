@@ -159,3 +159,10 @@ gem 'nokogiri', '1.13.10'
 # gem 'nokogiri', '~> 1.16.7'
 # gem "ostruct", "~> 0.6.0"
 
+# for central login
+gem 'oauth2'
+gem 'omniauth'
+gem 'omniauth-oauth2'
+gem 'omniauth-rails_csrf_protection'
+
+gem 'devise'
