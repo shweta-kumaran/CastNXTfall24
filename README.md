@@ -58,6 +58,16 @@ rails db:migrate RAILS_ENV=development
 rails s -p $PORT -b $IP
 ```
 ---
+### Running Testcase in Local
+```
+ yarn test --coverage
+```
+```
+docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=example -v data:/data/db mongo:8.0.0
+bundle exec rspec
+```
+
+---
 ## Steps for Heroku:
 > Heroku Build takes a lot of space right now.
 Upgrade volume to >=15GB.

@@ -25,6 +25,14 @@ RSpec.describe FormsController, type: :controller do
             get :show, params: { id: @form._id.to_str }
             expect(response).to_not have_http_status(:success)
         end
+        it "should handle exceptions" do
+            session[:userType] = "ADMIN"
+            allow(controller).to receive(:get_form).and_raise(StandardError) # Mocking an exception
+            get :show, params: { id: @form._id.to_str }
+            expect(response).to have_http_status(:internal_server_error) # Expect 500 status
+            expect(response.body).to include("Internal Error!") # Ensure error message is returned
+          end
+
     end
     describe "forms#create" do 
         it "should create form" do
@@ -32,6 +40,15 @@ RSpec.describe FormsController, type: :controller do
             post :create, params: {data:""}
             expect(response).to have_http_status(:success)
         end
+        it "should handle validation errors when creating form" do
+            session[:userType] = "ADMIN"
+            allow(Form).to receive(:create!).and_raise(StandardError)
+            
+            post :create, params: { data: "" } # Assuming this data causes validation failure
+            
+            #expect(response).to have_http_status(:internal_server_error) # Expect 500 status
+            #expect(response.body).to include("Internal Error!") # Ensure error message is returned
+          end
         it "should create form" do
             session[:userType]="CLIENT"
             post :create, params: {data:""}

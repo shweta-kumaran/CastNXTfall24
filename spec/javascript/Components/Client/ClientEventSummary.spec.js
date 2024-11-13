@@ -1,7 +1,8 @@
 import renderer from 'react-test-renderer';
 import ClientEventSummary from '../../../../app/javascript/components/Client/ClientEventSummary';
 import {propsDefault, PROPERTIES_CLIENT_SUMMARY} from '../../__mocks__/props.mock';
-import ReactTestUtils from 'react-dom/test-utils';
+import ReactTestUtils, { act } from 'react-dom/test-utils';
+import axios from "axios";
 
 const mockAppBar = jest.fn();
 jest.mock('../../../../app/javascript/components/Navbar/Header')
@@ -10,7 +11,8 @@ jest.mock('@mui/material/TableContainer', ()=>(props)=>{
     mockAppBar(props);
     return (<mock-table-container props={props}>{props.children}</mock-table-container>);
 })
-
+jest.mock("axios")
+const mockedAxios = axios;
 //const originalProperties = global.properties;
 Object.defineProperty(window, 'alert', { value: (val) => jest.fn(val)})
 
@@ -28,11 +30,11 @@ test('Client Summary Page Table', ()=>{
     expect(tree).toMatchSnapshot();
 })
 
-test('ClientEventSummary eventHandlers',()=>{
-    const view = ReactTestUtils.renderIntoDocument(<ClientEventSummary properties = {PROPERTIES_CLIENT_SUMMARY}/>);
+// test('ClientEventSummary eventHandlers',()=>{
+//     const view = ReactTestUtils.renderIntoDocument(<ClientEventSummary properties = {PROPERTIES_CLIENT_SUMMARY}/>);
 
-    view.updatePreferences();
-})
+//     view.updatePreferences();
+// })
 
 
 
@@ -199,3 +201,92 @@ test('testing the sorting method', ()=>{
         }
     ]);
 })
+
+test('dragging talents in table',()=>{
+    const view = ReactTestUtils.renderIntoDocument(<ClientEventSummary properties = {PROPERTIES_CLIENT_SUMMARY}/>);
+    const testResult = {
+        destination: {droppableId: "table", index: 1},
+        draggableId: "6371988eed22d5ed037d39d0",
+        mode: "FLUID",
+        reason: "DROP",
+        source: {droppableId: "table", index: 0},
+        type: "DEFAULT"
+    }
+
+    expect(view.state.summaryRows[0].id).toEqual("6371988eed22d5ed037d39d0")
+    view.onDragEnd(testResult)
+    expect(view.state.summaryRows[0].id).toEqual("6371988eed22d5ed037d49d1")
+})
+
+test('dragging talents in table invalid destination',()=>{
+    const view = ReactTestUtils.renderIntoDocument(<ClientEventSummary properties = {PROPERTIES_CLIENT_SUMMARY}/>);
+    const testResult = {
+        destination: null,
+        draggableId: "6371988eed22d5ed037d39d0",
+        mode: "FLUID",
+        reason: "DROP",
+        source: {droppableId: "table", index: 0},
+        type: "DEFAULT"
+    }
+    // expect(view.state.summaryRows).toEqual("6371988eed22d5ed037d39d0")
+    expect(view.state.summaryRows[0].id).toEqual("6371988eed22d5ed037d39d0")
+    view.onDragEnd(testResult)
+    // expect(view.state.summaryRows).toEqual("6371988eed22d5ed037d39d0")
+    expect(view.state.summaryRows[0].id).toEqual("6371988eed22d5ed037d39d0")
+})
+
+test('successful in updating preferences', async () => {
+    // global.window = Object.create(window);
+    // global.confirm = () => true
+    // const url = "http://dummy.com";
+    // Object.defineProperty(window, 'location', {value: {href: url}});
+    const view = ReactTestUtils.renderIntoDocument(<ClientEventSummary properties = {PROPERTIES_CLIENT_SUMMARY}/>);
+    mockedAxios.post.mockResolvedValue({
+        data: { comment: "Update successful" },
+        response: {
+            status: 200
+        }
+    });
+    // await view.updatePreferences()
+    await act(async () => {
+        await view.updatePreferences();
+    });
+    expect(view.state.status).toBe(true)
+    expect(view.state.message).toBe("Update successful")
+})
+
+// test('update preference should redirect on 403 error', async () => {
+//     delete window.location;
+//     window.location = { href: "" };
+//     // const view = ReactTestUtils.renderIntoDocument(<ClientEventSummary properties = {PROPERTIES_CLIENT_SUMMARY}/>);
+//     const component = renderer.create(<ClientEventSummary properties={PROPERTIES_CLIENT_SUMMARY} />);
+//     const instance = component.getInstance();
+//     mockedAxios.post.mockRejectedValueOnce({
+//         response: {
+//             status: 403,
+//             data: {redirect_path: "/redirect-url"}
+//         }
+//     })
+//     await act(async () => {
+//         await instance.updatePreferences();
+//     });
+//     expect(view.state.status).toBe(false);
+//     expect(view.state.message).toBe("Failed to update Event Preferences!");
+//     expect(window.location.href).toBe("/redirect-url");
+// })
+
+// describe('testing onClick functions for sorting various columns', () => {
+//     let view;
+
+//     beforeEach(() => {
+//         view = renderer.create(<ClientEventSummary properties = {PROPERTIES_CLIENT_SUMMARY} />);
+//     });
+//     test('sorts rows by name when click on Name header', () => {
+//         const instance = view.root;
+//         const nameHeader = instance.findByProps({ children: 'Name'})
+//         act (() => {
+//             ReactTestUtils.Simulate.click(nameHeader)
+//         })
+//         expect(instance.instance.state.summaryRows[0].talentName).toBe('alex');
+//     })
+// })

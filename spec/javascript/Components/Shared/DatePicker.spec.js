@@ -5,8 +5,8 @@ import DatePickerWrapperStart from "../../../../app/javascript/components/Shared
 import DatePickerWrapperEnd from "../../../../app/javascript/components/Shared/DatePickerEnd";
 
 jest.mock('@mui/material/TextField', () => (props) => {
-    jest.fn(props);
     return (<mockTextField props={props}>{props.children}</mockTextField>)
+    // return <div data-testid="mock-text-field" {...props}>{props.children}</div>;
 })
 
 jest.mock('@mui/x-date-pickers/LocalizationProvider', () =>({
@@ -22,6 +22,7 @@ jest.mock('@mui/x-date-pickers/DatePicker', () =>({
         return (<Mock-DatePicker props={props}>{props.children}</Mock-DatePicker>)
     } 
 }))
+
 
 const onChange = jest.fn()
 
@@ -39,13 +40,15 @@ test('DatePicker Load Test', ()=>{
     expect(tree).toMatchSnapshot();
 })
 
-test('DatePicker Load Test', ()=>{
-    const component = renderer.create(
-        <DatePickerWrapper value={''} onChange={onChange} />
-    )
+
+test('DatePicker test change in date', ()=>{
+    // const component = renderer.create(
+    //     <DatePickerWrapper value={''} onChange={onChange} />
+    // )
     
     const view = ReactTestUtils.renderIntoDocument(<DatePickerWrapper value={'2022-12-08T19:35:27Z'} onChange={onChange}/>);
-    view.onChange('2022-12-08T19:35:27Z')
+    view.onChange('2024-12-08T19:35:27Z')
+    expect(view.state.value).toEqual("2024-12-08T19:35:27.000Z");
 })
 /*
 <DatePickerWrapperStart id='eventdateStart' name='eventdateStart' variant='outlined' onChange={this.handleChange} value={this.state.eventdateStart} style={commonStyle} />
@@ -57,15 +60,53 @@ test('DatePickerStart Load Test', ()=> {
         variant='outlined' 
         onChange={onChange} 
         value={'2022-12-08T19:35:27Z'} />);
-    view.onChange('2022-12-08T19:35:27Z')
+    view.onChange('2024-12-08T19:35:27Z')
+    expect(view.state.value).toEqual("2024-12-08T19:35:27.000Z");
 })
 
 test('DatePickerEnd Load Test', ()=> {
     const view = ReactTestUtils.renderIntoDocument(<DatePickerWrapperEnd 
-        id='eventdateStart' 
-        name='eventdateStart' 
+        id='eventdateEnd' 
+        name='eventdateEnd' 
         variant='outlined' 
         onChange={onChange} 
         value={'2022-12-08T19:35:27Z'} />);
-    view.onChange('2022-12-08T19:35:27Z')
+    view.onChange('2024-12-08T19:35:27Z')
+    expect(view.state.value).toEqual("2024-12-08T19:35:27.000Z");
 })
+
+test('DatePicker On Blur with not valid date', ()=> {
+    const view = ReactTestUtils.renderIntoDocument(<DatePickerWrapper
+        id='eventdate' 
+        name='eventdate' 
+        variant='outlined' 
+        onChange={onChange}  />);
+    view.setState({value: 'not-valid'})
+    view.onBlur()
+    expect(view.state.value).toBeNull();
+})
+
+test('DatePickerEnd On Blur with not valid date', ()=> {
+    const view = ReactTestUtils.renderIntoDocument(<DatePickerWrapperEnd
+        id='eventdateEnd' 
+        name='eventdateEnd' 
+        variant='outlined' 
+        onChange={onChange}  />);
+    view.setState({value: 'not-valid'})
+    view.onBlur()
+    expect(view.state.value).toBeNull();
+})
+
+test('DatePickerStart On Blur with not valid date', ()=> {
+    const view = ReactTestUtils.renderIntoDocument(<DatePickerWrapperStart
+        id='eventdateStart' 
+        name='eventdateStart' 
+        variant='outlined' 
+        onChange={onChange}  />);
+    view.setState({value: 'not-valid'})
+    view.onBlur()
+    expect(view.state.value).toBeNull();
+})
+
+
+
