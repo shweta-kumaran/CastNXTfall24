@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'devise'
 
 class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # You should configure your model like this:
