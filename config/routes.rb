@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
 
-  devise_for :dusers
   root 'home#landing_page'
   get 'home', to: 'home#index'
   get '/logout', to: 'application#logout'
@@ -19,10 +18,10 @@ Rails.application.routes.draw do
 
   end
 
-  # ## == Devise OAuth ==
-  # devise_for :dusers, skip: [:sessions],
-  #   controllers: { omniauth_callbacks: 'dusers/omniauth_callbacks' },
-  #   omniauth_providers: %i[events360]
+   ## == Devise OAuth ==
+   devise_for :dusers, skip: [:sessions],
+     controllers: { omniauth_callbacks: 'dusers/omniauth_callbacks' },
+     omniauth_providers: %i[events360]
 
   
 
