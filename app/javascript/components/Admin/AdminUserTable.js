@@ -95,9 +95,9 @@ class AdminUserTable extends Component {
       let talentMessages = {}
       
       if(this.props.currentTab != undefined) {
-        console.log("Client: ", this.props.currentClient)
-        console.log("Client Decks: ", this.props.currentTalents)
-        console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
+        // console.log("Client: ", this.props.currentClient)
+        // console.log("Client Decks: ", this.props.currentTalents)
+        // console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
         slides = this.props.currentTalents[this.props.currentClient]
       }
       let eventTalent = []
@@ -236,11 +236,11 @@ class AdminUserTable extends Component {
                   console.log("new row: ", this.newRow)
               }
           }
-          console.log(rows)
+          // console.log(rows)
           return { rows };
       }, () => {
-        console.log("State has been updated: ", this.newRow)
-        console.log("State rows after update: ", this.state.rows)
+        // console.log("State has been updated: ", this.newRow)
+        // console.log("State rows after update: ", this.state.rows)
       });
   }
 
