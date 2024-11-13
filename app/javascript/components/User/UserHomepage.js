@@ -60,10 +60,13 @@ class UserHomepage extends Component {
             eventdateEnd:'',
             filteredTableData: savedTabValue===0 ? (properties.acceptingTableData ? properties.acceptingTableData : []):(properties.submittedTableData ? properties.submittedTableData : []),
             isPaidFilterValue: 'None',
+            openInbox: false,
             openChatWindow: false,
             disableSubmit: false,
             messageContent: '',
-            eventToMessage: null
+            eventToMessage: null,
+            messageGroups: null,
+            selectedGroupMessages: null,
         }
     }
     
@@ -126,6 +129,39 @@ class UserHomepage extends Component {
             });
         }
     };
+
+    groupEventMessages = (messages) => {
+        const grouped = {};
+      
+        messages.forEach((message) => {
+          const recipientKey = message.messageTo.sort().join(","); // Generate a unique key for each group
+          if (!grouped[recipientKey]) {
+            grouped[recipientKey] = {
+              talentNames: message.messageTo, // Array of recipient names
+              messages: [],
+            };
+          }
+          grouped[recipientKey].messages.push(message);
+        });
+      
+        return Object.values(grouped); // Convert to an array of group objects
+    }
+
+    selectMessageGroup = (group) => {
+        this.setState({
+            openChatWindow: true,
+            openInbox: false,
+            selectedGroupMessages: group.messages
+        })
+    }
+
+    openMessageInbox = () => {
+        const groupedMessages = groupEventMessages(this.state.eventToMessage.messages)
+        this.setState({
+          openInbox: !this.state.openInbox,
+          messageGroups: groupedMessages,
+        })
+      }
 
     openChatWindow = () => {
         this.setState({
@@ -320,7 +356,7 @@ class UserHomepage extends Component {
                                 {event.status}
                             </TableCell>
                             <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openChatWindow();}}>Chat with Producer of {event.title}</Button>
+                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openMessageInbox();}}>Open Event Inbox</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -334,7 +370,7 @@ class UserHomepage extends Component {
                                 {event.status}
                             </TableCell>
                             <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openChatWindow();}}>Chat with Producer of {event.title}</Button>
+                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openMessageInbox();}}>Open Event Inbox</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -425,6 +461,39 @@ class UserHomepage extends Component {
                                         </Table>
                                     </TableContainer>
                                     <div>
+                                    {this.state.openMessageInbox &&
+                                        <div
+                                            style={{
+                                            width: "540px",
+                                            height: "550px",
+                                            backgroundColor: '#727278',
+                                            display: "flex",
+                                            flexDirection: 'column',
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            position: "relative",
+                                            }}
+                                        >
+                                            <List
+                                            style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                overflowY: "auto",
+                                            }}
+                                            >
+                                            {this.state.messageGroups.map((group, index) => (
+                                                <ListItem
+                                                button
+                                                key={index}
+                                                onClick={() => this.selectMessageGroup(group)}
+                                                >
+                                                <ListItemText primary={`Group Chat with ${group.talentNames.join(', ')}`} />
+                                                </ListItem>
+                                            ))}
+                                            </List>
+                                        </div>
+                                        
+                                    }
                                     {this.state.openChatWindow && 
                                         <div
                                         style={{
@@ -455,7 +524,7 @@ class UserHomepage extends Component {
                                                 height: "368px"
                                             }}
                                             >
-                                            {this.state.eventToMessage.messages.map((message) =>(
+                                            {this.state.selectedGroupMessages.map((message) =>(
                                                     <ListItem
                                                     key = {message.messageContent}
                                                     >
@@ -521,7 +590,7 @@ class UserHomepage extends Component {
                                                             color: "gray",                 // Lighter color for the timestamp
                                                         }}
                                                         >
-                                                        {`Producer     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                        {`${message.messageFrom}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                                                         </Typography>
                                                         <Box
                                                         sx={{

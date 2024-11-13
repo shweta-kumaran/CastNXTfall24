@@ -26,7 +26,7 @@ class AdminUserTable extends Component {
             rows: [],
             columns: [],
             filterModel: {items: []},
-            selectedRow: -1,
+            selectedRows: [],
             currentTab: props.currentTab,
             currentClient: props.currentClient,
             currentTalents: props.currentTalents,
@@ -258,12 +258,17 @@ class AdminUserTable extends Component {
     }
 
     sendMessage = () => {
+      const recipients = this.state.selectedRows.map(rowIndex => ({
+        talentName: this.state.rows[rowIndex - 1]['talentName'],
+        uniqId: this.state.rows[rowIndex - 1]['uniqId'],
+      }));
+
       const payload = {
         content: this.state.messageContent,
         sender: properties.name,
-        receiver: this.state.rows[this.state.selectedRow - 1]['talentName'],
+        receiver: recipients.map(recipient => recipient.talentName),
         event_id: window.location.href.split("/")[-1],
-        user_id: this.state.rows[this.state.selectedRow - 1]['uniqId']
+        user_id: recipients.map(recipient => recipient.uniqId)
       }
 
       const baseURL = window.location.href.split("#")[0]
@@ -346,7 +351,7 @@ class AdminUserTable extends Component {
                           </IconButton>
                         </div>
                       </div>
-                      {this.state.selectedRow > -1 && (<Button variant="contained" onClick={this.openChatWindow}>Chat with {this.state.rows[this.state.selectedRow - 1]['talentName']}</Button>)}
+                      {this.state.selectedRows.length > 0 && (<Button variant="contained" onClick={this.openChatWindow}>Send Message</Button>)}
                       <button onClick={this.addNewRow}>Add Row</button>
                       <button onClick={this.handleSave}>Save Data</button>
                       <DataGrid
@@ -383,14 +388,7 @@ class AdminUserTable extends Component {
                         rowsPerPageOptions={[10]}
                         autoHeight
                         checkboxSelection={this.props.showCheckbox}
-                        selectionModel={this.state.selectedRow ? [this.state.selectedRow] : []}
-                        onSelectionModelChange={(newSelection) => {
-                          if (newSelection[0] == this.state.selectedRow) {
-                            this.setState({ selectedRow: newSelection.slice(-1)[0], openChatWindow: false });
-                          } else {
-                            this.setState({ selectedRow: newSelection[0], openChatWindow: false });
-                          }
-                        }}
+                        onSelectionModelChange={(newSelection) => this.setState({ selectedRows: newSelection, openChatWindow: false })}
                         onRowClick = {this.onRowClick}
                         filterModel = {this.state.filterModel}
                         onFilterModelChange={(model) => this.onFilterModelChange(model)}
@@ -426,7 +424,16 @@ class AdminUserTable extends Component {
                                 height: "368px"
                               }}
                             >
-                              {this.state.talentMessages[this.state.rows[this.state.selectedRow - 1]['uniqId']].map((message) =>(
+                              {this.state.talentMessages[this.state.rows[this.state.selectedRows[0] - 1]['uniqId']].filter((message) => {
+                                    // Get the list of selected talent names
+                                    const selectedTalentNames = this.state.selectedRows.map(rowIndex => this.state.rows[rowIndex - 1]['talentName']);
+
+                                    // Check if `message.messageTo` has the exact same talents as `selectedTalentNames`
+                                    const isExactMatch = selectedTalentNames.length === message.messageTo.length &&
+                                        selectedTalentNames.every(talentName => message.messageTo.includes(talentName));
+
+                                    return isExactMatch;
+                                }).map((message) =>(
                                     <ListItem
                                       key = {message.messageContent}
                                     >
@@ -492,7 +499,7 @@ class AdminUserTable extends Component {
                                             color: "gray",                 // Lighter color for the timestamp
                                           }}
                                         >
-                                          {`${this.state.rows[this.state.selectedRow - 1]['talentName']}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                          {`${message.messageFrom}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                                         </Typography>
                                         <Box
                                           sx={{
