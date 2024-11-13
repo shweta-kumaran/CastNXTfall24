@@ -1,7 +1,7 @@
 class Duser
   include Mongoid::Document
   extend Devise::Models
-
+  
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :omniauthable,
@@ -31,21 +31,30 @@ class Duser
   # field :locked_at,       type: Time
   include Mongoid::Timestamps
   class << self
-    def from_omniauth(auth, current_user = nil)
+    def from_omniauth(auth)
+      puts "Auth data: #{auth.inspect}"
+
       case auth.provider.to_s
       when 'events360'
+        puts "Auth data: #{auth.inspect}"
+
         return self.from_omniauth_events360(auth)
       end
       nil
     end
 
-    private
+    
 
     def from_omniauth_events360(auth)
-      unless auth&.auth.info&.email && auth.info&.name
-        Rails.logger.error "Missing required fields in auth data: #{auth.inspect}"
-        return nil # or handle it as needed
+      puts "Auth data: #{auth.inspect}"
+
+      # Check if 'auth' and 'auth.info' are nil
+      if auth.nil? || auth.info.nil?
+        puts "Error: Missing auth or auth.info"
+        return nil
       end
+
+      
       user_info = {
         uid: auth.uid.to_s,
         provider: auth.provider.to_s,
@@ -53,7 +62,11 @@ class Duser
         name: auth.info.name
       }
 
-      user = Duser.find_by(email: user_info[:email])
+      begin
+        user = Duser.find_by(email: user_info[:email])
+      rescue Mongoid::Errors::DocumentNotFound => e
+        user = nil  # Handle the case where the user isn't found
+      end
 
       if user.present?
        ##do nothing

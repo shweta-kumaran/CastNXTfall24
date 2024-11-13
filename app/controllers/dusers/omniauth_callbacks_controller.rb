@@ -1,15 +1,15 @@
 # frozen_string_literal: true
-
+require 'devise'
 class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # You should configure your model like this:
-  devise :omniauthable, omniauth_providers: [:events360]
+  #devise :omniauthable, omniauth_providers: [:events360]
 
   # You should also create an action method in this controller like this:
   def events360
     Rails.logger.info "Here viewed"
     
     auth = request.env['omniauth.auth']
-    @user = Duser.from_omniauth(auth, current_user)
+    @user = Duser.from_omniauth(auth)
     
     ## at this point we have an entry in duser
     

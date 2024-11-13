@@ -11,7 +11,7 @@
     <div id="main-content" style="background-color: white !important; height: 80vh; ">
        
 
-        <section class="mb-5" id="features" >
+    <section class="mb-5 mt-4" id="features">
         <section class="mb-5">
         <h3 class="text-center display-5 fw-bold lh-1 mb-5 mt-5"> Welcome to CastNXT </h3>
         </section>
@@ -21,22 +21,22 @@
         <%= form_with url: role_selection_home_index_path, method: :post do %>
 
         <div class="d-flex flex-column align-items-center">
-          <div class="form-check mb-4">
-            <%= radio_button_tag :role, "admin", false, id: "role_admin", class: "form-check-input" %>
+          <div class="form-check mb-4 d-flex align-items-center">
+            <%= radio_button_tag :role, "admin", false, id: "role_admin", class: "form-check-input me-3" %>
             <label class="form-check-label" for="role_admin">
               <h3 class="my-2">Admin</h3>
             </label>
           </div>
           
-          <div class="form-check mb-4">
-            <%= radio_button_tag :role, "client", false, id: "role_client", class: "form-check-input" %>
+          <div class="form-check mb-4 d-flex align-items-center">
+            <%= radio_button_tag :role, "client", false, id: "role_client", class: "form-check-input me-3" %>
             <label class="form-check-label" for="role_client">
               <h3 class="my-2">Client</h3>
             </label>
           </div>
           
-          <div class="form-check mb-4">
-            <%= radio_button_tag :role, "talent", false, id: "role_talent", class: "form-check-input" %>
+          <div class="form-check mb-4 d-flex align-items-center">
+            <%= radio_button_tag :role, "talent", false, id: "role_talent", class: "form-check-input me-3" %>
             <label class="form-check-label" for="role_talent">
               <h3 class="my-2">Talent</h3>
             </label>
