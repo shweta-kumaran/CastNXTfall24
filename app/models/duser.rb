@@ -46,7 +46,6 @@ class Duser
     
 
     def from_omniauth_events360(auth)
-      puts "Auth data: #{auth.inspect}"
 
       # Check if 'auth' and 'auth.info' are nil
       if auth.nil? || auth.info.nil?
@@ -55,15 +54,12 @@ class Duser
       end
 
       
-      user_info = {
-        uid: auth.uid.to_s,
-        provider: auth.provider.to_s,
-        email: auth.info.email,
-        name: auth.info.name
-      }
+      
 
       begin
-        user = Duser.find_by(email: user_info[:email])
+        puts "Auth data: #{auth.info.email}"
+
+        user = Duser.find_by(email: auth.info.email)
       rescue Mongoid::Errors::DocumentNotFound => e
         user = nil  # Handle the case where the user isn't found
       end
