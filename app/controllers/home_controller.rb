@@ -64,6 +64,29 @@ class HomeController < ApplicationController
     end
   end
   
+
+  def role_selection
+    begin 
+      session[:userEmail] = "test"
+        
+        session[:userName] = "test"
+        session[:userId] = "test"
+      session[:userType] = params[:role]
+      if "ADMIN".casecmp? params[:role]
+        Producer.create(:_id => "test", :name => "test", :email => "test", :is_valid => true)
+      elsif "CLIENT".casecmp? params[:role]
+        Client.create(:_id => "test", :name => "test", :email => "test", :is_valid => true)
+      else
+        Talent.create(:_id => "test", :name => "test", :email => "test", :is_valid => true)
+      end
+      
+      render json: {redirect_path: get_redirect_path}, status: 200
+    end   
+    # You can add any logic needed for first-time users here
+    # For example, tracking analytics, setting flags, etc.
+
+  end
+
   # POST /home/login
   def login
     begin
@@ -88,6 +111,10 @@ class HomeController < ApplicationController
       render json: {comment: e.message}, status: 500
     end
   end
+ 
+  #GET /first_time_user
+  def first_time_user
+  end  
 
   # POST /home/forgotPassword
   def forgotPassword

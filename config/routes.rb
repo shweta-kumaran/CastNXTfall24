@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   root 'home#landing_page'
   get 'home', to: 'home#index'
   get '/logout', to: 'application#logout'
-
   get '/validation/:id', to: 'home#validation'
   
   get '/api/change_status/:id', to: 'api#change_status'
@@ -15,6 +14,9 @@ Rails.application.routes.draw do
     post 'login', :on => :collection
     post 'signup', :on => :collection
     post 'forgotPassword', :on => :collection
+    post 'role_selection', :on => :collection
+    get 'first_time_user', :on => :collection
+
   end
 
   # ## == Devise OAuth ==

@@ -7,15 +7,9 @@ class Duser
 
   ## Database authenticatable
   field :email,              type: String, default: ""
-  field :encrypted_password, type: String, default: ""
-
-  ## Recoverable
-  field :reset_password_token,   type: String
-  field :reset_password_sent_at, type: Time
-
-  ## Rememberable
-  field :remember_created_at, type: Time
-
+  field :user_type, type: String,  default: ""
+  field :name, type: String,  default: "" 
+  
   ## Trackable
   # field :sign_in_count,      type: Integer, default: 0
   # field :current_sign_in_at, type: Time
@@ -46,6 +40,10 @@ class Duser
     private
 
     def from_omniauth_events360(auth)
+      unless auth&.auth.info&.email && auth.info&.name
+        Rails.logger.error "Missing required fields in auth data: #{auth.inspect}"
+        return nil # or handle it as needed
+      end
       user_info = {
         uid: auth.uid.to_s,
         provider: auth.provider.to_s,
@@ -53,14 +51,23 @@ class Duser
         name: auth.info.name
       }
 
-      user = Duser.find_by(uid: user_info[:uid], provider: user_info[:provider])
+      user = Duser.find_by(email: user_info[:email])
 
       if user.present?
-        user.update(user_info)
-        user
+       ##do nothing
+       user
       else
-        Duser.create(user_info)
+       # Duser.create(user_info)
+       ## create  a newuser with role  
+       user_info = {
+        email: auth.info.email,
+        name: auth.info.name,
+        user_type: "new_user"
+      }
+      Duser.create(user_info)
+
       end
+      
     end
   end
 
