@@ -329,7 +329,7 @@ class AdminCreateEvent extends Component {
                             
                             <br /><br />
                             
-                            <Button disabled={this.state.disableSubmit} variant="contained" onClick={this.onCreateEventClick}>Create Event</Button>
+                            <Button id="createEvent" disabled={this.state.disableSubmit} variant="contained" onClick={this.onCreateEventClick}>Create Event</Button>
                             
                             {(this.state.status !== "" && this.state.status) &&
                                 <div>
