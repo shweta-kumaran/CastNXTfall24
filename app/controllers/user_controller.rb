@@ -9,7 +9,12 @@ class UserController < ApplicationController
     submittedTableData = []
     
     talent = get_talent(session[:userId])
+    talent_data = JSON.parse(talent.talentData || '{}')
+    user_city = talent_data["city"] || "Portland"
+    user_state = talent_data["state"] || "Oregon"
+
     events = Event.all
+    events_near_user = []
 
     events.each do |event|
       object = {
@@ -53,7 +58,7 @@ class UserController < ApplicationController
         end
       end
     end
-    @properties = {name: session[:userName], acceptingTableData: acceptingTableData, submittedTableData: submittedTableData}
+    @properties = {name: session[:userName], acceptingTableData: acceptingTableData, submittedTableData: submittedTableData, events_near_user: events_near_user, user_city: user_city, user_state: user_state}
   end
   
   private
