@@ -6,6 +6,7 @@ import { extendedNumberOperators } from '../../utils/RangeFilter';
 import { saveAs } from 'file-saver';
 import IconButton from '@material-ui/core/IconButton';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import "./Admin.css";
 import axios from "axios";
 import { UsStates, getCities} from '../../utils/FormsUtils';
@@ -16,6 +17,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import TextField from "@mui/material/TextField";
 import Box from '@mui/material/Box';
+// import {Dialog, DialogActions, DialogContent, DialogTitle} from '@material-ui/core'
+import FilterForm from '../Filter/ColumnFilter'
 class AdminUserTable extends Component {
     constructor(props) {
         super(props)
@@ -23,6 +26,7 @@ class AdminUserTable extends Component {
             properties: props.properties,
             slides: props.properties.data.slides,
             eventTalent: [],
+            originalRows: [],
             rows: [],
             columns: [],
             filterModel: {items: []},
@@ -31,6 +35,7 @@ class AdminUserTable extends Component {
             currentClient: props.currentClient,
             currentTalents: props.currentTalents,
             openChatWindow: false,
+            openFilter: false,
             talentMessages: {},
             messageContent: "",
             disableSubmit: false
@@ -95,9 +100,9 @@ class AdminUserTable extends Component {
       let talentMessages = {}
       
       if(this.props.currentTab != undefined) {
-        console.log("Client: ", this.props.currentClient)
-        console.log("Client Decks: ", this.props.currentTalents)
-        console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
+        // console.log("Client: ", this.props.currentClient)
+        // console.log("Client Decks: ", this.props.currentTalents)
+        // console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
         slides = this.props.currentTalents[this.props.currentClient]
       }
       let eventTalent = []
@@ -116,14 +121,6 @@ class AdminUserTable extends Component {
         talentMessages[key] = slides[key].messages === null ? [] : slides[key].messages
         eventTalent.push(talentData)
       }
-      // for(var key in slides) {
-      //   eventTalent.push({
-      //       id: key,
-      //       name: slides[key].talentName,
-      //       curated: slides[key].curated,
-      //       formData: slides[key].formData
-      //   })
-      // }
       this.setState({ talentMessages: talentMessages })
       return eventTalent;
     }
@@ -137,6 +134,7 @@ class AdminUserTable extends Component {
         let [rows,columns] = this.constructTableData(eventTalent)
         this.setState({
             eventTalent: eventTalent,
+            originalRows: rows,
             rows: rows,
             columns: columns
         })
@@ -324,9 +322,41 @@ class AdminUserTable extends Component {
     
         // Redirect the user to the Venmo payment page
         window.open(paymentURL, "_blank");
-      }
+      }      
+    };
+    openFilter = () => {
+      this.setState({
+        openFilter: !this.state.openFilter
+      })
+    }
 
-      
+    applyFilterToRows = (filter) => {
+      // console.log(this.state.rows)
+      const {rows} = this.state
+      const { columnField, operatorValue, value } = filter;
+      console.log(columnField)
+      return rows.filter((row) => {
+        console.log(row)
+        const cellValue = row[columnField];
+        console.log("cellValue: ", row[columnField])
+        if (operatorValue == 'equals') {
+          return cellValue === value
+        } else if (operatorValue == 'contains') {
+          return cellValue && cellValue.includes(value)
+        }
+        return true
+      })
+    }
+
+    updateFilter = (filter) => {
+      const filteredRows = this.applyFilterToRows(filter)
+      console.log("filtered rows:", filteredRows)
+      // this.setState({rows: filteredRows})
+    }
+
+    clearFilter = () => {
+      // Reset rows to originalRows when clearing the filter
+      this.setState((prevState) => ({ rows: prevState.originalRows }));
     };
     
     render() {
@@ -344,8 +374,12 @@ class AdminUserTable extends Component {
                           <IconButton color="primary" aria-label="Download Table" onClick={this.handleDownloadClick}>
                             <SaveAltIcon />
                           </IconButton>
+                          <IconButton color="primary" aria-label="Filter" onClick={this.openFilter}>
+                            <FilterAltIcon />
+                          </IconButton>
                         </div>
                       </div>
+                      <FilterForm open={this.state.openFilter} columns={this.state.columns} onApplyFilter={this.updateFilter} onClose={this.openFilter} onClearFilter={this.clearFilter}></FilterForm>
                       {this.state.selectedRow > -1 && (<Button variant="contained" onClick={this.openChatWindow}>Chat with {this.state.rows[this.state.selectedRow - 1]['talentName']}</Button>)}
                       <button onClick={this.addNewRow}>Add Row</button>
                       <button onClick={this.handleSave}>Save Data</button>
