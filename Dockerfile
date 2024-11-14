@@ -3,15 +3,13 @@ FROM ruby:2.6.6
 WORKDIR /home
 COPY Gemfile package.json ./
 
-ENV RAILS_ENV=development
-
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - 
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - 
 RUN apt-get install -y nodejs
 
-RUN npm install -g npm@10.8.2
-# RUN npm install -g n
-# RUN n 16.13.0
-# RUN hash -r
+RUN npm install -g npm@8.5.4
+RUN npm install -g n
+RUN n 16.13.0
+RUN hash -r
 RUN npm install -g yarn
 
 RUN gem install bundler -v 2.2.31
