@@ -56,6 +56,9 @@ class UserController < ApplicationController
         if "ACCEPTING".casecmp? event.status
           acceptingTableData << object
         end
+        if "ACCEPTING".casecmp?(event.status) && event.statename == user_state
+          events_near_user << object
+        end
       end
     end
     @properties = {name: session[:userName], acceptingTableData: acceptingTableData, submittedTableData: submittedTableData, events_near_user: events_near_user, user_city: user_city, user_state: user_state}
