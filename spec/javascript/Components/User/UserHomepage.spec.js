@@ -239,6 +239,94 @@ test('Filter by end date', () => {
   expect(view.state.filteredTableData.length).toBe(1);
 })
 
+test('messages are properly grouped together into same data structure if have same participants', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const sample_messages = [
+    { messageTo: ['Alice', 'Bob', 'Charlie', 'David'], messageFrom: 'Charlie', messageContent: 'Hello' },
+    { messageTo: ['Bob', 'Alice', 'David', 'Charlie'], messageFrom: 'David', messageContent: 'Hi' },
+  ];
+
+  const result = view.groupEventMessages(sample_messages);
+  expect(result).toHaveLength(1); // Only one group since the recipients are the same
+  expect(result[0].talentNames).toEqual(['Alice', 'Bob', 'Charlie', 'David']);
+  expect(result[0].messages).toHaveLength(2);
+})
+
+test('returns different groups for messages with different participants', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const sample_messages = [
+    { messageTo: ['Alice', 'Bob', 'Charlie', 'David'], messageFrom: 'Charlie', messageContent: 'Hello' },
+    { messageTo: ['Alice', 'Bob', 'Charlie', 'David'], messageFrom: 'David', messageContent: 'Hi' },
+    { messageTo: ['Bob', 'Charlie', 'Eve'], messageFrom: 'Eve', messageContent: 'Hey' },
+  ];
+
+  const result = view.groupEventMessages(sample_messages);
+  expect(result).toHaveLength(2);
+});
+
+it('openInbox should sort message groups by the time of the last message', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const messages = [
+    { messageContent: 'Hello' , messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:00:00Z' },
+    { messageContent: 'Hi', messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:01:00Z' },
+  ];
+
+  const group1 = { talentNames: ['Alice', 'Bob'], messages: messages };
+  const group2 = { talentNames: ['Alice', 'Charlie'], messages: [ { messageContent: 'Hi', messageTo: ['Alice', 'Charlie'], timeSent: '2024-11-14T12:02:00Z' } ] };
+
+  view.setState({
+    eventToMessage: {
+      id: 1,
+      slideId: 'slide123',
+      messages: [...group1.messages, ...group2.messages]
+    },
+  })
+
+  expect(view.state.openInbox).toBe(false)
+  expect(view.state.openChatWindow).toBe(false)
+  expect(view.state.messageGroups).toBe(null)
+
+  // Call the function to test
+  view.openMessageInbox();
+
+  // Check that setState was called with the correct arguments
+  expect(view.state.openInbox).toBe(true)
+  expect(view.state.openChatWindow).toBe(false)
+  expect(view.state.messageGroups).toEqual([group2, group1])
+});
+
+test('Properly open the chat window for messages when group chat is selected from inbox', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  
+  const messages = [
+    { messageContent: 'Hello' , messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:00:00Z' },
+    { messageContent: 'Hi', messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:01:00Z' },
+  ];
+
+  const group1 = { talentNames: ['Alice', 'Bob'], messages: messages };
+  const group2 = { talentNames: ['Alice', 'Charlie'], messages: [ { messageContent: 'Hi', messageTo: ['Alice', 'Charlie'], timeSent: '2024-11-14T12:02:00Z' } ] };
+
+  view.setState({
+    messageGroups: [group2, group1]
+  })
+
+  view.setState({
+    openChatWindow: false, 
+    openInbox: true,
+  })
+
+  expect(view.state.openChatWindow).toBe(false)
+  expect(view.state.openInbox).toBe(true)
+  expect(view.state.selectedGroupMessages).toEqual([])
+
+  view.selectMessageGroup(group1)
+
+  expect(view.state.openChatWindow).toBe(true)
+  expect(view.state.openInbox).toBe(false)
+  expect(view.state.selectedGroupMessages).toEqual(messages)
+})
+
+
 test('Open and close Chat Window when clicked', () => {
   const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
   view.setState({

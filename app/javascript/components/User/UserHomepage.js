@@ -67,7 +67,7 @@ class UserHomepage extends Component {
             messageContent: '',
             eventToMessage: null,
             messageGroups: null,
-            selectedGroupMessages: null,
+            selectedGroupMessages: [],
         }
     }
     
@@ -159,7 +159,6 @@ class UserHomepage extends Component {
     openMessageInbox = () => {
         const groupedMessages = this.groupEventMessages(this.state.eventToMessage.messages).sort((group1Messages, group2Messages) => {
             // Access the `timeSent` of the last message in each group
-            console.log(group1Messages)
             const group1LastMessageTime = new Date(group1Messages.messages.slice(-1)[0].timeSent);
             const group2LastMessageTime = new Date(group2Messages.messages.slice(-1)[0].timeSent);
         
@@ -186,13 +185,15 @@ class UserHomepage extends Component {
       }
   
       sendMessage = () => {
-        console.log(this.state.selectedGroupMessages)
+        let messageTo = this.state.selectedGroupMessages.length > 0 ? this.state.selectedGroupMessages[0].messageTo : []; 
+        let userIds = this.state.selectedGroupMessages.length > 0 ? this.state.selectedGroupMessages[0].userIds : [];
+
         const payload = {
           content: this.state.messageContent,
           sender: properties.name,
-          receiver: this.state.selectedGroupMessages[0].messageTo,
+          receiver: messageTo,
           event_id: this.state.eventToMessage.id,
-          user_id: this.state.selectedGroupMessages[0].userIds,
+          user_id: userIds,
         }
   
         const baseURL = window.location.href.split("#")[0]
