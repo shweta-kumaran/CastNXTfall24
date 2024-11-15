@@ -6,4 +6,5 @@ class Announcement
 
     field :from, type: String
     field :announcement, type: String
+    field :for_client, type: Boolean
 end

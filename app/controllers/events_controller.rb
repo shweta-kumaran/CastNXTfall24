@@ -315,7 +315,7 @@ class EventsController < ApplicationController
     event.slide_ids.each do |slideId|
       slide = get_slide(slideId)
       talent = get_talent(slide.talent_id)
-      messages = get_event_user_messages(event._id, slideId)
+      messages = get_event_user_messages(event._id, slideId.to_str)
 
       slideObject = {}
       slideObject[:talentName] = talent.name
@@ -428,7 +428,7 @@ class EventsController < ApplicationController
   # end
 
   def get_event_user_messages eventId, userId
-    return Message.where(:event_id => eventId, :user_id => userId)
+    return Message.where(:event_id => eventId, :user_id.in => [userId])
   end
 
 
