@@ -145,7 +145,7 @@ class UserHomepage extends Component {
         });
       
         return Object.values(grouped); // Convert to an array of group objects
-    }
+      }
 
     selectMessageGroup = (group) => {
         this.setState({
@@ -153,12 +153,20 @@ class UserHomepage extends Component {
             openInbox: false,
             selectedGroupMessages: group.messages
         })
-    }
+      }
 
     openMessageInbox = () => {
-        const groupedMessages = groupEventMessages(this.state.eventToMessage.messages)
+        const groupedMessages = this.groupEventMessages(this.state.eventToMessage.messages).sort((group1Messages, group2Messages) => {
+            // Access the `timeSent` of the last message in each group
+            const group1LastMessageTime = new Date(group1Messages.slice(-1)[0].timeSent);
+            const group2LastMessageTime = new Date(group2Messages.slice(-1)[0].timeSent);
+        
+            // Sort in descending order (most recent first)
+            return group2LastMessageTime - group1LastMessageTime;
+          })
         this.setState({
           openInbox: !this.state.openInbox,
+          openChatWindow: false,
           messageGroups: groupedMessages,
         })
       }
@@ -176,12 +184,13 @@ class UserHomepage extends Component {
       }
   
       sendMessage = () => {
+        console.log(this.state.selectedGroupMessages)
         const payload = {
           content: this.state.messageContent,
           sender: properties.name,
-          receiver: 'Producer',
+          receiver: this.state.selectedGroupMessages[0].messageTo,
           event_id: this.state.eventToMessage.id,
-          user_id: this.state.eventToMessage.slideId,
+          user_id: this.state.selectedGroupMessages[0].userIds,
         }
   
         const baseURL = window.location.href.split("#")[0]
@@ -356,7 +365,7 @@ class UserHomepage extends Component {
                                 {event.status}
                             </TableCell>
                             <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openMessageInbox();}}>Open Event Inbox</Button>
+                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openMessageInbox();});}}>Open Event Inbox</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -370,7 +379,7 @@ class UserHomepage extends Component {
                                 {event.status}
                             </TableCell>
                             <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openMessageInbox();}}>Open Event Inbox</Button>
+                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openMessageInbox();});}}>Open Event Inbox</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -452,7 +461,7 @@ class UserHomepage extends Component {
                                                 <TableRow>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Event</TableCell>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Status</TableCell>
-                                                    <TableCell align="center" style={{fontSize: "12pt"}}>Chat</TableCell>
+                                                    <TableCell align="center" style={{fontSize: "12pt"}}>Inbox</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -461,7 +470,7 @@ class UserHomepage extends Component {
                                         </Table>
                                     </TableContainer>
                                     <div>
-                                    {this.state.openMessageInbox &&
+                                    {this.state.openInbox &&
                                         <div
                                             style={{
                                             width: "540px",
@@ -474,23 +483,49 @@ class UserHomepage extends Component {
                                             position: "relative",
                                             }}
                                         >
-                                            <List
-                                            style={{
-                                                width: "100%",
-                                                height: "100%",
-                                                overflowY: "auto",
-                                            }}
+                                            <div
+                                                style={{
+                                                width: "90%",
+                                                height: "450px",
+                                                borderRadius: "5px",
+                                                backgroundColor: 'white',
+                                                display: "flex",
+                                                position: "relative",
+                                                }}
                                             >
-                                            {this.state.messageGroups.map((group, index) => (
-                                                <ListItem
-                                                button
-                                                key={index}
-                                                onClick={() => this.selectMessageGroup(group)}
+
+                                                <List
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    overflowY: "auto",
+                                                }}
                                                 >
-                                                <ListItemText primary={`Group Chat with ${group.talentNames.join(', ')}`} />
-                                                </ListItem>
-                                            ))}
-                                            </List>
+                                                {this.state.messageGroups.map((group, index) => {
+                                                    const lastMessage = group.messages.slice(-1)[0]; // Get the last message in the group
+                                                    const messageFrom = lastMessage.messageFrom;
+                                                    const messagePreview = lastMessage.messageContent.slice(0,35);
+                                                    const timeSent = new Date(lastMessage.timeSent); 
+                                                    const formattedTime = timeSent.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                                                    return (<React.Fragment key={index}>
+                                                        <ListItem
+                                                        button
+                                                        onClick={() => this.selectMessageGroup(group)}
+                                                        >
+                                                        <ListItemText   
+                                                            primary={`${["Producer", ...group.talentNames].join(', ')}`} 
+                                                            secondary={`${messageFrom}: ${messagePreview}`} />
+                                                            <span style={{ marginLeft: 'auto', color: 'gray' }}>
+                                                                {formattedTime}
+                                                            </span>
+                                                        </ListItem>
+                                                        
+                                                        {index < this.state.messageGroups.length - 1 && <Divider />} 
+                                                    </React.Fragment>);
+                                                    })}
+                                                </List>
+                                            </div>
                                         </div>
                                         
                                     }

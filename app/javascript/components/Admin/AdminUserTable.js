@@ -265,7 +265,7 @@ class AdminUserTable extends Component {
 
       const payload = {
         content: this.state.messageContent,
-        sender: properties.name,
+        sender: "Producer",
         receiver: recipients.map(recipient => recipient.talentName),
         event_id: window.location.href.split("/")[-1],
         user_id: recipients.map(recipient => recipient.uniqId)
@@ -427,7 +427,6 @@ class AdminUserTable extends Component {
                               {this.state.talentMessages[this.state.rows[this.state.selectedRows[0] - 1]['uniqId']].filter((message) => {
                                     // Get the list of selected talent names
                                     const selectedTalentNames = this.state.selectedRows.map(rowIndex => this.state.rows[rowIndex - 1]['talentName']);
-
                                     // Check if `message.messageTo` has the exact same talents as `selectedTalentNames`
                                     const isExactMatch = selectedTalentNames.length === message.messageTo.length &&
                                         selectedTalentNames.every(talentName => message.messageTo.includes(talentName));
