@@ -12,24 +12,36 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     Duser.from_omniauth_events360(auth)
 
     email = auth.info.email
+
+    user = Duser.find_by(email: email)
+
+# Check if the user was found
+if duser
+  # User found, proceed with a different path
+  # Set session details for the existing user
+  session[:userEmail] = duser.email
+  session[:userType] = duser.user_type
+  session[:userName] = duser.name
+  session[:userId] = duser.id.to_s
+  
+  
+  if "ADMIN".casecmp? session[:userType]
+    redirect_to "/admin"
+  elsif "CLIENT".casecmp? session[:userType]
+    redirect_to "/client"
+  else
+    redirect_to "/user"
+  end
+  # Render message for an existing user
     
-    render json: { comment: "successful Oauth for this email. Role selection and Session creation capability is still in progress.", email: email }, status: 400
+   # render json: { comment: "successful Oauth for this email. Role selection and Session creation capability is still in progress.", email: email }, status: 400
 
 #     ## at this point we have an entry in duser - to be completed in next phase of the feature
     
-#   session[:userEmail] = currentUser.email
-#  session[:userType] = currentUser.user_type
-#  session[:userName] = currentUser.name
-#  session[:userId] = currentUser._id.to_str
+else 
 
-# if @user.user_type == "new_user"
-#   # Redirect for new users
-#   redirect_to "/home/first-time-user"
-# else
-#   # Additional actions for existing users can go here if needed
-#   redirect_to get_redirect_path
-  
-# end
+
+  render json: { comment: "successful Oauth for this email. Role selection and Session creation capability is still in progress.", email: email }, status: 400
 
      
   end
@@ -56,12 +68,3 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 end
 
 ## function copied from homecontroller class - check for reuse 
-def get_redirect_path
-  if "ADMIN".casecmp? session[:userType]
-    return "/admin"
-  elsif "CLIENT".casecmp? session[:userType]
-    return "/client"
-  else
-    return "/user"
-  end
-end
