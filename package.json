@@ -64,7 +64,8 @@
     "test:file": "jest --coverage"
   },
   "devDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.21.5",
+    "@babel/plugin-proposal-private-methods": "^7.16.7",
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@babel/preset-react": "^7.16.7",
     "jest-css-modules": "^2.1.0",
     "jest-environment-jsdom": "^29.3.1",
