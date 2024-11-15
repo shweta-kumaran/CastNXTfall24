@@ -57,7 +57,7 @@
                     <DialogContent>
                         <FormControl fullWidth margin='normal'>
                             <InputLabel>Column</InputLabel>
-                                <Select value={selectedColumn} onChange={handleColumnChange}>
+                                <Select value={selectedColumn} onChange={handleColumnChange} label="Column">
                                     {columns.map((col) => (
                                         <MenuItem key={col.field} value={col.field}>{col.headerName}</MenuItem>
                                     ))}
@@ -65,7 +65,7 @@
                         </FormControl>
                         <FormControl fullWidth margin='normal'>
                             <InputLabel>Operator</InputLabel>
-                                <Select value={operator} onChange={handleOperatorChange}>
+                                <Select value={operator} onChange={handleOperatorChange} label="Operator">
                                     <MenuItem value="equals">Equals</MenuItem>
                                     <MenuItem value="contains">Contains</MenuItem>
                                 </Select>
@@ -77,12 +77,12 @@
                             onChange={handleValueChange}
                             margin="normal"
                         />
-                        <Button variant="contained" color="primary" onClick={applyFilter}>
+                        <Button variant="contained" color="primary" onClick={applyFilter} label="apply">
                             Apply Filter
                         </Button>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={clearFilter}>Clear Filter</Button>
+                        <Button onClick={clearFilter} label="clear">Clear Filter</Button>
                         <Button onClick={onClose}>Cancel</Button>
                     </DialogActions>
                 </Dialog>

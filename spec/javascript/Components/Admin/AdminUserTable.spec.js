@@ -331,7 +331,60 @@ describe('AdminUserTable Component', () => {
     });
 });
 
+describe('AdminUserTable Filter', () => {
+    let instance;
+    beforeEach(() => {
+        instance = renderer.create(
+            <AdminUserTable properties={propsDefault.properties} />
+        ).getInstance();
+        instance.setState({
+            openFilter: false,
+            rows: [
+                { id: 1, name: 'Test Name 1', email: 'test1@example.com' },
+                { id: 2, name: 'Test Name 2', email: 'test2@example.com' },
+            ],
+        });
+    });
 
+    test('applyFilter equals operator', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'equals',
+            value: 'Test Name 2'
+        }
+        expect(instance.applyFilterToRows(filter).length).toBe(1)
+    })
+
+    test('applyFilter contains operator', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'contains',
+            value: 'Test Name'
+        }
+        expect(instance.applyFilterToRows(filter).length).toBe(2)
+    })
+
+    test('updateFilter when no filtered rows', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'equals',
+            value: 'Mary'
+        }
+        instance.updateFilter(filter)
+        expect(instance.state.selectedRow).toBe(-1)
+    })
+
+    test('clear filters', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'equals',
+            value: 'Test Name 2'
+        }
+        expect(instance.applyFilterToRows(filter).length).toBe(1)
+        instance.clearFilter()
+        expect(instance.state.rows.length).toBe(4)
+    })
+})
 
 // test('should correctly find and concatenate assigned clients names', () => {
 //     const props = {

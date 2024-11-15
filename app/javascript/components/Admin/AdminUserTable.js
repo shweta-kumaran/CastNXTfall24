@@ -133,6 +133,7 @@ class AdminUserTable extends Component {
           eventTalent=eventTalent.filter(row => row["curated"] === true)
         }
         let [rows,columns] = this.constructTableData(eventTalent)
+        console.log("COLUMNS: ", columns)
         this.setState({
             eventTalent: eventTalent,
             originalRows: rows,
@@ -157,17 +158,6 @@ class AdminUserTable extends Component {
     }
 
     onRowClick = (rowData) => {
-      // console.log("rowData:", rowData)
-      // console.log("Rows: ", this.state.rows)
-      // console.log("event talent: ", this.state.eventTalent)
-      // let talentData;
-      // if (this.state.filtered){
-      //   const rowId = this.state.rows[rowData.id - 1].id
-      //   talentData = this.state.eventTalent[rowId - 1]
-      // } else {
-      //   talentData = this.state.eventTalent[rowData.id-1];
-      // }
-      // const talentData = this.state.eventTalent[rowData.id-1];
       const rowId = this.state.rows[rowData.id - 1].id
       const talentData = this.state.eventTalent[rowId - 1]
       rowData.row = talentData;
