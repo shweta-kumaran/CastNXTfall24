@@ -168,6 +168,7 @@ class AdminUserTable extends Component {
         filterModel: model
       })
     }
+
     addNewRow = () => {
       const newRow = { id: this.state.rows.length + 1, /* 其他初始值 */ };
         this.newRow = newRow; // 更新最新行的变量
@@ -176,10 +177,13 @@ class AdminUserTable extends Component {
         }));
     }
     handleRowChange = (newData, id) => {
+      console.log("New Data: ", newData)
+      console.log("New Data ID: ", id)
       this.setState(prevState => ({
           rows: prevState.rows.map(row => row.id === id ? newData : row)
       }));
     }
+
     handleSave = () => {
       // 取得需要发送的数据
       const eventId = window.location.href.split('/').pop();
@@ -334,11 +338,8 @@ class AdminUserTable extends Component {
       // console.log(this.state.rows)
       const {rows} = this.state
       const { columnField, operatorValue, value } = filter;
-      console.log(columnField)
       return rows.filter((row) => {
-        console.log(row)
         const cellValue = row[columnField];
-        console.log("cellValue: ", row[columnField])
         if (operatorValue == 'equals') {
           return cellValue === value
         } else if (operatorValue == 'contains') {
@@ -350,8 +351,8 @@ class AdminUserTable extends Component {
 
     updateFilter = (filter) => {
       const filteredRows = this.applyFilterToRows(filter)
-      console.log("filtered rows:", filteredRows)
-      // this.setState({rows: filteredRows})
+      // console.log("filtered rows:", filteredRows)
+      this.setState({rows: filteredRows})
     }
 
     clearFilter = () => {
@@ -426,8 +427,8 @@ class AdminUserTable extends Component {
                           }
                         }}
                         onRowClick = {this.onRowClick}
-                        filterModel = {this.state.filterModel}
-                        onFilterModelChange={(model) => this.onFilterModelChange(model)}
+                        // filterModel = {this.state.filterModel}
+                        // onFilterModelChange={(model) => this.onFilterModelChange(model)}
                         getRowClassName={(params) => params.row.id % 2 === 0 ? 'even-row' : 'odd-row'}
                       />
                       {this.state.openChatWindow && 
