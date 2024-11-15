@@ -2,6 +2,13 @@ import AdminUserTable from "../../../../app/javascript/components/Admin/AdminUse
 import {propsDefault, CLIENT_DESK_PROP} from '../../__mocks__/props.mock';
 import renderer, { act }from 'react-test-renderer';
 import { saveAs } from 'file-saver';
+import axios from 'axios';
+
+// In your test setup or beforeEach block
+jest.mock('axios');
+axios.post.mockImplementation(() => Promise.resolve({ data: { comment: 'Success' } }));
+axios.delete.mockImplementation(() => Promise.resolve({ status: 200 }));
+
 
 jest.mock('@material-ui/data-grid', () => ({
     DataGrid: (props) => {
@@ -26,7 +33,19 @@ jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
 global.window.open = jest.fn();
 
+// When creating an instance of the component in your tests
+const instance = renderer.create(
+    <AdminUserTable {...propsDefault} filter_curated={true} />
+).getInstance();
 
+// In your component methods where you access `uniqId` or similar properties
+deleteRow = () => {
+    if (this.state.selectedRow > 0 && this.state.selectedRow <= this.state.rows.length) {
+        const baseURL = window.location.href.split("#")[0];
+        const uniqId = this.state.rows[this.state.selectedRow - 1]['uniqId'];
+        axios.delete(baseURL + '/slides/' + uniqId);
+    }
+}
 
 
 test('Admin Table Load', () =>{
@@ -331,32 +350,39 @@ describe('AdminUserTable Component', () => {
     });
 });
 
+describe('AdminUserTable Additional Tests', () => {
+    let instance;
+    let mockWindow;
+    
+    beforeEach(() => {
+        mockWindow = {
+            location: {
+                href: 'http://test.com/events/123',
+                reload: jest.fn()
+            }
+        };
+        global.window = mockWindow;
+        
+        instance = renderer.create(
+            <AdminUserTable properties={propsDefault.properties} />
+        ).getInstance();
+    });
 
+    test('handleSave should handle missing state/city correctly', () => {
+        instance.newRow = {
+            talentName: 'Test Name',
+            email: 'test@example.com',
+            state: 'InvalidState',
+            city: 'InvalidCity'
+        };
+        
+        instance.handleSave();
+        
+        expect(instance.newRow.state).toBe('Oregon');
+        expect(instance.newRow.city).toBe('Portland');
+    });
+});
 
-// test('should correctly find and concatenate assigned clients names', () => {
-//     const props = {
-//       properties: {
-//         data: {
-//           clients: {
-//             client1: { name: 'Client One', finalizedIds: ['1', '2'] },
-//             client2: { name: 'Client Two', finalizedIds: ['2'] },
-//             client3: { name: 'Client Three', finalizedIds: ['3'] },
-//           }
-//         }
-//       }
-//     };
-  
-//     act(() => {
-//       const component = renderer.create(<AdminEventSummary {...props} />);
-//       const instance = component.getInstance();
-  
-//       // Test different scenarios
-//       expect(instance.findAssignedClients('1')).toBe('Client One');
-//       expect(instance.findAssignedClients('2')).toBe('Client One, Client Two');
-//       expect(instance.findAssignedClients('3')).toBe('Client Three');
-//       expect(instance.findAssignedClients('4')).toBe(''); // No clients with this ID
-//     });
-//   });
   
 
 

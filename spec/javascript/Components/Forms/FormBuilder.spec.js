@@ -56,3 +56,26 @@ test('Form Builder File Schema Change.', () => {
     />);
     view.onFormBuilderChange(JSON.stringify(newFileSchema), JSON.stringify(newUiSchema))
 })
+
+  it('handles the removal of a file input', () => {
+    const initialProps = {
+      schema: JSON.stringify({ properties: { file_image: { type: "string", format: "data-url" } } }),
+      uischema: JSON.stringify({ "ui:order": ["file_image"], "file_image": { "ui:widget": "file" } }),
+      onSchemaChange: jest.fn(),
+      onUISchemaChange: jest.fn(),
+      formData: {}
+    };
+    const component = ReactTestUtils.renderIntoDocument(<FormBuilderContainer {...initialProps} />);
+    component.setState({ fileKey: 'image' }); // Simulating previous file input state
+  
+    const newSchema = JSON.stringify({ properties: {} });
+    const newUiSchema = JSON.stringify({ "ui:order": [] });
+  
+    component.onFormBuilderChange(newSchema, newUiSchema);
+  
+    expect(component.state.fileKey).toBeFalsy();
+    expect(initialProps.onSchemaChange).toHaveBeenCalledWith(JSON.stringify({ properties: {} }));
+    expect(initialProps.onUISchemaChange).toHaveBeenCalledWith(JSON.stringify({ "ui:order": [] }));
+  });
+
+  

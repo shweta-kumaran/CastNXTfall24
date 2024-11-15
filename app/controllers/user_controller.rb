@@ -9,7 +9,12 @@ class UserController < ApplicationController
     submittedTableData = []
     
     talent = get_talent(session[:userId])
+    talent_data = JSON.parse(talent.talentData || '{}')
+    user_city = talent_data["city"] || "Portland"
+    user_state = talent_data["state"] || "Oregon"
+
     events = Event.all
+    events_near_user = []
 
     events.each do |event|
       object = {
@@ -51,9 +56,19 @@ class UserController < ApplicationController
         if "ACCEPTING".casecmp? event.status
           acceptingTableData << object
         end
+        if "ACCEPTING".casecmp?(event.status) && event.statename == user_state
+          events_near_user << object
+        end
       end
     end
-    @properties = {name: session[:userName], acceptingTableData: acceptingTableData, submittedTableData: submittedTableData}
+
+    events_near_user.sort_by! do |event|
+      [
+        event[:location] == user_city ? 0 : 1,
+        event[:date] || Date.today
+      ]
+    end
+    @properties = {name: session[:userName], acceptingTableData: acceptingTableData, submittedTableData: submittedTableData, events_near_user: events_near_user, user_city: user_city, user_state: user_state}
   end
   
   private
