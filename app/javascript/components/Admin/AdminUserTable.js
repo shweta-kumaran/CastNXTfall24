@@ -342,7 +342,7 @@ class AdminUserTable extends Component {
 
     applyFilterToRows = (filter) => {
       // console.log(this.state.rows)
-      this.setState({selectedRow: -1})
+      this.setState({selectedRows: []})
       const {rows} = this.state
       const { columnField, operatorValue, value } = filter;
       return rows.filter((row) => {
@@ -359,7 +359,7 @@ class AdminUserTable extends Component {
     updateFilter = (filter) => {
       const filteredRows = this.applyFilterToRows(filter)
       if (filteredRows.length == 0) {
-        this.setState({ selectedRow: -1})
+        this.setState({ selectedRows: []})
       }
       // console.log("filtered rows:", filteredRows)
       

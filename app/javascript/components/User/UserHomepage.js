@@ -17,7 +17,6 @@ import TextField from "@mui/material/TextField";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Header from "../Navbar/Header";
@@ -67,7 +66,7 @@ class UserHomepage extends Component {
             messageContent: '',
             eventToMessage: null,
             messageGroups: null,
-            selectedGroupMessages: null,
+            selectedGroupMessages: [],
         }
     }
     
@@ -159,9 +158,8 @@ class UserHomepage extends Component {
     openMessageInbox = () => {
         const groupedMessages = this.groupEventMessages(this.state.eventToMessage.messages).sort((group1Messages, group2Messages) => {
             // Access the `timeSent` of the last message in each group
-            console.log(group1Messages)
-            const group1LastMessageTime = new Date(group1Messages.messages.slice(-1)[0].timeSent);
-            const group2LastMessageTime = new Date(group2Messages.messages.slice(-1)[0].timeSent);
+            const group1LastMessageTime = new Date(group1Messages.slice(-1)[0].timeSent);
+            const group2LastMessageTime = new Date(group2Messages.slice(-1)[0].timeSent);
         
             // Sort in descending order (most recent first)
             return group2LastMessageTime - group1LastMessageTime;
@@ -186,15 +184,21 @@ class UserHomepage extends Component {
       }
   
       sendMessage = () => {
-        console.log(this.state.selectedGroupMessages)
+        let messageTo = []; // Default to an empty array
+        let userIds = []; // Default to an empty array
+
+        if (this.state.selectedGroupMessages.length > 0) {
+            messageTo = this.state.selectedGroupMessages[0].messageTo
+            userIds = this.state.selectedGroupMessages[0].userIds
+        }
+
         const payload = {
           content: this.state.messageContent,
           sender: properties.name,
-          receiver: this.state.selectedGroupMessages[0].messageTo,
+          receiver: messageTo,
           event_id: this.state.eventToMessage.id,
-          user_id: this.state.selectedGroupMessages[0].userIds,
+          user_id: userIds,
         }
-  
         const baseURL = window.location.href.split("#")[0]
         
         this.setState({

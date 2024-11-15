@@ -371,7 +371,7 @@ describe('AdminUserTable Filter', () => {
             value: 'Mary'
         }
         instance.updateFilter(filter)
-        expect(instance.state.selectedRow).toBe(-1)
+        expect(instance.state.selectedRows.length).toBe(0)
     })
 
     test('clear filters', () => {
@@ -384,6 +384,16 @@ describe('AdminUserTable Filter', () => {
         instance.clearFilter()
         expect(instance.state.rows.length).toBe(4)
     })
+
+    // test('open filter', () => {
+    //     instance.setState({
+    //         openFilter: false,
+    //         openChatWindow: false
+    //     })
+    //     instance.openFilter()
+    //     expect(instance.state.openFilter).toBe(true)
+    //     expect(instance.state.openChatWindow).toBe(false)
+    // })
 })
 
 // test('should correctly find and concatenate assigned clients names', () => {
