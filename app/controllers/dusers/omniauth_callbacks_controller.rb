@@ -12,12 +12,8 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     Duser.from_omniauth_events360(auth)
 
     email = auth.info.email
-    if email.present?
-      flash[:notice] = "Email recognized: #{email}"
-    else
-      flash[:alert] = "No email found in authentication data."
-    end
-    redirect_to root_path
+    
+    render json: { comment: "successful Oauth for this email. Role selection and Session creation capability is still in progress.", email: email }, status: 400
 
 #     ## at this point we have an entry in duser - to be completed in next phase of the feature
     
