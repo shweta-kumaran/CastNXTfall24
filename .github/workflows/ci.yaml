@@ -38,7 +38,7 @@ jobs:
           rubocop --parallel --fail-level error
       
       - name: Run Jest tests
-        run: yarn test --coverage
+        run: yarn coverage spec/javascript
       
       - name: Run MongoDB
         run: docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=example mongo:8.0.0

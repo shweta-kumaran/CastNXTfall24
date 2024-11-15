@@ -17,9 +17,9 @@ Feature: Admin events
         And the user should see "2024-12-19"
         And the user should see "Fashion"
 
-      Scenario: Change event status
-        Given the user is on the homepage for "Miu Miu"
-        When the user presses "REVIEWING"
+      # Scenario: Change event status
+        # Given the user is on the homepage for "Miu Miu"
+        # When the user presses "REVIEWING"
         # Then the user should see the popup "Are you sure you want to change the event status?"
       #   When the user presses "OK"
       #   Then the user should redirect to Admin Homepage

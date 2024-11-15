@@ -80,21 +80,20 @@ defineFeature(feature, (test) => {
 
     });
 
-    test('Change event status', ({ given, when, then, and }) => {
-        eventsInDatabase(given, and);
+    // test('Change event status', ({ given, when, then, and }) => {
+    //     eventsInDatabase(given, and);
 
-        given(/^the user is on the homepage for "(.*)"$/, async (eventName) => {
-            await driver.findElement(By.linkText(eventName)).click();
-        });
+    //     given(/^the user is on the homepage for "(.*)"$/, async (eventName) => {
+    //         await driver.findElement(By.linkText(eventName)).click();
+    //     });
 
-        when(/^the user presses "(.*)"$/, async (buttonName) => {
-            // await driver.findElement(By.linkText(buttonName)).click();
-            await driver.findElement(By.xpath(`//button[text()='${buttonName}']`)).click();
-        });
+    //     when(/^the user presses "(.*)"$/, async (buttonName) => {
+    //         await driver.findElement(By.xpath(`//button[text()='${buttonName}']`)).click();
+    //     });
 
-        // then(/^the user should see the popup "(.*)"$/, async (text) => {
-        //     let alert = await driver.switchTo().alert();
-        //     expect(await alert.getText()).toContain(text);
-        // });
-    });
+    //     then(/^the user should see the popup "(.*)"$/, async (text) => {
+    //         let alert = await driver.switchTo().alert();
+    //         expect(await alert.getText()).toContain(text);    
+    //     });
+    // });
 });

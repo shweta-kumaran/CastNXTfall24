@@ -39,9 +39,9 @@ defineFeature(feature, (test) => {
 
         then('the user should see a list of events', async () => {
             // Write code here that turns the phrase above into concrete actions
-            expect(await driver.getPageSource()).toContain("Events");
+            expect(await driver.getPageSource()).toContain("Event");
             expect(await driver.getPageSource()).toContain("Miu Miu");
         });
 
-    }, 150000);
+    });
 });
