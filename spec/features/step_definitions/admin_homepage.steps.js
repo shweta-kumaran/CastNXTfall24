@@ -14,6 +14,10 @@ defineFeature(feature, (test) => {
         await driver.quit();
     });
 
+    afterEach(async () => {
+        await driver.findElement(By.id('logoutBtn')).click();
+    });
+
     test('Admin can see list of their events and can create new events', ({ given, when, then, and }) => {
         given(/^a user with email \"(.+)\" and password \"(\w+)\" is logged in as an \"admin\"$/, async (email, password) => {
             // Write code here that turns the phrase above into concrete actions
@@ -116,13 +120,13 @@ defineFeature(feature, (test) => {
 
     test('Create new event with missing information', ({ given, when, then, and }) => {
         given('the user navigates to the Admin Homepage', async () => {
-            // let email = 'admin@example.com';
-            // let password = '123456qt';
-            // await driver.get('http://127.0.0.1:3000/home');
-            // await driver.findElement(By.name('loginEmail')).sendKeys(email);
-            // await driver.findElement(By.name('loginPassword')).sendKeys(password);
-            // await driver.findElement(By.id('login')).click();
-            // await driver.wait(until.elementLocated(By.id('events')), 10000);
+            let email = 'admin@example.com';
+            let password = '123456qt';
+            await driver.get('http://127.0.0.1:3000/home');
+            await driver.findElement(By.name('loginEmail')).sendKeys(email);
+            await driver.findElement(By.name('loginPassword')).sendKeys(password);
+            await driver.findElement(By.id('login')).click();
+            await driver.wait(until.elementLocated(By.id('events')), 10000);
             await driver.get('http://127.0.0.1:3000/admin');
         });
 
@@ -153,5 +157,4 @@ defineFeature(feature, (test) => {
             expect(await driver.findElement(By.className('MuiAlert-message')).getText()).toContain(alert);
         });
     });
-
 });
