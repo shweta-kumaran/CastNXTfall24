@@ -179,6 +179,17 @@ class AdminUserTable extends Component {
             rows: [...prevState.rows, newRow]
         }));
     }
+    deleteRow = () => {
+      this.setState(prevState => ({
+        rows: prevState.rows.filter(row => row.id !== this.state.selectedRow),
+        selectedRow: -1,
+        openChatWindow: false
+      }));
+
+      const baseURL = window.location.href.split("#")[0]
+      const uniqId = this.state.rows[this.state.selectedRow - 1]['uniqId']
+      axios.delete(baseURL + '/slides/'+ uniqId)
+    }
     handleRowChange = (newData, id) => {
       this.setState(prevState => ({
           rows: prevState.rows.map(row => row.id === id ? newData : row)
@@ -228,11 +239,11 @@ class AdminUserTable extends Component {
                   console.log("new row: ", this.newRow)
               }
           }
-          console.log(rows)
+          // console.log(rows)
           return { rows };
       }, () => {
-        console.log("State has been updated: ", this.newRow)
-        console.log("State rows after update: ", this.state.rows)
+        // console.log("State has been updated: ", this.newRow)
+        // console.log("State rows after update: ", this.state.rows)
       });
   }
 
