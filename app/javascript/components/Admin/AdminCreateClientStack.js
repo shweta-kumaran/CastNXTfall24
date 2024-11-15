@@ -183,7 +183,7 @@ class AdminCreateClientStack extends Component {
         //initial loads and subsequent ones that follow.
         const isCurated = rowData?.curated || this.props?.properties?.data?.slides[`${rowData.row.uniqId}`]?.curated;
         const slideData = rowsToEntries(rowData, isCurated)
-        console.log(slideData);
+        console.log("Row Data", slideData);
         this.setState({
           page: rowData.id-1
         })

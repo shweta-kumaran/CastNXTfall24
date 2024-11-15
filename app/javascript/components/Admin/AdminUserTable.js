@@ -18,7 +18,7 @@ import Typography from '@mui/material/Typography';
 import TextField from "@mui/material/TextField";
 import Box from '@mui/material/Box';
 // import {Dialog, DialogActions, DialogContent, DialogTitle} from '@material-ui/core'
-import FilterForm from '../Filter/ColumnFilter'
+import FilterForm from '../Filter/ColumnFilter';
 class AdminUserTable extends Component {
     constructor(props) {
         super(props)
@@ -146,13 +146,13 @@ class AdminUserTable extends Component {
         let eventTalent = this.createEventTalentData()
         if(this.props.filter_curated) {
           eventTalent=eventTalent.filter(row => row["curated"] === true)
-        }
+        
         let [rows,columns] = this.constructTableData(eventTalent)
         this.setState({
             eventTalent: eventTalent,
             rows: rows,
             columns: columns
-        })
+        })}
       }
     }
 
@@ -167,7 +167,9 @@ class AdminUserTable extends Component {
       // } else {
       //   talentData = this.state.eventTalent[rowData.id-1];
       // }
-      const talentData = this.state.eventTalent[rowData.id-1];
+      // const talentData = this.state.eventTalent[rowData.id-1];
+      const rowId = this.state.rows[rowData.id - 1].id
+      const talentData = this.state.eventTalent[rowId - 1]
       rowData.row = talentData;
       rowData.row.uniqId = talentData.id;
       rowData.row.talentName = talentData.name;
@@ -394,7 +396,7 @@ class AdminUserTable extends Component {
                           </IconButton>
                         </div>
                       </div>
-                      <FilterForm open={this.state.openFilter} columns={this.state.columns} onApplyFilter={this.updateFilter} onClose={this.openFilter} onClearFilter={this.clearFilter}></FilterForm>
+                      <FilterForm open={this.state.openFilter} columns={this.state.columns} onApplyFilter={this.updateFilter} onClose={this.openFilter} onClearFilter={this.clearFilter}/>
                       {this.state.selectedRow > -1 && (<Button variant="contained" onClick={this.openChatWindow}>Chat with {this.state.rows[this.state.selectedRow - 1]['talentName']}</Button>)}
                       <button onClick={this.addNewRow}>Add Row</button>
                       <button onClick={this.handleSave}>Save Data</button>
