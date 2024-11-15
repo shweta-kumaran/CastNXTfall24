@@ -1,15 +1,11 @@
 FROM ruby:2.6.6
 
 WORKDIR /home
-COPY Gemfile package.json ./
+COPY Gemfile package.json yarn.lock ./
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - 
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - 
 RUN apt-get install -y nodejs
 
-RUN npm install -g npm@8.5.4
-RUN npm install -g n
-RUN n 16.13.0
-RUN hash -r
 RUN npm install -g yarn
 
 RUN gem install bundler -v 2.2.31
@@ -18,10 +14,9 @@ RUN bundle install
 
 COPY . .
 COPY config/mongoid.Docker.config config/mongoid.yml
-RUN npm install
+RUN yarn install
 
-RUN rails webpacker:install
-RUN rails webpacker:compile
+RUN ./bin/webpack
 
 RUN rm -rf tmp/
 
