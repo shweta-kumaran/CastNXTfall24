@@ -7,15 +7,8 @@ class Duser
 
   ## Database authenticatable
   field :email,              type: String, default: ""
-  field :encrypted_password, type: String, default: ""
 
-  ## Recoverable
-  field :reset_password_token,   type: String
-  field :reset_password_sent_at, type: Time
-
-  ## Rememberable
-  field :remember_created_at, type: Time
-
+  
   ## Trackable
   # field :sign_in_count,      type: Integer, default: 0
   # field :current_sign_in_at, type: Time
@@ -41,7 +34,6 @@ class Duser
          :recoverable, :rememberable, :validatable
 
   ## Database authenticatable
-  field :email,              type: String, default: ""
   field :user_type, type: String,  default: ""
   field :name, type: String,  default: "" 
   
@@ -92,12 +84,14 @@ class Duser
       
       puts "Auth data: #{auth.info.email}"
 
-      #   #user = Duser.find_by(email: auth.info.email)
+       return auth.info.email
+
+      # user = Duser.find_by(email: auth.info.email)
       # rescue Mongoid::Errors::DocumentNotFound => e
       #   user = nil  # Handle the case where the user isn't found
       # end
 
-      # if user.present?
+      #if user.present?
       #  ##do nothing
       #  user
       # else
