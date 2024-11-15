@@ -38,7 +38,8 @@ class AdminUserTable extends Component {
             openFilter: false,
             talentMessages: {},
             messageContent: "",
-            disableSubmit: false
+            disableSubmit: false,
+            filtered: false
         }
         this.newRow = null;
     }
@@ -156,6 +157,16 @@ class AdminUserTable extends Component {
     }
 
     onRowClick = (rowData) => {
+      // console.log("rowData:", rowData)
+      // console.log("Rows: ", this.state.rows)
+      // console.log("event talent: ", this.state.eventTalent)
+      // let talentData;
+      // if (this.state.filtered){
+      //   const rowId = this.state.rows[rowData.id - 1].id
+      //   talentData = this.state.eventTalent[rowId - 1]
+      // } else {
+      //   talentData = this.state.eventTalent[rowData.id-1];
+      // }
       const talentData = this.state.eventTalent[rowData.id-1];
       rowData.row = talentData;
       rowData.row.uniqId = talentData.id;
@@ -177,8 +188,6 @@ class AdminUserTable extends Component {
         }));
     }
     handleRowChange = (newData, id) => {
-      console.log("New Data: ", newData)
-      console.log("New Data ID: ", id)
       this.setState(prevState => ({
           rows: prevState.rows.map(row => row.id === id ? newData : row)
       }));
@@ -336,6 +345,7 @@ class AdminUserTable extends Component {
 
     applyFilterToRows = (filter) => {
       // console.log(this.state.rows)
+      this.setState({selectedRow: -1})
       const {rows} = this.state
       const { columnField, operatorValue, value } = filter;
       return rows.filter((row) => {
@@ -351,13 +361,17 @@ class AdminUserTable extends Component {
 
     updateFilter = (filter) => {
       const filteredRows = this.applyFilterToRows(filter)
+      if (filteredRows.length == 0) {
+        this.setState({ selectedRow: -1})
+      }
       // console.log("filtered rows:", filteredRows)
-      this.setState({rows: filteredRows})
+      
+      this.setState({rows: filteredRows, filtered: true})
     }
 
     clearFilter = () => {
       // Reset rows to originalRows when clearing the filter
-      this.setState((prevState) => ({ rows: prevState.originalRows }));
+      this.setState((prevState) => ({ rows: prevState.originalRows, filtered: false}));
     };
     
     render() {
