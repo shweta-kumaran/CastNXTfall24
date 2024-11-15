@@ -79,6 +79,16 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'sendinblue'
 
 gem 'nokogiri', '1.13.10'
+
+gem 'oauth2'
+gem 'omniauth'
+gem 'omniauth-oauth2'
+gem 'omniauth-rails_csrf_protection'
+
+gem 'devise'
+gem 'dotenv-rails', groups: [:development, :test]
+
+
 # source 'https://rubygems.org'
 # git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
