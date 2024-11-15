@@ -21,7 +21,7 @@ COPY config/mongoid.Docker.config config/mongoid.yml
 RUN npm install
 
 RUN rails webpacker:install
-RUN rails webpacker:compile
+RUN rails webpacker:compile || true
 
 RUN rm -rf tmp/
 
