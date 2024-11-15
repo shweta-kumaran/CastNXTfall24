@@ -3,6 +3,7 @@ import UserHomepage from "../../../../app/javascript/components/User/UserHomepag
 import ReactTestUtils, {act} from 'react-dom/test-utils';
 import renderer from 'react-test-renderer';
 import axios from "axios";
+import ReactDOM from "react-dom";
 //import { render, fireEvent } from '@testing-library/react'; // Add this import
 import { USER_PROPERTIES_WITH_SUBMISSIONS, USER_PROPERTIES_WITH_ACCEPTING } from '../../__mocks__/props.mock'
 
@@ -43,6 +44,7 @@ afterEach(() => {
 
 describe('UserHomepage component', () => {
     // Mock props
+    let container;
     const mockPropsWithDeletedEvent = {
       submittedTableData: [
         {
@@ -53,7 +55,21 @@ describe('UserHomepage component', () => {
       ],
       acceptingTableData: [],
     };
+
+    beforeEach(() => {
+      // Initialize the container before each test
+      container = document.createElement('div');
+      document.body.appendChild(container);
+      global.properties = USER_PROPERTIES_WITH_SUBMISSIONS;
+    });
   
+    afterEach(() => {
+      // Clean up after each test
+      document.body.removeChild(container);
+      container = null;
+      jest.clearAllMocks();
+    });
+
     test('renders UserHomepage with deleted event', () => {
         const view = ReactTestUtils.renderIntoDocument(
           <UserHomepage properties={mockPropsWithDeletedEvent} />
@@ -152,6 +168,78 @@ describe('UserHomepage component', () => {
   
     // Add more test cases for onSubmit, onCategoryFilterValueSelected, onIsPaidFilterSelected,
     // renderAcceptingEventList, and renderSubmittedEventList methods
+    test('constructor initializes state with deleted event flag', () => {
+      const mockProps = {
+        submittedTableData: [
+          {
+            status: 'DELETED',
+            delete_time: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+            title: 'Deleted Event'
+          }
+        ],
+        acceptingTableData: [],
+        events_near_user: [],
+        user_state: 'Texas',
+        user_city: 'Austin'
+      };
+      
+      const component = ReactTestUtils.renderIntoDocument(<UserHomepage {...mockProps} />);
+      expect(component.state.eventDeletedFlag).toBeTruthy();
+    });
+
+    test('handleDateChange properly validates date ranges', () => {
+      const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+      
+      // Set start date
+      const startEvent = {
+        target: {
+          name: 'eventdateStart',
+          value: '2024-01-01'
+        }
+      };
+      view.handleDateChange(startEvent);
+      expect(view.state.eventdateStart).toBe('2024-01-01');
+      
+      // Set end date before start date
+      const endEvent = {
+        target: {
+          name: 'eventdateEnd',
+          value: '2023-12-31'
+        }
+      };
+      view.handleDateChange(endEvent);
+      expect(view.state.dateRangeWarning).toBe('Event end date must be greater than start date');
+    });
+
+    test('renderEventBoxes displays events correctly', () => {
+      const mockEvents = [
+        {
+          id: 1,
+          title: 'Test Event 1',
+          category: 'Music',
+          date: '2024-12-01',
+          location: 'Austin',
+          statename: 'Texas',
+          ispaid: 'Yes'
+        },
+        {
+          id: 2,
+          title: 'Test Event 2',
+          category: 'Dance',
+          date: '2024-12-02',
+          location: 'Dallas',
+          statename: 'Texas',
+          ispaid: 'No'
+        }
+      ];
+  
+      const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+      view.setState({ eventsNearUser: mockEvents });
+      
+      const result = view.renderEventBoxes();
+      expect(result.props.children.length).toBe(2);
+    });
+
   });
 
 test('Selected filter is updated in state', ()=> {

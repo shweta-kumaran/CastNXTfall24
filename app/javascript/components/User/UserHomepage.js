@@ -29,8 +29,10 @@ const commonStyle = {marginTop: "20px", marginBottom: "20px"}
 class UserHomepage extends Component {
     constructor(props) {
         super(props)
-        
-        const submittedTableData = properties.submittedTableData || []
+        console.log("Props received in constructor:", props);
+
+        //const submittedTableData = properties.submittedTableData || []
+        const { acceptingTableData = [], submittedTableData = [], events_near_user = [], user_state = '', user_city = '' } = props;
         const eventDeletedFlag = submittedTableData.find((event)=>{
             if(event.status === 'DELETED'){
                 let currTime = new Date();
@@ -50,11 +52,12 @@ class UserHomepage extends Component {
         this.state = {
             acceptingTableData: properties.acceptingTableData ? properties.acceptingTableData : [],
             submittedTableData: properties.submittedTableData ? properties.submittedTableData : [],
+            eventsNearUser: properties.events_near_user || [],
             eventDeletedFlag,
             tabValue: savedTabValue,
             categoryFilterTextValue: 'All', 
-            stateName: '', 
-            cityName: '', 
+            stateName: user_state, 
+            cityName: user_city, 
             title:'',
             eventdateStart:'',
             eventdateEnd:'',
@@ -344,7 +347,67 @@ class UserHomepage extends Component {
         return rows;
     }
 
+    renderEventBoxes() {
+        const { eventsNearUser } = this.state;
+    
+        if (!eventsNearUser || eventsNearUser.length === 0) {
+            return <Typography>No nearby events available</Typography>;
+        }
+    
+        const isScrollable = eventsNearUser.length <= 3;
+    
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    overflowX: isScrollable ? "auto" : "scroll",
+                    padding: "10px",
+                    justifyContent: isScrollable ? "center" : "flex-start",
+                    whiteSpace: isScrollable ? "normal" : "nowrap",
+                }}
+            >
+                {eventsNearUser.map((event, index) => (
+                    <Box
+                        key={index}
+                        sx={{
+                            border: "1px solid #ccc",
+                            borderRadius: "10px",
+                            padding: "10px",
+                            marginRight: "10px",
+                            cursor: "pointer",
+                            width: "200px",
+                            minHeight: "150px",
+                            display: "inline-block",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            backgroundColor: "#f9f9f9",
+                        }}
+                        onClick={() => window.location.href = `/user/events/${event.id}`}
+                    >
+                        <Typography variant="h6" gutterBottom>
+                            {event.title}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {event.category}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {new Date(event.date).toLocaleDateString()}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {event.location}, {event.statename}
+                        </Typography>
+                        <Typography variant="body2" color={event.ispaid ? "green" : "red"}>
+                            {event.ispaid ? "Paid" : "Free"}
+                        </Typography>
+                    </Box>
+                ))}
+            </div>
+        );
+    }    
+
     render() {
+        const { eventsNearUser = [] } = this.state;
         return(
             <div>
                 <div>
@@ -355,6 +418,7 @@ class UserHomepage extends Component {
                         {
                             this.state.eventDeletedFlag ? <MuiAlert onClick={() => (this.setState({eventDeletedFlag: false}))} severity="warning" elevation={6} variant="filled">Note: Certain events have been cancelled. Please check submissions for more details. Sorry for the inconvenience.</MuiAlert> : null
                         }
+                
                         <div className="row">
                             <h2> CastNXT Events</h2>
                         </div>
@@ -367,6 +431,11 @@ class UserHomepage extends Component {
                                     </Tabs>
                                     <hr style={{ color: "black" }} />
                                 </div>
+                                {this.state.tabValue === 0 &&
+                                    (<div className="row">
+                                    <h4>Events Near Me</h4>
+                                    {this.renderEventBoxes()}
+                                </div>)}
                                 
                                 <div><b>Category Filter</b></div>
                                 <CategoryFilter categoryFilterValueSelected = {this.onCategoryFilterValueSelected}></CategoryFilter>
@@ -388,8 +457,6 @@ class UserHomepage extends Component {
                                         {this.state.dateRangeWarning}
                                     </div>
                                 )}
-                                    
-                                {this.state.tabValue === 0 &&
                                     <TableContainer component={Paper}>
                                         <Table aria-label="simple table">
                                             <TableHead style={{ backgroundColor: "#3498DB" }}>
@@ -406,7 +473,6 @@ class UserHomepage extends Component {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
-                                }
                                 
                                 {this.state.tabValue === 1 &&
                                     <div>
@@ -542,7 +608,7 @@ class UserHomepage extends Component {
                                                         </Box>
                                                         
                                                     </Box>
-                                                    }
+    }
 
                                                     </ListItem>
                                             ))}
