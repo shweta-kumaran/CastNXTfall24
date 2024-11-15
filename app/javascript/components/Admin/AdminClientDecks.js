@@ -257,7 +257,7 @@ class AdminClientDecks extends Component {
         sender: properties.name,
         receiver: this.state.clientList[this.state.client].name,
         event_id: window.location.href.split("/")[-1],
-        client_id: this.state.client
+        user_id: this.state.client
       }
 
       const baseURL = window.location.href.split("#")[0]
@@ -349,7 +349,7 @@ class AdminClientDecks extends Component {
                 {this.state.client !== "" &&
                     <div>
                       <Button variant="contained" onClick={this.expandSlides}>Expand Deck</Button><br /><br />
-                      <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
+                      <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" showCheckbox={false} currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
 
                         <div className="col-md-8 offset-md-2">
 
@@ -398,7 +398,13 @@ class AdminClientDecks extends Component {
                                             }}
                                             >
 
-                                              <List>
+                                              <List
+                                                style={{
+                                                  flex: 1, // Takes all available vertical space above the input area
+                                                  overflowY: "auto", // Enables scrolling for messages
+                                                  height: "342px"
+                                                }}
+                                              >
                                                 {this.state.announcements.map((announcement) =>(
                                                   <ListItem
                                                     key = {announcement.announcementContent}
@@ -464,10 +470,16 @@ class AdminClientDecks extends Component {
                                                       borderRadius: "5px",
                                                       backgroundColor: 'white',
                                                       display: "flex",
-                                                      position: "relative"
+                                                      position: "relative",
                                                     }}
                                                   >
-                                                    <List>
+                                                    <List
+                                                      style={{
+                                                        flex: 1, // Takes all available vertical space above the input area
+                                                        overflowY: "auto", // Enables scrolling for messages
+                                                        height: "368px"
+                                                      }}
+                                                    >
                                                       {this.state.clientMessages[this.state.client].map((message) =>(
                                                             <ListItem
                                                               key = {message.messageContent}

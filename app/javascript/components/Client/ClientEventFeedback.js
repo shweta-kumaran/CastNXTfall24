@@ -48,7 +48,7 @@ class ClientEventFeedback extends Component {
       let entries = []
       let clientComments = []
       let slideComments = []
-      
+      console.log("properties: ", this.props.properties)
       for(var key in slides) {
         entries.push({
           ...slides[key],
@@ -146,7 +146,7 @@ class ClientEventFeedback extends Component {
         receiver: 'Producer',
         sender: this.props.properties.name,
         event_id: window.location.href.split("/")[-1],
-        client_id: this.state.clientId
+        user_id: this.state.clientId
       }
 
       const baseURL = window.location.href.split("#")[0]
@@ -242,6 +242,7 @@ class ClientEventFeedback extends Component {
                                               height: "calc(50% - 100px)",
                                               borderRadius: "5px",
                                               backgroundColor: '#d3d3d3',
+                                              overflowY: "auto"
                                             }}
                                             >
                                               <List>
@@ -303,10 +304,16 @@ class ClientEventFeedback extends Component {
                                                     borderRadius: "5px",
                                                     backgroundColor: 'white',
                                                     display: "flex",
-                                                    position: "relative"
+                                                    position: "relative",
                                                   }}
                                                 >
-                                                  <List>
+                                                  <List
+                                                    style={{
+                                                      height: "368px",
+                                                      flex: 1, // Takes all available vertical space above the input area
+                                                      overflowY: "auto", // Enables scrolling for messages
+                                                    }}
+                                                  >
                                                     {this.state.clientMessages.map((message) =>(
                                                           <ListItem
                                                             key = {message.messageContent}

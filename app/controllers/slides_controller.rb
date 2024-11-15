@@ -11,6 +11,11 @@ class SlidesController < ApplicationController
     end
   end
 
+  # DELETE /admin/events/:event_id/slides/:id
+  def destroy
+    delete_producer_slide params[:id]
+  end
+
   def update_payment_status
     slide = Slide.find(params[:id])
     if slide.update(been_paid: params[:been_paid])
@@ -103,7 +108,21 @@ class SlidesController < ApplicationController
     #   render json: {comment: "Internal Error!"}, status: 500
     end
   end
-    
+
+  def delete_producer_slide slide_id
+    begin
+      if is_user_logged_in?("ADMIN")
+        slide = Slide.find_by(:_id => slide_id)
+        slide.destroy
+        render json: {comment: "Deleted slide!"}, status: 200
+      else
+        render json: {redirect_path: "/"}, status: 403
+      end
+    # rescue Exception
+    #   render json: {comment: "Internal Error!"}, status: 500
+    end
+  end
+
   def update_event_slides data
     data.keys.each do |slideId|
       puts slideId

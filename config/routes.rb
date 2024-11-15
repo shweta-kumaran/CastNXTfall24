@@ -20,6 +20,7 @@ Rails.application.routes.draw do
     collection do
       resources :events, only: [:show] do
         resources :slides, only: [:create]
+        resources :messages, only: [:create]
       end
     end
   end
@@ -42,7 +43,7 @@ Rails.application.routes.draw do
         resources :negotiations, only: [:create]
         resources :messages, only: [:create]
         resources :announcements, only: [:create]
-        resources :slides, only: [:create] do
+        resources :slides, only: [:create, :destroy] do
           resources :comments, only: [:create]
         end
       end

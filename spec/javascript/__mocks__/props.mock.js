@@ -346,7 +346,30 @@ export const USER_PROPERTIES_WITH_SUBMISSIONS = {
             "title": "Paris Fashion Week",
             "id": "634b4470c2e881bd9a343e45",
             "accepting": true,
-            "status": "SUBMITTED"
+            "category": 'Fashion',
+            "status": "SUBMITTED",
+            "statename": 'Hawaii',
+            "date": new Date('10-26-2024')
+        },
+        {
+            "title": "Deleted Event",
+            "id": "634b4470c2e881bd9a343e46",
+            "accepting": false,
+            "category": 'Performing Arts',
+            "status": "DELETED",
+            "statename": 'Texas',
+            "location": 'Irving',
+            "date": new Date('10-26-2023')
+        }, 
+        {
+            "title": "Houston Orchestra",
+            "id": "634b4470c2e881bd9a343e47",
+            "accepting": true,
+            "category": 'Performing Arts',
+            "status": "SUBMITTED",
+            "statename": 'Texas',
+            "location": 'Houston',
+            "date": new Date('01-11-2025')
         }
     ]
 }
@@ -459,11 +482,17 @@ export const PROPERTIES_CLIENT_SUMMARY ={
         "finalizedIds": [],
         "slides": {
             "6371988eed22d5ed037d39d0": {
-                "talentName": "efsedfsd",
+                "talentName": "harris",
                 "formData": {
                     "plp": "nfjkdsnkjfds"
                 }
-            }
+            },
+            "6371988eed22d5ed037d49d1": {
+                "talentName": "alex",
+                "formData": {
+                    "plp": "nfjkdsnkjfds"
+                }
+            },
         }
     }
 }
@@ -471,6 +500,7 @@ export const PROPERTIES_CLIENT_SUMMARY ={
 export const PROPERTIES_CLIENT_FEEDBACK = {
     "name": "Sid",
     "data": {
+        "announcements": [],
         "schema": {
             "type": "object",
             "properties": {
@@ -509,6 +539,9 @@ export const PROPERTIES_CLIENT_FEEDBACK = {
         "description": "Some Description",
         "status": "ACCEPTING",
         "negotiationId": "634b4956c2e881bec01f8fea",
+        "messageContent": "",
+        "commentContent": "",
+        "messages": [],
         "finalizedIds": [],
         "location": null,
         "statename": null,

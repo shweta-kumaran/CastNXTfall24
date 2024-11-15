@@ -160,14 +160,13 @@ class AdminEventSummary extends Component {
 
   handlePaymentCompletedToggle = async (id) => {
     const row = this.state.rows.find((row) => row.id === id); // Find row by the internal index
+    if (!row) {return;}
     const updatedPaymentStatus = !row.paymentCompleted;
 
     if (!row.slideId) { // Ensure we are using the actual slideId
-      console.error('Slide ID is undefined for row:', row);
+      console.error('Slide ID is undefined for row:', row)
       return;
     }
-
-    console.log('URL:', `/slides/${row.slideId}/update_payment_status`); // Log the URL
 
     try {
       const response = await fetch(`/slides/${row.slideId}/update_payment_status`, {
@@ -185,7 +184,6 @@ class AdminEventSummary extends Component {
       }
 
       const result = await response.json();
-      console.log("API Response:", result);
 
       if (result.success) {
         this.setState((prevState) => {
@@ -197,12 +195,8 @@ class AdminEventSummary extends Component {
           });
           return { rows: updatedRows };
         });
-      } else {
-        console.error('Failed to update payment status:', result.error);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
+      } else {}
+    } catch (error) { console.error('Error:', error) }
   };
 
   render() {
@@ -236,7 +230,7 @@ class AdminEventSummary extends Component {
                         variant="contained"
                         color="primary"
                         endIcon={<PaymentIcon />}
-                        onClick={() => this.handlePayClick(params.row.paymentLink)}
+                        onClick={() => this.handlePayMeLinkClick(params.row.paymentLink)}
                         style={{ width: '100%' }}
                       >
                         Pay

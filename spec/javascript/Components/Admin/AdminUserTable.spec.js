@@ -2,31 +2,6 @@ import AdminUserTable from "../../../../app/javascript/components/Admin/AdminUse
 import {propsDefault, CLIENT_DESK_PROP} from '../../__mocks__/props.mock';
 import renderer, { act }from 'react-test-renderer';
 import { saveAs } from 'file-saver';
-// Import necessary utilities from react-test-renderer
-// import renderer, { act } from 'react-test-renderer';
-
-/*
-jest.mock('@material-ui/data-grid',() => ({
-    DataGrid: (props) => {
-        jest.fn(props);
-        return(<mock-data-grid props={props}>{props.children}</mock-data-grid>)
-    },
-    getGridNumericColumnOperators: () => []
-}));
-jest.mock('@material-ui/core', () => ({
-    Paper: (props) => {
-        jest.fn(props)
-        return (<mock-paper props={props}>{props.children}</mock-paper>)
-    }
-}))
-
-jest.mock('../../../../app/javascript/utils/RangeFilter' , () => ({
-    extendedNumberOperators: () => []
-}))
-
-
-global.window.open = jest.fn();
-*/
 
 jest.mock('@material-ui/data-grid', () => ({
     DataGrid: (props) => {
@@ -171,6 +146,188 @@ describe('testing editing cells', () => {
         reactComponentObjectForThisComponent.addNewRow();
         reactComponentObjectForThisComponent.handleSave();
         expect(window.alert).toHaveBeenCalledWith("Name and email should be provided");
+    });
+});
+
+describe('AdminUserTable Component', () => {
+    let instance;
+    beforeEach(() => {
+        instance = renderer.create(
+            <AdminUserTable properties={propsDefault.properties} />
+        ).getInstance();
+    });
+
+    test('constructTableData should generate columns and rows from eventTalent data', () => {
+        const mockProps = {
+            properties: {
+                ...propsDefault.properties,
+                data: {
+                    schema: {
+                        properties: {
+                            name: { title: 'Name', type: 'string' },
+                            preference: { title: 'Preference', type: 'number' }
+                        }
+                    }
+                }
+            },
+            currentTab: true,
+            currentClient: 'client1',
+            currentTalents: {
+                client1: [
+                    {
+                        slideId: '1',
+                        talentName: 'Test Talent',
+                        preference: 1,
+                        finalized: false,
+                        formData: {}
+                    }
+                ]
+            }
+        };
+        instance = renderer.create(
+            <AdminUserTable {...mockProps} />
+        ).getInstance();
+
+        const eventTalent = [
+            { 
+                id: '1', 
+                name: 'Test Talent', 
+                preference: 1, 
+                finalized: false, 
+                formData: {} 
+            }
+        ];
+
+        const [rows, columns] = instance.constructTableData(eventTalent);
+
+        expect(columns.length).toBeGreaterThan(0);
+        expect(columns[0].field).toBe('preference');
+        expect(columns.some(col => col.filterOperators)).toBeTruthy();
+        expect(rows[0].id).toBe(1); 
+        expect(rows[0].talentName).toBe('Test Talent'); 
+    });
+    
+
+    test('createEventTalentData should return an array of objects with expected fields', () => {
+        const mockProps = {
+            properties: propsDefault.properties,
+            currentTab: true,
+            currentClient: 'client1',
+            currentTalents: {
+                client1: [
+                    {
+                        slideId: '1',
+                        talentName: 'Test Talent',
+                        preference: 1,
+                        finalized: false,
+                        formData: {}
+                    }
+                ]
+            }
+        };
+
+        instance = renderer.create(
+            <AdminUserTable {...mockProps} />
+        ).getInstance();
+        const eventTalentData = instance.createEventTalentData();
+        expect(Array.isArray(eventTalentData)).toBeTruthy();
+        expect(eventTalentData[0]).toHaveProperty('id');
+        expect(eventTalentData[0]).toHaveProperty('finalized');
+    });
+
+    test('componentDidMount should initialize eventTalent, rows, and columns state', () => {
+        instance.componentDidMount();
+        expect(instance.state.eventTalent).toBeDefined();
+        expect(instance.state.rows).toBeDefined();
+        expect(instance.state.columns).toBeDefined();
+    });
+
+    test('componentDidUpdate should re-render when props change', () => {
+        const newProps = { ...propsDefault, currentTab: 'newTab' };
+        instance.componentDidUpdate(newProps);
+        expect(instance.state.rows).toBeDefined();
+        expect(instance.state.columns).toBeDefined();
+    });
+
+    test('onRowClick should call handleRowClick with correct data', () => {
+        const mockHandleRowClick = jest.fn();
+        instance = renderer.create(
+            <AdminUserTable 
+                properties={propsDefault.properties}
+                handleRowClick={mockHandleRowClick}
+            />
+        ).getInstance();
+
+        const rowData = { id: 1 };
+        instance.onRowClick(rowData);
+        expect(mockHandleRowClick).toHaveBeenCalledWith(expect.objectContaining({
+            id: 1
+        }));
+    });
+
+    test('onFilterModelChange should update filterModel state', () => {
+        const model = { items: [{ columnField: 'name', operatorValue: 'contains', value: 'test' }] };
+        instance.onFilterModelChange(model);
+        expect(instance.state.filterModel).toEqual(model);
+    });
+
+    test('handleRowChange should update specific row data by ID', () => {
+        const newData = { id: 2, name: 'Updated Name' };
+        instance.setState({ rows: [{ id: 1, name: 'Name1' }, { id: 2, name: 'Name2' }] });
+        instance.handleRowChange(newData, 2);
+        expect(instance.state.rows[1].name).toBe('Updated Name');
+    });
+
+    test('handleSave should set default state and city if missing', () => {
+        instance.newRow = { state: undefined, city: undefined, talentName: 'Test', email: 'test@example.com' };
+        instance.handleSave();
+        expect(instance.newRow.state).toBe('Oregon');
+        expect(instance.newRow.city).toBe('Portland');
+    });
+
+    test('handleSave should alert if talentName or email is missing', () => {
+        jest.spyOn(window, 'alert').mockImplementation(() => {});
+        instance.newRow = { talentName: '', email: '' };
+        instance.handleSave();
+        expect(window.alert).toHaveBeenCalledWith("Name and email should be provided");
+        window.alert.mockRestore();
+    });
+
+    test('handleCellEditCommit should update rows state correctly', () => {
+        const params = { id: 1, field: 'name', value: 'Edited Name' };
+        instance.setState({ rows: [{ id: 1, name: 'Old Name' }] });
+        instance.handleCellEditCommit(params);
+        expect(instance.state.rows[0].name).toBe('Edited Name');
+    });
+
+    test('convertDataToCSV should generate correct CSV format from rows', () => {
+        const data = [{ id: 1, name: 'John Doe', email: 'john@example.com' }];
+        const csvData = instance.convertDataToCSV(data);
+        expect(csvData).toBe('id,name,email\n1,John Doe,john@example.com');
+    });
+
+    test('handleDownloadClick should call saveAs with Blob and filename', () => {
+        instance.setState({
+            rows: [{ id: 1, name: 'Test Name 1', email: 'test1@example.com' }]
+        });
+        instance.handleDownloadClick();
+        expect(saveAs).toHaveBeenCalledWith(expect.any(Blob), 'table_data.csv');
+    });
+
+    test('handlePayMeLinkClick opens correct PayPal URL', () => {
+        instance.handlePayMeLinkClick('https://www.paypal.me/testuser');
+        expect(window.open).toHaveBeenCalledWith('https://www.paypal.com/paypalme/testuser', '_blank');
+    });
+
+    test('handlePayMeLinkClick opens correct Venmo URL', () => {
+        instance.handlePayMeLinkClick('https://venmo.com/testuser');
+        expect(window.open).toHaveBeenCalledWith('https://venmo.com/testuser', '_blank');
+    });
+
+    test('render should display key components and elements', () => {
+        const component = renderer.create(<AdminUserTable properties={propsDefault.properties} />);
+        const tree = component.toJSON();
+        expect(tree).toMatchSnapshot();
     });
 });
 
