@@ -61,6 +61,13 @@ class UserController < ApplicationController
         end
       end
     end
+
+    events_near_user.sort_by! do |event|
+      [
+        event[:location] == user_city ? 0 : 1,
+        event[:date] || Date.today
+      ]
+    end
     @properties = {name: session[:userName], acceptingTableData: acceptingTableData, submittedTableData: submittedTableData, events_near_user: events_near_user, user_city: user_city, user_state: user_state}
   end
   
