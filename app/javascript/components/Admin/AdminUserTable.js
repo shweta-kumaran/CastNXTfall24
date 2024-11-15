@@ -297,9 +297,7 @@ class AdminUserTable extends Component {
           status: true,
           message: res.data.message
         })
-        setTimeout(() => {
-          window.location.href = ""
-        }, 2500)
+        setTimeout(() => (window.location.href = ""), 2500)
       })
       .catch((err) => {
         this.setState({
@@ -307,9 +305,7 @@ class AdminUserTable extends Component {
           message: "Failed to send message!"
         })
         
-        if(err.response.status === 403) {
-          window.location.href = err.response.data.redirect_path
-        }
+        err.response.status === 403 && (window.location.href = err.response.data.redirect_path)
       })
     }
   
@@ -402,6 +398,7 @@ class AdminUserTable extends Component {
                           </IconButton>
                         </div>
                       </div>
+
                       <FilterForm open={this.state.openFilter} columns={this.state.columns} onApplyFilter={this.updateFilter} onClose={this.openFilter} onClearFilter={this.clearFilter}/>
                       {this.state.selectedRows.length > 0 && (<Button variant="contained" onClick={this.openChatWindow}>Send Message</Button>)}
                       <button onClick={this.addNewRow}>Add Row</button>
@@ -490,7 +487,7 @@ class AdminUserTable extends Component {
                                     >
                                     
 
-                                    {message.messageFrom === properties.name &&
+                                    {message.messageFrom === "Producer" &&
                                       <Box
                                       sx={{
                                         display: "flex",              // Align the message and timestamp together
@@ -531,7 +528,7 @@ class AdminUserTable extends Component {
                                       </Box>
 
                                     }
-                                    {message.messageFrom != properties.name &&
+                                    {message.messageFrom != "Producer" &&
                                       <Box
                                       sx={{
                                         display: "flex",
