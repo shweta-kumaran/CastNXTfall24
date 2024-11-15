@@ -27,6 +27,7 @@ class ClientEventSummary extends Component {
     componentDidMount() {
         let slides = this.props.properties.data.slides
         let finalizedIds = this.props.properties.data.finalizedIds
+        console.log("Finalized IDS:" ,finalizedIds)
         let tableRows = []
         // console.log(slides);
         for(var key in slides) {
@@ -50,6 +51,7 @@ class ClientEventSummary extends Component {
     }
 
     onDragEnd = (result) => {
+        console.log("Result client: ", result)
         const { destination, source, reason } = result;
         
         if (!destination) {
@@ -76,7 +78,7 @@ class ClientEventSummary extends Component {
         })
     }
     
-    updatePreferences = () => {
+    updatePreferences = async () => {
         let preferences = []
         
         for(var i=0; i<this.state.summaryRows.length; i++) {
@@ -88,24 +90,38 @@ class ClientEventSummary extends Component {
         }
         
         const baseURL = window.location.href.split("#")[0]
-        
-        axios.post(baseURL + "/negotiations", payload)
-            .then((res) => {
-                this.setState({
-                  status: true,
-                  message: res.data.comment
-                })
+        try {
+            const res = await axios.post(`${baseURL}/negotiations`, payload);
+            this.setState({
+                status: true,
+                message: res.data.comment
             })
-            .catch((err) => {
-                this.setState({
-                  status: false,
-                  message: "Failed to update Event Preferences!"
-                })
+        } catch (err) {
+            this.setState({
+                status: false,
+                message: "Failed to update Event Preferences!"
+            })
+            if (err.response?.status === 403) {
+                window.location.href = err.response.data.redirect_path;
+            }
+        }
+        // await axios.post(baseURL + "/negotiations", payload)
+        //     .then((res) => {
+        //         this.setState({
+        //           status: true,
+        //           message: res.data.comment
+        //         })
+        //     })
+        //     .catch((err) => {
+        //         this.setState({
+        //           status: false,
+        //           message: "Failed to update Event Preferences!"
+        //         })
                 
-                if(err.response.status === 403) {
-                  window.location.href = err.response.data.redirect_path
-                }
-            })
+        //         if(err.response.status === 403) {
+        //           window.location.href = err.response.data.redirect_path
+        //         }
+        //     })
     }
 
     onClickStyle = (event) => {

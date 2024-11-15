@@ -249,7 +249,7 @@ class EventsController < ApplicationController
 
     data[:clientId] = client._id.to_str
     data[:messages] = []
-    messages = get_event_client_messages(event._id, client._id)
+    messages = get_event_user_messages(event._id, client._id)
     messages.each do |message|
       data[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
     end
@@ -298,7 +298,7 @@ class EventsController < ApplicationController
         clientObject[:preferenceSubmitted] = true
       end
 
-      messages = get_event_client_messages(event._id, client._id)
+      messages = get_event_user_messages(event._id, client._id)
       messages.each do |message|
         clientObject[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
       end
@@ -315,18 +315,23 @@ class EventsController < ApplicationController
     event.slide_ids.each do |slideId|
       slide = get_slide(slideId)
       talent = get_talent(slide.talent_id)
-      
+      messages = get_event_user_messages(event._id, slideId)
+
       slideObject = {}
       slideObject[:talentName] = talent.name
       slideObject[:formData] = JSON.parse(slide.data)
       slideObject[:curated] = slide.curated
       slideObject[:comments] = []
+      slideObject[:messages] = []
 
       slide.comment_ids.each do |commentId|
         clientFound=get_comment(commentId)
         slideObject[:comments].push({:commentContent => clientFound.content, :commentOwner => clientFound.owner, :commentClient =>clientFound.client_id.to_str})        
       end
-      
+
+      messages.each do |message|
+        slideObject[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
+      end
       slidesObject[slideId.to_str] = slideObject
     end
     
@@ -422,8 +427,8 @@ class EventsController < ApplicationController
   #   return Comment.where(:slide_id => slideId)
   # end
 
-  def get_event_client_messages eventId, clientId
-    return Message.where(:event_id => eventId, :client_id => clientId)
+  def get_event_user_messages eventId, userId
+    return Message.where(:event_id => eventId, :user_id => userId)
   end
 
 

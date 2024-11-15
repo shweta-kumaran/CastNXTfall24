@@ -1,0 +1,57 @@
+name: Run Linters and Tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: 2.6.6
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install packages
+        run: |
+          gem install bundler -v 2.4.22
+          bundle install
+          yarn install
+          gem install rubocop-ast -v 1.30.0
+          gem install parallel -v 1.24.0
+          gem install rubocop -v 1.21.0
+      
+      - name: Run Rubocop
+        run: |
+          rubocop --parallel --fail-level error
+      
+      - name: Run Jest tests
+        run: yarn test --coverage
+      
+      - name: Run MongoDB
+        run: docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=example mongo:8.0.0
+      
+      - name: Run RSpec tests
+        run: bundle exec rspec
+
+      - uses: paambaati/codeclimate-action@v9
+        # if: github.ref == 'refs/heads/main'
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: |
+            coverage/lcov.info:lcov
+          debug: true
+        # coverage/.resultset.json:simplecov

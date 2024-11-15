@@ -42,6 +42,17 @@ RSpec.describe CommentsController, type: :controller do
             session[:userId]=@client._id.to_str
             expect{post :create,params:{event_id: @event._id.to_str,client_id:@client._id,slide_id: @slide._id.to_str,content:"comment controller",owner: @client.name}}.to change(Comment,:count).by(1)
         end
+        it "should  not create comment as client if exception occurs" do
+            session[:userType]="CLIENT"
+            session[:userName]="eventtest_client"
+            session[:userEmail]="eventtest_client@gmail.com"
+            session[:userId]=@client._id.to_str
+            allow(controller).to receive(:is_user_logged_in?).and_raise(StandardError, "Some error")
+
+            post :create,params:{event_id: @event._id.to_str,client_id:@client._id,slide_id: @slide._id.to_str,content:"comment controller",owner: @client.name}
+            expect(response).to_not have_http_status(:success)
+
+        end
         it "should create comment as admin" do
             session[:userType]="ADMIN"
             session[:userName]="eventtest"

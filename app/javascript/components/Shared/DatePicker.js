@@ -39,7 +39,7 @@ class DatePickerWrapper extends React.Component{
       let date
       let dateStr
       try {
-          date = new Date(this.state.value).toISOString()
+          // date = new Date(this.state.value).toISOString()
           dateStr = date.toString()
       }catch (error) {
           this.setState({

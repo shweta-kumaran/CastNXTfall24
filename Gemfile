@@ -37,8 +37,6 @@ gem 'table_print'
 
 gem 'rack-cors', '~> 0.3.1'
 
-gem 'loofah', '~> 2.19.1'
-
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
@@ -69,14 +67,9 @@ group :test do
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
-  # gem 'chromedriver-helper'
-  gem 'webdrivers', require: false
   gem 'mongoid-rspec'
-  gem 'simplecov'
-  gem 'cucumber-rails', require: false
-  # database_cleaner is not required, but highly recommended
-  gem 'database_cleaner'
-  gem 'database_cleaner-mongoid'
+  gem 'simplecov', '~> 0.21.2', require: false
+  gem "simplecov_json_formatter", "~> 0.1.4", require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -84,6 +77,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'sendinblue'
 
+gem 'loofah', '2.19.1'
 gem 'nokogiri', '1.10.10'
 # source 'https://rubygems.org'
 # git_source(:github) { |repo| "https://github.com/#{repo}.git" }
@@ -164,3 +158,4 @@ gem 'nokogiri', '1.10.10'
 
 # gem 'nokogiri', '~> 1.16.7'
 # gem "ostruct", "~> 0.6.0"
+
