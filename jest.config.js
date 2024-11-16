@@ -1,6 +1,10 @@
 module.exports = {
     roots: [
-        "spec/javascript"
+        "spec/javascript",
+        "spec/features"
+    ],
+    testMatch: [
+        "**/*.{spec,steps}.js"
     ],
     testEnvironment: "jsdom",
     testPathIgnorePatterns: [

@@ -43,3 +43,6 @@ yarn-debug.log*
 
 **/__snapshots__
 /coverage
+
+log/
+bin/
