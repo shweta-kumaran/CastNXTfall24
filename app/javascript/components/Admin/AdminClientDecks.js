@@ -292,6 +292,7 @@ class AdminClientDecks extends Component {
       const payload = {
         content: this.state.announcementContent,
         sender: properties.name,
+        for_client: true,
         event_id: window.location.href.split("/")[-1],
       }
 

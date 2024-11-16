@@ -38,6 +38,8 @@ class AdminUserTable extends Component {
             openFilter: false,
             talentMessages: {},
             messageContent: "",
+            announcements: props.properties.data.announcements,
+            announcementContent: "",
             disableSubmit: false,
             filtered: false
         }
@@ -308,6 +310,42 @@ class AdminUserTable extends Component {
         err.response.status === 403 && (window.location.href = err.response.data.redirect_path)
       })
     }
+
+    sendAnnouncement = () => {
+      const payload = {
+        content: this.state.announcementContent,
+        sender: properties.name,
+        for_client: false,
+        event_id: window.location.href.split("/")[-1],
+      }
+
+      const baseURL = window.location.href.split("#")[0]
+      
+      this.setState({
+        disableSubmit: true
+      })
+
+      return axios.post(baseURL + "/announcements", payload)
+      .then((res) => {
+        this.setState({
+          status: true,
+          message: res.data.announcement
+        })
+        setTimeout(() => {
+          window.location.href = ""
+        }, 2500)
+      })
+      .catch((err) => {
+        this.setState({
+          status: false,
+          message: "Failed to send announcement!"
+        })
+        
+        if(err.response.status === 403) {
+          window.location.href = err.response.data.redirect_path
+        }
+      })
+    }
   
     convertDataToCSV = (data) => {
       // Implement a function to convert your data to CSV format
@@ -443,6 +481,95 @@ class AdminUserTable extends Component {
                         // onFilterModelChange={(model) => this.onFilterModelChange(model)}
                         getRowClassName={(params) => params.row.id % 2 === 0 ? 'even-row' : 'odd-row'}
                       />
+                      {this.props.showAnnouncements &&
+                        <div
+                          style={{
+                            width: "100%",
+                            height: "500px",
+                            backgroundColor: '#727278',
+                            display: "flex",
+                            flexDirection: 'column',
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >                                     
+                          <div
+                            style={{
+                              width: '100%',
+                              height: "100px",
+                              display: 'flex',
+                              alignItems: 'center',
+                              backgroundColor: '#075E54',
+                              color: 'white',
+                              fontSize: '24px',
+                              left: 10 
+                            }}
+                          >
+                            Announcements
+                          </div>   
+                              
+                          <div
+                          style={{
+                            width: "100%",
+                            height: "calc(100% - 100px)",
+                            borderRadius: "5px",
+                            backgroundColor: '#d3d3d3',
+                          }}
+                          >
+
+                            <List
+                              style={{
+                                flex: 1, // Takes all available vertical space above the input area
+                                overflowY: "auto", // Enables scrolling for messages
+                                height: "342px"
+                              }}
+                            >
+                              {this.state.announcements.map((announcement) =>(
+                                <ListItem
+                                  key = {announcement.announcementContent}
+                                >
+                                
+                                
+                                <Box
+                                sx={{
+                                  marginBottom: "10px",
+                                  width: '100%'
+                                }}
+                                >
+                                  
+                                  <Box
+                                    sx={{
+                                      backgroundColor: "white", 
+                                      color: "black",
+                                      padding: "10px",
+                                      borderRadius: "10px",
+                                      wordWrap: "break-word",
+                                      whiteSpace: "pre-wrap",
+                                      marginRight: "auto",           
+                                      position: "relative",
+                                    }}
+                                  >
+                                    <ListItemText 
+                                      primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
+                                    />
+                                  </Box>
+                                  
+                                </Box>
+
+                                
+                                </ListItem>
+                              ))}
+                            </List>
+
+                            <br />
+                            <TextField id="title-textfield" name="announcementContent" multiline minRows={1} maxRows={3} style={{backgroundColor: "white", position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Make announcement here..." />
+                            <br />
+                            <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendAnnouncement()}>Send Announcement</Button><br />
+                            
+                          </div>
+                        </div>
+                      }
                       {this.state.openChatWindow && 
                         <div
                           style={{
