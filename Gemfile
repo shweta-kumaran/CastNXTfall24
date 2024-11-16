@@ -68,7 +68,7 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'mongoid-rspec'
-  gem 'simplecov', '~> 0.21.2', require: false
+  gem 'simplecov'
   gem "simplecov_json_formatter", "~> 0.1.4", require: false
 end
 
@@ -79,6 +79,7 @@ gem 'sendinblue'
 
 gem 'loofah', '2.19.1'
 gem 'nokogiri', '1.10.10'
+
 # source 'https://rubygems.org'
 # git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 

@@ -32,7 +32,7 @@ class UserController < ApplicationController
         slide = get_talent_slide(event._id, talent._id)
         object["slideId"] = slide._id.to_str
         
-        messages = get_event_user_messages(event._id, slide._id)
+        messages = get_event_user_messages(event._id, slide._id.to_str)
         if "ACCEPTING".casecmp? event.status
           object["accepting"] = true
           object["status"] = "SUBMITTED"
@@ -49,7 +49,7 @@ class UserController < ApplicationController
         end
         object[:messages] = []
         messages.each do |message|
-          object[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
+          object[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at, :userIds => message.user_id})
         end
         submittedTableData << object
       else
@@ -82,7 +82,7 @@ class UserController < ApplicationController
   end
 
   def get_event_user_messages eventId, userId
-    return Message.where(:event_id => eventId, :user_id => userId)
+    return Message.where(:event_id => eventId, :user_id.in => [userId])
   end
   
   def get_talent_slide eventId, talentId
