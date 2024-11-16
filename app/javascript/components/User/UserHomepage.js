@@ -509,7 +509,7 @@ class UserHomepage extends Component {
                                     </div>
                                 )}
                                     <TableContainer component={Paper}>
-                                        <Table aria-label="simple table">
+                                        <Table aria-label="simple table" id="events">
                                             <TableHead style={{ backgroundColor: "#3498DB" }}>
                                                 <TableRow>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Event</TableCell>
