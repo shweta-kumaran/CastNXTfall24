@@ -77,6 +77,14 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'sendinblue'
 
+gem 'oauth2'
+gem 'omniauth'
+gem 'omniauth-oauth2'
+gem 'omniauth-rails_csrf_protection'
+
+gem 'devise', '~> 4.9.2' # Or the latest stable version
+gem 'dotenv-rails', groups: [:development, :test]
+
 gem 'loofah', '2.19.1'
 gem 'nokogiri', '1.10.10'
 
