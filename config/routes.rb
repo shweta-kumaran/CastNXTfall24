@@ -20,6 +20,8 @@ omniauth_providers: %i[events360]
     post 'login', :on => :collection
     post 'signup', :on => :collection
     post 'forgotPassword', :on => :collection
+    post 'role_selection', :on => :collection
+    get 'first_time_user', :on => :collection
   end
   
   resources :user, only: [:index] do

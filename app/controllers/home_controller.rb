@@ -148,7 +148,25 @@ class HomeController < ApplicationController
   #   rsetCode = AuthReset.create(:resetuuid => rCode)
   #   return rCode
   # end
-  
+  def role_selection
+    begin 
+      session[:userType] = params[:role]
+      if "ADMIN".casecmp? params[:role]
+        Producer.create(:_id => session[:userId], :name => session[:userName], :email => session[:userEmail], :is_valid => true)
+      elsif "CLIENT".casecmp? params[:role]
+        Client.create(:_id => session[:userId], :name => session[:userName], :email => session[:userEmail], :is_valid => true)
+      else
+        Talent.create(:_id => session[:userId], :name => session[:userName], :email => session[:userEmail], :is_valid => true)
+      end
+
+      render json: {redirect_path: get_redirect_path}, status: 200
+    end   
+    # You can add any logic needed for first-time users here
+    # For example, tracking analytics, setting flags, etc.
+
+  end
+
+
   def create_user params
     puts (params)
     user = Auth.create(:name => params[:name], :email => params[:email], :password => params[:password], :user_type => params[:type], :is_valid => true)
