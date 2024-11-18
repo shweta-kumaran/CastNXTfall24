@@ -12,7 +12,7 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     Duser.from_omniauth_events360(auth)
 
     email = auth.info.email
-
+    name = auth.info.email
     @user = Duser.where(email: email).first
 
 if @user.nil?
@@ -37,41 +37,26 @@ end
       redirect_to get_redirect_path(@user.user_type)
     end
     
-    private
+    
 
-    def get_redirect_path(role)
-      case role&.upcase
-      when "ADMIN"
-        return "/admin"
-      when "CLIENT"
-        return "/client"
-      else
-        return "/user"
-      end
-    end
+    
     
      
   end
 
-  # More info at:
-  # https://github.com/heartcombo/devise#omniauth
+    
 
-  # GET|POST /resource/auth/twitter
-  # def passthru
-  #   super
-  # end
+  def get_redirect_path(role)
+    case role&.upcase
+    when "ADMIN"
+      return "/admin"
+    when "CLIENT"
+      return "/client"
+    else
+      return "/user"
+    end
+  end
 
-  # GET|POST /users/auth/twitter/callback
-  # def failure
-  #   super
-  # end
-
-  # protected
-
-  # The path used when OmniAuth fails
-  # def after_omniauth_failure_path_for(scope)
-  #   super(scope)
-  # end
 end
 
 ## function copied from homecontroller class - check for reuse 
