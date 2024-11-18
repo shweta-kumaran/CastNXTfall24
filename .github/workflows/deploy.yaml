@@ -3,13 +3,12 @@ name: Deploy
 on:
   push:
     branches:
-      - main
-      - staging
+      - oauthtest
   workflow_dispatch:
 
 env: 
   HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-  HEROKU_APP_NAME: castnxtfall2024
+  HEROKU_APP_NAME: castnxt-dev-fall2024
   
 jobs:
   build-and-deploy:

@@ -12,26 +12,42 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     Duser.from_omniauth_events360(auth)
 
     email = auth.info.email
+
+    @user = Duser.find_or_initialize_by(email: email)
+
+    if @user.new_record?
+      # If user does not exist, set user_type to "new_user"
+      @user.name = name
+      @user.user_type = "new_user"
+      @user.save
+    end
+
+    # Set session values
+    session[:userEmail] = @user.email
+    session[:userType] = @user.user_type
+    session[:userName] = @user.name
+    session[:userId] = @user.id.to_s
+
+    # Redirect based on user type
+    if @user.user_type == "new_user"
+      redirect_to "/home/first-time-user"
+    else
+      redirect_to get_redirect_path(@user.user_type)
+    end
     
-    render json: { comment: "Successful Oauth login for this email. Role selection and Session creation capability is still in progress. Please come back later.", email: email }, status: 400
+    private
 
-
-#     ## at this point we have an entry in duser - to be completed in next phase of the feature
+    def get_redirect_path(role)
+      case role&.upcase
+      when "ADMIN"
+        return "/admin"
+      when "CLIENT"
+        return "/client"
+      else
+        return "/user"
+      end
+    end
     
-#   session[:userEmail] = currentUser.email
-#  session[:userType] = currentUser.user_type
-#  session[:userName] = currentUser.name
-#  session[:userId] = currentUser._id.to_str
-
-# if @user.user_type == "new_user"
-#   # Redirect for new users
-#   redirect_to "/home/first-time-user"
-# else
-#   # Additional actions for existing users can go here if needed
-#   redirect_to get_redirect_path
-  
-# end
-
      
   end
 
@@ -57,12 +73,3 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 end
 
 ## function copied from homecontroller class - check for reuse 
-def get_redirect_path
-  if "ADMIN".casecmp? session[:userType]
-    return "/admin"
-  elsif "CLIENT".casecmp? session[:userType]
-    return "/client"
-  else
-    return "/user"
-  end
-end
