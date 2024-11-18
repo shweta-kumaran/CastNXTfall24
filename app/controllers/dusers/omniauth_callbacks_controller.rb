@@ -32,7 +32,7 @@ end
 
     # Redirect based on user type
     if @user.user_type == "new_user"
-      redirect_to "/home/first-time-user"
+      redirect_to "/home/first_time_user"
     else
       redirect_to get_redirect_path(@user.user_type)
     end
