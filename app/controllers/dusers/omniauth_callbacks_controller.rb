@@ -6,21 +6,23 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   # You should also create an action method in this controller like this:
   def events360
-    Rails.logger.info "Here viewed"
+    ##Rails.logger.info "Here viewed"
     
     auth = request.env['omniauth.auth']
     Duser.from_omniauth_events360(auth)
 
     email = auth.info.email
 
-    @user = Duser.find_or_initialize_by(email: email)
+    @user = Duser.where(email: email).first
 
-    if @user.new_record?
-      # If user does not exist, set user_type to "new_user"
-      @user.name = name
-      @user.user_type = "new_user"
-      @user.save
-    end
+if @user.nil?
+  # If user does not exist, create a new user
+  @user = Duser.new(email: email, name: name, user_type: "new_user")
+  unless @user.save
+    Rails.logger.error("Failed to save user: #{@user.errors.full_messages.join(", ")}")
+  end
+
+end
 
     # Set session values
     session[:userEmail] = @user.email
