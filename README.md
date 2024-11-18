@@ -57,3 +57,19 @@ bundle exec rspec
 yarn test spec/features
 ```
 5. If you face timeout errors, run `rails webpacker:install && rails webpacker:compile` before running this test.
+
+### Deployment
+This application uses the following components:
+
+Backend
+* Ruby v2.6
+* Rails v5.2
+
+Frontend
+* React v17.0
+* Material UI v4.12
+
+Database
+* MongoDB
+
+This application is deployed to Heroku using [Github Actions](.github/workflows/deploy.yaml) under the FashioNxt account.
