@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main
-      - staging
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'Dockerfile'
   workflow_dispatch:
 
 env: 
