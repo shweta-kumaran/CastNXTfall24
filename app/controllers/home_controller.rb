@@ -92,6 +92,7 @@ class HomeController < ApplicationController
   def role_selection
     begin
       # Step 1: Find the user from the session
+      
       duser = Duser.find_by(_id: session[:userId])
   
       # Handle case if the user doesn't exist
@@ -101,7 +102,7 @@ class HomeController < ApplicationController
       end
   
       # Step 2: Check if the user's role is 'new_user'
-      if duser.role == 'new_user'
+      if duser.user_type == 'new_user'
         # Step 3: Based on the role parameter, create the appropriate role-based object
         case params[:role].upcase
         when 'ADMIN'
@@ -138,7 +139,7 @@ class HomeController < ApplicationController
         end
   
         # Update the user's role to reflect they have selected a role
-        duser.update(role: params[:role])
+        duser.update(user_type: params[:role])
   
         # Step 4: Return the redirect path
         render json: { redirect_path: get_redirect_path }, status: 200
