@@ -12,7 +12,7 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     Duser.from_omniauth_events360(auth)
 
     email = auth.info.email
-    name = auth.info.email
+    name = auth.info.name
     @user = Duser.where(email: email).first
 
     if @user.nil?

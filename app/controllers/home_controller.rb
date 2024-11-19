@@ -92,7 +92,7 @@ class HomeController < ApplicationController
   def role_selection
     begin
       # Step 1: Find the user from the session
-      duser = User.find_by(_id: session[:userId])
+      duser = Duser.find_by(_id: session[:userId])
   
       # Handle case if the user doesn't exist
       if duser.nil?
