@@ -73,3 +73,13 @@ Database
 * MongoDB
 
 This application is deployed to Heroku using [Github Actions](.github/workflows/deploy.yaml) under the FashioNxt account.
+
+
+### Team contacts :
+Rituparna Mandal <rituparna@tamu.edu>,
+Alea Nablan	<alean@tamu.edu>,
+Harsh Manishkumar Shah <shahharsh06@tamu.edu>,
+Rahul Baid <rahulbaid@tamu.edu>,
+Jose Salazar <jlsalazar@tamu.edu>,
+Shweta Kumaran <shwetakumaran@tamu.edu>
+
