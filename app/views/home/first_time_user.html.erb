@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CASTNXT</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+  </head>
+  <body  style="background-color: white !important;">
+    
+    <div id="main-content" style="background-color: white !important; height: 80vh; ">
+       
+
+    <section class="mb-5 mt-4" id="features">
+        <section class="mb-5">
+        <h3 class="text-center display-5 fw-bold lh-1 mb-5 mt-5"> Welcome to CastNXT </h3>
+        </section>
+        <section class="mb-5">
+
+        <p class="mb-md-3 lead fs-6 text-center"> You are logging in to CastNXT for the first time. Please select a Role to create an account</p>
+        <%= form_with url: role_selection_home_index_path, method: :post do %>
+
+        <div class="d-flex flex-column align-items-center">
+          <div class="form-check mb-4 d-flex align-items-center">
+            <%= radio_button_tag :role, "admin", false, id: "role_admin", class: "form-check-input me-3" %>
+            <label class="form-check-label" for="role_admin">
+              <h3 class="my-2">Admin</h3>
+            </label>
+          </div>
+          
+          <div class="form-check mb-4 d-flex align-items-center">
+            <%= radio_button_tag :role, "client", false, id: "role_client", class: "form-check-input me-3" %>
+            <label class="form-check-label" for="role_client">
+              <h3 class="my-2">Client</h3>
+            </label>
+          </div>
+          
+          <div class="form-check mb-4 d-flex align-items-center">
+            <%= radio_button_tag :role, "talent", false, id: "role_talent", class: "form-check-input me-3" %>
+            <label class="form-check-label" for="role_talent">
+              <h3 class="my-2">Talent</h3>
+            </label>
+          </div>
+        </div>
+      
+        <div class="text-center mt-5">
+          <%= submit_tag "Submit Role", class: "btn btn-primary fw-bold" %>
+        </div>
+       <% end %>
+ 
+      </section>
+      
+     </section>
+      </div>
+      </div>
+  </body>
+</html>
+

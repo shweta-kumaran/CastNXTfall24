@@ -193,7 +193,7 @@ class EventsController < ApplicationController
     data[:announcements] = []
     announcements = get_event_announcements(event._id)
     announcements.each do |announcement|
-      data[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :timeSent => announcement.created_at})
+      data[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :forClient => announcement.for_client, :timeSent => announcement.created_at})
     end
 
     data[:slides] = build_producer_event_slides(event)
@@ -258,7 +258,7 @@ class EventsController < ApplicationController
     data[:announcements] = []
     announcements = get_event_announcements(event._id)
     announcements.each do |announcement|
-      data[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :timeSent => announcement.created_at})
+      data[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :forClient => announcement.for_client, :timeSent => announcement.created_at})
     end
 
 
