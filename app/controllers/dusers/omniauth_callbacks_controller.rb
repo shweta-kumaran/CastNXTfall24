@@ -21,21 +21,21 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     
       if @user.save
         # User successfully saved to the database
-        Rails.logger.info("User successfully created: #{@user.inspect}")
+        puts "User successfully created: #{@user.inspect}"
     
         # Retrieve the user from the DB after save
         @user = Duser.find_by(id: @user.id)
     
         if @user.nil?
-          Rails.logger.error("Failed to retrieve user after saving: User ID #{@user.id} not found.")
+          puts "Failed to retrieve user after saving: User ID #{@user.id} not found."
           return { error: "Failed to retrieve user after saving", details: "User not found in the database" }
         else
           # Successfully retrieved user from DB
-          Rails.logger.info("User successfully retrieved from DB: #{@user.inspect}")
+          puts "User successfully retrieved from DB: #{@user.inspect}"
         end
       else
         # If user is not saved, log error and return failure response
-        Rails.logger.error("Failed to save user: #{@user.errors.full_messages.join(", ")}")
+        puts "Failed to save user: #{@user.errors.full_messages.join(", ")}"
         return { error: "Failed to create user", details: @user.errors.full_messages }
       end
     end
