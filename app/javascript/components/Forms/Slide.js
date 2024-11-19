@@ -128,7 +128,7 @@ class Slide extends Component {
   
   render() {
     // schema and uiSchema are to be used from state and not props since image preview is being added in state
-    const { onFormDataChange, onSubmit, schema, uiSchema, formData, ...restProps} = this.props
+    const { onFormDataChange, onSubmit, schema, uiSchema, formData, isPreview, ...restProps} = this.props
     
     const widgets = {
       ImageWidget: this.ImageWidget
