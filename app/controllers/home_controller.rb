@@ -108,6 +108,7 @@ class HomeController < ApplicationController
         when 'ADMIN'
           # Check if Producer already exists, otherwise create
           producer = Producer.find_by(_id: session[:userId])
+          session[:userType] = 'ADMIN'
           if producer
             producer.update(name: session[:userName], email: session[:userEmail], is_valid: true)
           else
@@ -115,6 +116,7 @@ class HomeController < ApplicationController
           end
   
         when 'CLIENT'
+          session[:userType] = 'CLIENT'
           # Check if Client already exists, otherwise create
           client = Client.find_by(_id: session[:userId])
           if client
@@ -124,6 +126,8 @@ class HomeController < ApplicationController
           end
   
         when 'TALENT'
+          session[:userType] = 'USER'
+
           # Check if Talent already exists, otherwise create
           talent = Talent.find_by(_id: session[:userId])
           if talent
