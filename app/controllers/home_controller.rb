@@ -107,7 +107,11 @@ class HomeController < ApplicationController
         case params[:role].upcase
         when 'ADMIN'
           # Check if Producer already exists, otherwise create
+          begin
           producer = Producer.find_by(_id: session[:userId])
+          rescue Mongoid::Errors::DocumentNotFound => e
+          producer = nil
+          end
           session[:userType] = 'ADMIN'
           if producer
             producer.update(name: session[:userName], email: session[:userEmail], is_valid: true)
@@ -118,7 +122,11 @@ class HomeController < ApplicationController
         when 'CLIENT'
           session[:userType] = 'CLIENT'
           # Check if Client already exists, otherwise create
+          begin
           client = Client.find_by(_id: session[:userId])
+          rescue Mongoid::Errors::DocumentNotFound => e
+          client = nil
+          end
           if client
             client.update(name: session[:userName], email: session[:userEmail], is_valid: true)
           else
@@ -129,7 +137,11 @@ class HomeController < ApplicationController
           session[:userType] = 'USER'
 
           # Check if Talent already exists, otherwise create
+          begin
           talent = Talent.find_by(_id: session[:userId])
+          rescue Mongoid::Errors::DocumentNotFound => e
+            talent = nil
+          end
           if talent
             talent.update(name: session[:userName], email: session[:userEmail], is_valid: true)
           else

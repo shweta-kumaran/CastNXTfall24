@@ -89,6 +89,85 @@ RSpec.describe HomeController, type: :controller do
 
 end
 
+
+
+describe HomeController, type: :controller do
+    describe "POST #role_selection" do
+    let(:user_id) { "1234567890" }
+    let(:user_name) { "Test User" }
+    let(:user_email) { "test@example.com" }
+    let!(:duser) do
+       begin 
+        # Check if the user already exists
+
+        existing_user = Duser.find_by(_id: user_id)
+
+        # If the user exists, destroy it before creating a new one
+        existing_user&.destroy
+      rescue Mongoid::Errors::DocumentNotFound => e
+        # Handle the case where the document is not found
+        Rails.logger.info("Document with _id #{user_id} not found. Proceeding without destruction.")
+      end  
+        # Create the new user
+       Duser.create(_id: user_id, user_type: "new_user", email: user_email, name: user_name)
+        
+      end
+     
+    before do
+
+    existing_user = Duser.find_by(_id: user_id)
+       Rails.logger.info(existing_user._id)
+  
+      session[:userId] = "1234567890"
+      session[:userName] = user_name
+      session[:userEmail] = user_email
+      session[:userType] = "new_user"
+    end
+
+    context "when session is valid and user exists" do
+        it "saves the user in the database" do
+            expect(Duser.find_by(email: user_email)).not_to be_nil
+          end
+       
+
+      it "assigns the role ADMIN successfully" do
+
+        post :role_selection, params: { role: "ADMIN" }
+        expect(response).to have_http_status(:ok)
+        expect(session[:userType]).to eq("ADMIN")
+        expect(duser.reload.user_type).to eq("ADMIN")
+        expect(Producer.find_by(_id: user_id)).not_to be_nil
+      end
+
+      it "assigns the role CLIENT successfully" do
+        post :role_selection, params: { role: "CLIENT" }
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+        expect(json_response['redirect_path']).to eq(get_redirect_path)
+        expect(session[:userType]).to eq("CLIENT")
+        expect(duser.reload.user_type).to eq("CLIENT")
+        expect(Client.find_by(_id: user_id)).not_to be_nil
+      end
+
+      it "assigns the role TALENT successfully" do
+        post :role_selection, params: { role: "TALENT" }
+        expect(response).to have_http_status(:ok)
+        expect(session[:userType]).to eq("USER")
+        expect(duser.reload.user_type).to eq("TALENT")
+        expect(Talent.find_by(_id: user_id)).not_to be_nil
+      end
+
+      it "returns error for invalid role" do
+        post :role_selection, params: { role: "INVALID_ROLE" }
+        expect(response).to have_http_status(:bad_request)
+        expect(JSON.parse(response.body)["error"]).to eq("Invalid role specified")
+      end
+    end
+end 
+end
+
+
+
 describe HomeController, type: :controller do
     let(:valid_admin_params) { { email: 'admin@example.com', password: 'password123' } }
     let(:valid_client_params) { { email: 'client@example.com', password: 'password123' } }
