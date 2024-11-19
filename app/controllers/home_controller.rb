@@ -90,18 +90,68 @@ class HomeController < ApplicationController
   end
 
   def role_selection
-    begin 
-      session[:userType] = params[:role]
-      if "ADMIN".casecmp? params[:role]
-        Producer.create(:_id => session[:userId], :name => session[:userName], :email => session[:userEmail], :is_valid => true)
-      elsif "CLIENT".casecmp? params[:role]
-        Client.create(:_id => session[:userId], :name => session[:userName], :email => session[:userEmail], :is_valid => true)
-      else
-        Talent.create(:_id => session[:userId], :name => session[:userName], :email => session[:userEmail], :is_valid => true)
+    begin
+      # Step 1: Find the user from the session
+      duser = User.find_by(_id: session[:userId])
+  
+      # Handle case if the user doesn't exist
+      if duser.nil?
+        render json: { error: "User not found" }, status: 404
+        return
       end
-
-      render json: {redirect_path: get_redirect_path}, status: 200
-    end  
+  
+      # Step 2: Check if the user's role is 'new_user'
+      if duser.role == 'new_user'
+        # Step 3: Based on the role parameter, create the appropriate role-based object
+        case params[:role].upcase
+        when 'ADMIN'
+          # Check if Producer already exists, otherwise create
+          producer = Producer.find_by(_id: session[:userId])
+          if producer
+            producer.update(name: session[:userName], email: session[:userEmail], is_valid: true)
+          else
+            Producer.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
+          end
+  
+        when 'CLIENT'
+          # Check if Client already exists, otherwise create
+          client = Client.find_by(_id: session[:userId])
+          if client
+            client.update(name: session[:userName], email: session[:userEmail], is_valid: true)
+          else
+            Client.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
+          end
+  
+        when 'TALENT'
+          # Check if Talent already exists, otherwise create
+          talent = Talent.find_by(_id: session[:userId])
+          if talent
+            talent.update(name: session[:userName], email: session[:userEmail], is_valid: true)
+          else
+            Talent.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
+          end
+  
+        else
+          # Return error if role is invalid
+          render json: { error: "Invalid role specified" }, status: 400
+          return
+        end
+  
+        # Update the user's role to reflect they have selected a role
+        duser.update(role: params[:role])
+  
+        # Step 4: Return the redirect path
+        render json: { redirect_path: get_redirect_path }, status: 200
+      else
+        render json: { error: "User is not a new_user" }, status: 400
+      end
+    rescue => e
+      # Catch any unexpected errors and return a 500 server error response
+      logger.error "Error in role_selection: #{e.message}"
+      render json: { error: "Something went wrong" }, status: 500
+    end
+  end
+  
 
   # POST /home/forgotPassword
   def forgotPassword
