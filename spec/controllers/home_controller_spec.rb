@@ -133,7 +133,7 @@ describe HomeController, type: :controller do
       it "assigns the role ADMIN successfully" do
 
         post :role_selection, params: { role: "ADMIN" }
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:found)
         expect(session[:userType]).to eq("ADMIN")
         expect(duser.reload.user_type).to eq("ADMIN")
         expect(Producer.find_by(_id: user_id)).not_to be_nil
@@ -141,9 +141,7 @@ describe HomeController, type: :controller do
 
       it "assigns the role CLIENT successfully" do
         post :role_selection, params: { role: "CLIENT" }
-        expect(response).to have_http_status(:ok)
-        json_response = JSON.parse(response.body)
-        expect(json_response['redirect_path']).to eq(get_redirect_path)
+        expect(response).to have_http_status(:found)
         expect(session[:userType]).to eq("CLIENT")
         expect(duser.reload.user_type).to eq("CLIENT")
         expect(Client.find_by(_id: user_id)).not_to be_nil
@@ -151,7 +149,7 @@ describe HomeController, type: :controller do
 
       it "assigns the role TALENT successfully" do
         post :role_selection, params: { role: "TALENT" }
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:found)
         expect(session[:userType]).to eq("USER")
         expect(duser.reload.user_type).to eq("TALENT")
         expect(Talent.find_by(_id: user_id)).not_to be_nil

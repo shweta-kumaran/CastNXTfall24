@@ -90,8 +90,9 @@ class HomeController < ApplicationController
   end
 
   def role_selection
+
+    
     begin
-      # Step 1: Find the user from the session
       
       duser = Duser.find_by(_id: session[:userId])
   
@@ -118,6 +119,7 @@ class HomeController < ApplicationController
           else
             Producer.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
           end
+          redirect_to admin_index_path
   
         when 'CLIENT'
           session[:userType] = 'CLIENT'
@@ -132,6 +134,8 @@ class HomeController < ApplicationController
           else
             Client.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
           end
+          redirect_to client_index_path
+
   
         when 'TALENT'
           session[:userType] = 'USER'
@@ -147,6 +151,7 @@ class HomeController < ApplicationController
           else
             Talent.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
           end
+          redirect_to user_index_path
   
         else
           # Return error if role is invalid
@@ -157,8 +162,6 @@ class HomeController < ApplicationController
         # Update the user's role to reflect they have selected a role
         duser.update(user_type: params[:role])
   
-        # Step 4: Return the redirect path
-        render json: { redirect_path: get_redirect_path }, status: 200
       else
         render json: { error: "User is not a new_user" }, status: 400
       end
