@@ -147,7 +147,7 @@ class HomeController < ApplicationController
       end
     rescue => e
       # Catch any unexpected errors and return a 500 server error response
-      logger.error "Error in role_selection: #{e.message}"
+      Rails.logger.error "Error in role_selection: #{e.message}"
       render json: { error: "Something went wrong" }, status: 500
     end
   end
