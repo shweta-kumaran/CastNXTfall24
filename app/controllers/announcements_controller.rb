@@ -7,7 +7,7 @@ class AnnouncementsController < ApplicationController
         begin
           if is_user_logged_in?("ADMIN")
     
-            create_announcement(params[:event_id],  params[:content], params[:sender], params[:for_client])
+            create_announcement(params[:event_id],  params[:content], params[:sender])
             render json: {comment: "Successfully made Announcement as Admin!"}, status: 200
             
           elsif is_user_logged_in?("CLIENT")
@@ -22,9 +22,9 @@ class AnnouncementsController < ApplicationController
     
       private
     
-      def create_announcement eventId, messageContent, messageSender, forClient
+      def create_announcement eventId, messageContent, messageSender
         #UserMailer.added_announcement(client.email).deliver_now	
-        Announcement.create(:event_id => eventId, :from => messageSender, :announcement => messageContent, :for_client => forClient)
+        Announcement.create(:event_id => eventId, :from => messageSender, :announcement => messageContent)
       end
     
     end

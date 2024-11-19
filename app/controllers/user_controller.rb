@@ -32,7 +32,6 @@ class UserController < ApplicationController
         slide = get_talent_slide(event._id, talent._id)
         object["slideId"] = slide._id.to_str
         
-        announcements = get_event_announcements(event._id)
         messages = get_event_user_messages(event._id, slide._id.to_str)
         if "ACCEPTING".casecmp? event.status
           object["accepting"] = true
@@ -47,10 +46,6 @@ class UserController < ApplicationController
         else
           object["accepting"] = false
           object["status"] = event.status
-        end
-        object[:announcements] = []
-        announcements.each do |announcement|
-          object[:announcements].push({:announcementContent => announcement.announcement, :announcementFrom => announcement.from, :forClient => announcement.for_client, :timeSent => announcement.created_at})
         end
         object[:messages] = []
         messages.each do |message|
@@ -88,10 +83,6 @@ class UserController < ApplicationController
 
   def get_event_user_messages eventId, userId
     return Message.where(:event_id => eventId, :user_id.in => [userId])
-  end
-
-  def get_event_announcements eventId
-    return Announcement.where(:event_id => eventId)
   end
   
   def get_talent_slide eventId, talentId

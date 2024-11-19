@@ -66,7 +66,6 @@ class UserHomepage extends Component {
             isPaidFilterValue: 'None',
             openInbox: false,
             openChatWindow: false,
-            openAnnouncementWindow: false,
             disableSubmit: false,
             messageContent: '',
             eventToMessage: null,
@@ -183,14 +182,6 @@ class UserHomepage extends Component {
           openChatWindow: !this.state.openChatWindow
         })
       }
-
-    openAnnouncement = () => {
-        this.setState({
-            openAnnouncementWindow: !this.state.openAnnouncementWindow,
-            openInbox: false,
-            openChatWindow: false,
-        })
-    }
   
       handleChange = (e, value) => {
         this.setState({
@@ -385,9 +376,6 @@ class UserHomepage extends Component {
                             <TableCell align="center">
                                 <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openMessageInbox();});}}>Open Event Inbox</Button>
                             </TableCell>
-                            <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openAnnouncement();});}}>Open Event Announcements</Button>
-                            </TableCell>
                         </TableRow>
                     )
                 } else {
@@ -401,9 +389,6 @@ class UserHomepage extends Component {
                             </TableCell>
                             <TableCell align="center">
                                 <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openMessageInbox();});}}>Open Event Inbox</Button>
-                            </TableCell>
-                            <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openAnnouncement();});}}>Open Event Announcements</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -549,7 +534,6 @@ class UserHomepage extends Component {
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Event</TableCell>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Status</TableCell>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Inbox</TableCell>
-                                                    <TableCell align="center" style={{fontSize: "12pt"}}>Announcements</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -745,88 +729,6 @@ class UserHomepage extends Component {
                                             <br />
                                             <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
                                         </div>
-                                        </div>
-                                    }
-                                    {this.state.openAnnouncementWindow && 
-                                        
-                                        <div
-                                            style={{
-                                                width: "540px",
-                                                height: "550px",
-                                                backgroundColor: '#727278',
-                                                display: "flex",
-                                                flexDirection: 'column',
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                position: "relative",
-                                            }}
-                                        >  
-                                            <div
-                                                style={{
-                                                width: '100%',
-                                                height: "100px",
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                backgroundColor: '#075E54',
-                                                color: 'white',
-                                                fontSize: '24px',
-                                                left: 10 
-                                                }}
-                                            >
-                                                Announcements
-                                            </div>
-
-                                            <div
-                                            style={{
-                                                width: "100%",
-                                                height: "calc(100% - 100px)",
-                                                borderRadius: "5px",
-                                                backgroundColor: '#d3d3d3',
-                                                overflowY: "auto"
-                                            }}
-                                            >
-                                                <List>
-                                                    {this.state.eventToMessage.announcements.filter((announcement) => {
-                                                        const is_for_talent = announcement.forClient == false;
-
-                                                        return is_for_talent;
-                                                    }).map((announcement) =>(
-                                                    <ListItem
-                                                        key = {announcement.announcementContent}
-                                                    >
-                                                    
-                                                    
-                                                    <Box
-                                                    sx={{
-                                                        marginBottom: "10px",
-                                                        width: '100%'
-                                                    }}
-                                                    >
-                                                        
-                                                        <Box
-                                                        sx={{
-                                                            backgroundColor: "white", 
-                                                            color: "black",
-                                                            padding: "10px",
-                                                            borderRadius: "10px",
-                                                            wordWrap: "break-word",
-                                                            whiteSpace: "pre-wrap",
-                                                            marginRight: "auto",           
-                                                            position: "relative",
-                                                        }}
-                                                        >
-                                                        <ListItemText 
-                                                            primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
-                                                        />
-                                                        </Box>
-                                                        
-                                                    </Box>
-
-                                                    
-                                                    </ListItem>
-                                                    ))}
-                                                </List>
-                                            </div>
                                         </div>
                                     }
                                     </div>

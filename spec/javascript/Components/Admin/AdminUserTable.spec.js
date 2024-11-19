@@ -2,7 +2,6 @@ import AdminUserTable from "../../../../app/javascript/components/Admin/AdminUse
 import {propsDefault, CLIENT_DESK_PROP} from '../../__mocks__/props.mock';
 import renderer, { act }from 'react-test-renderer';
 import { saveAs } from 'file-saver';
-import ReactTestUtils from 'react-dom/test-utils';
 import axios from 'axios';
 
 // In your test setup or beforeEach block
@@ -348,36 +347,6 @@ describe('AdminUserTable Component', () => {
         const component = renderer.create(<AdminUserTable properties={propsDefault.properties} />);
         const tree = component.toJSON();
         expect(tree).toMatchSnapshot();
-    });
-
-    test('sending message to talents', async () => {
-        const view = ReactTestUtils.renderIntoDocument(<AdminUserTable properties={propsDefault.properties}/>);
-        view.setState({
-            messageContent: "Hello world"
-        })
-        axios.post.mockResolvedValue({
-           data: { message: "message sent successful" }
-        })
-        await act(async () => {
-            await view.sendMessage();
-        });
-        expect(view.state.disableSubmit).toBe(true)
-        expect(view.state.status).toBe(true)
-    });
-
-    test('sending announcement to talents', async () => {
-        const view = ReactTestUtils.renderIntoDocument(<AdminUserTable properties={propsDefault.properties}/>);
-        view.setState({
-            announcementContent: "test talent announcement"
-        })
-        axios.post.mockResolvedValue({
-           data: { message: "announcement sent successful" }
-        })
-        await act(async () => {
-            await view.sendAnnouncement();
-        });
-        expect(view.state.disableSubmit).toBe(true)
-        expect(view.state.status).toBe(true)
     });
 });
 

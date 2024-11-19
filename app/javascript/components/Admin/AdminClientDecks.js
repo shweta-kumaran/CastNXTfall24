@@ -291,8 +291,7 @@ class AdminClientDecks extends Component {
     sendAnnouncement = () => {
       const payload = {
         content: this.state.announcementContent,
-        sender: "Producer",
-        for_client: true,
+        sender: properties.name,
         event_id: window.location.href.split("/")[-1],
       }
 
@@ -406,11 +405,7 @@ class AdminClientDecks extends Component {
                                                   height: "342px"
                                                 }}
                                               >
-                                                {this.state.announcements.filter((announcement) => {
-                                                  const is_for_client = announcement.forClient == true;
-
-                                                  return is_for_client;
-                                                }).map((announcement) =>(
+                                                {this.state.announcements.map((announcement) =>(
                                                   <ListItem
                                                     key = {announcement.announcementContent}
                                                   >

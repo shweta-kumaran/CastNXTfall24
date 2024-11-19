@@ -380,7 +380,6 @@ it('openInbox should sort message groups by the time of the last message', () =>
   // Check that setState was called with the correct arguments
   expect(view.state.openInbox).toBe(true)
   expect(view.state.openChatWindow).toBe(false)
-  expect(view.state.openAnnouncementWindow).toBe(false)
   expect(view.state.messageGroups).toEqual([group2, group1])
 });
 
@@ -452,20 +451,6 @@ test('send message successful', async () => {
   expect(view.state.disableSubmit).toBe(true)
   expect(view.state.status).toBe(true)
 })
-
-test('renders announcements', () => {
-  const view = ReactTestUtils.renderIntoDocument(<UserHomepage/>);
-  view.setState({
-    eventToMessage: {
-      id: 1,
-      announcements: [{ announcementContent: "Talent Event Update", forClient: false, timeSent: new Date()}]
-    }
-  })
-  view.openAnnouncement();
-  expect(view.state.openInbox).toBe(false)
-  expect(view.state.openChatWindow).toBe(false)
-  expect(view.state.openAnnouncementWindow).toBe(true)
-});
 
 test('failed to send message', async () => {
   delete window.location; 
