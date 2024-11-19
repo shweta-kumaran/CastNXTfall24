@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
 
+  ## == Devise OAuth ==
+devise_for :dusers,
+controllers: { omniauth_callbacks: 'dusers/omniauth_callbacks' },
+omniauth_providers: %i[events360]
+
+  
   root 'home#landing_page'
   get 'home', to: 'home#index'
   get '/logout', to: 'application#logout'
@@ -43,7 +49,7 @@ Rails.application.routes.draw do
         resources :negotiations, only: [:create]
         resources :messages, only: [:create]
         resources :announcements, only: [:create]
-        resources :slides, only: [:create] do
+        resources :slides, only: [:create, :destroy] do
           resources :comments, only: [:create]
         end
       end
@@ -58,3 +64,5 @@ Rails.application.routes.draw do
     end
   end
 end
+
+ 

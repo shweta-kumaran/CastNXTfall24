@@ -6,6 +6,7 @@ import { extendedNumberOperators } from '../../utils/RangeFilter';
 import { saveAs } from 'file-saver';
 import IconButton from '@material-ui/core/IconButton';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import "./Admin.css";
 import axios from "axios";
 import { UsStates, getCities} from '../../utils/FormsUtils';
@@ -16,6 +17,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import TextField from "@mui/material/TextField";
 import Box from '@mui/material/Box';
+// import {Dialog, DialogActions, DialogContent, DialogTitle} from '@material-ui/core'
+import FilterForm from '../Filter/ColumnFilter';
 class AdminUserTable extends Component {
     constructor(props) {
         super(props)
@@ -23,17 +26,22 @@ class AdminUserTable extends Component {
             properties: props.properties,
             slides: props.properties.data.slides,
             eventTalent: [],
+            originalRows: [],
             rows: [],
             columns: [],
             filterModel: {items: []},
-            selectedRow: -1,
+            selectedRows: [],
             currentTab: props.currentTab,
             currentClient: props.currentClient,
             currentTalents: props.currentTalents,
             openChatWindow: false,
+            openFilter: false,
             talentMessages: {},
             messageContent: "",
-            disableSubmit: false
+            announcements: props.properties.data.announcements,
+            announcementContent: "",
+            disableSubmit: false,
+            filtered: false
         }
         this.newRow = null;
     }
@@ -95,9 +103,9 @@ class AdminUserTable extends Component {
       let talentMessages = {}
       
       if(this.props.currentTab != undefined) {
-        console.log("Client: ", this.props.currentClient)
-        console.log("Client Decks: ", this.props.currentTalents)
-        console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
+        // console.log("Client: ", this.props.currentClient)
+        // console.log("Client Decks: ", this.props.currentTalents)
+        // console.log("client's talents: ", this.props.currentTalents[this.props.currentClient])
         slides = this.props.currentTalents[this.props.currentClient]
       }
       let eventTalent = []
@@ -116,14 +124,6 @@ class AdminUserTable extends Component {
         talentMessages[key] = slides[key].messages === null ? [] : slides[key].messages
         eventTalent.push(talentData)
       }
-      // for(var key in slides) {
-      //   eventTalent.push({
-      //       id: key,
-      //       name: slides[key].talentName,
-      //       curated: slides[key].curated,
-      //       formData: slides[key].formData
-      //   })
-      // }
       this.setState({ talentMessages: talentMessages })
       return eventTalent;
     }
@@ -135,8 +135,10 @@ class AdminUserTable extends Component {
           eventTalent=eventTalent.filter(row => row["curated"] === true)
         }
         let [rows,columns] = this.constructTableData(eventTalent)
+        console.log("COLUMNS: ", columns)
         this.setState({
             eventTalent: eventTalent,
+            originalRows: rows,
             rows: rows,
             columns: columns
         })
@@ -147,18 +149,19 @@ class AdminUserTable extends Component {
         let eventTalent = this.createEventTalentData()
         if(this.props.filter_curated) {
           eventTalent=eventTalent.filter(row => row["curated"] === true)
-        }
+        
         let [rows,columns] = this.constructTableData(eventTalent)
         this.setState({
             eventTalent: eventTalent,
             rows: rows,
             columns: columns
-        })
+        })}
       }
     }
 
     onRowClick = (rowData) => {
-      const talentData = this.state.eventTalent[rowData.id-1];
+      const rowId = this.state.rows[rowData.id - 1].id
+      const talentData = this.state.eventTalent[rowId - 1]
       rowData.row = talentData;
       rowData.row.uniqId = talentData.id;
       rowData.row.talentName = talentData.name;
@@ -170,6 +173,7 @@ class AdminUserTable extends Component {
         filterModel: model
       })
     }
+
     addNewRow = () => {
       const newRow = { id: this.state.rows.length + 1, /* 其他初始值 */ };
         this.newRow = newRow; // 更新最新行的变量
@@ -177,11 +181,23 @@ class AdminUserTable extends Component {
             rows: [...prevState.rows, newRow]
         }));
     }
+    deleteRow = () => {
+      this.setState(prevState => ({
+        rows: prevState.rows.filter(row => row.id !== this.state.selectedRow),
+        selectedRow: -1,
+        openChatWindow: false
+      }));
+
+      const baseURL = window.location.href.split("#")[0]
+      const uniqId = this.state.rows[this.state.selectedRow - 1]['uniqId']
+      axios.delete(baseURL + '/slides/'+ uniqId)
+    }
     handleRowChange = (newData, id) => {
       this.setState(prevState => ({
           rows: prevState.rows.map(row => row.id === id ? newData : row)
       }));
     }
+
     handleSave = () => {
       // 取得需要发送的数据
       const eventId = window.location.href.split('/').pop();
@@ -225,11 +241,11 @@ class AdminUserTable extends Component {
                   console.log("new row: ", this.newRow)
               }
           }
-          console.log(rows)
+          // console.log(rows)
           return { rows };
       }, () => {
-        console.log("State has been updated: ", this.newRow)
-        console.log("State rows after update: ", this.state.rows)
+        // console.log("State has been updated: ", this.newRow)
+        // console.log("State rows after update: ", this.state.rows)
       });
   }
 
@@ -258,12 +274,17 @@ class AdminUserTable extends Component {
     }
 
     sendMessage = () => {
+      const recipients = this.state.selectedRows.map(rowIndex => ({
+        talentName: this.state.rows[rowIndex - 1]['talentName'],
+        uniqId: this.state.rows[rowIndex - 1]['uniqId'],
+      }));
+
       const payload = {
         content: this.state.messageContent,
-        sender: properties.name,
-        receiver: this.state.rows[this.state.selectedRow - 1]['talentName'],
+        sender: "Producer",
+        receiver: recipients.map(recipient => recipient.talentName),
         event_id: window.location.href.split("/")[-1],
-        user_id: this.state.rows[this.state.selectedRow - 1]['uniqId']
+        user_id: recipients.map(recipient => recipient.uniqId)
       }
 
       const baseURL = window.location.href.split("#")[0]
@@ -278,9 +299,7 @@ class AdminUserTable extends Component {
           status: true,
           message: res.data.message
         })
-        setTimeout(() => {
-          window.location.href = ""
-        }, 2500)
+        setTimeout(() => (window.location.href = ""), 2500)
       })
       .catch((err) => {
         this.setState({
@@ -288,9 +307,39 @@ class AdminUserTable extends Component {
           message: "Failed to send message!"
         })
         
-        if(err.response.status === 403) {
-          window.location.href = err.response.data.redirect_path
-        }
+        err.response.status === 403 && (window.location.href = err.response.data.redirect_path)
+      })
+    }
+
+    sendAnnouncement = () => {
+      const payload = {
+        content: this.state.announcementContent,
+        sender: "Producer",
+        for_client: false,
+        event_id: window.location.href.split("/")[-1],
+      }
+
+      const baseURL = window.location.href.split("#")[0]
+      
+      this.setState({
+        disableSubmit: true
+      })
+
+      return axios.post(baseURL + "/announcements", payload)
+      .then((res) => {
+        this.setState({
+          status: true,
+          message: res.data.announcement
+        })
+        setTimeout(() => (window.location.href = ""), 2500)
+      })
+      .catch((err) => {
+        this.setState({
+          status: false,
+          message: "Failed to send announcement!"
+        })
+        
+        err.response.status === 403 && (window.location.href = err.response.data.redirect_path)
       })
     }
   
@@ -324,9 +373,43 @@ class AdminUserTable extends Component {
     
         // Redirect the user to the Venmo payment page
         window.open(paymentURL, "_blank");
-      }
+      }      
+    };
+    openFilter = () => {
+      this.setState({
+        openFilter: !this.state.openFilter
+      })
+    }
 
+    applyFilterToRows = (filter) => {
+      // console.log(this.state.rows)
+      this.setState({selectedRows: []})
+      const {rows} = this.state
+      const { columnField, operatorValue, value } = filter;
+      return rows.filter((row) => {
+        const cellValue = row[columnField];
+        if (operatorValue == 'equals') {
+          return cellValue === value
+        } else if (operatorValue == 'contains') {
+          return cellValue && cellValue.includes(value)
+        }
+        return true
+      })
+    }
+
+    updateFilter = (filter) => {
+      const filteredRows = this.applyFilterToRows(filter)
+      if (filteredRows.length == 0) {
+        this.setState({ selectedRows: []})
+      }
+      // console.log("filtered rows:", filteredRows)
       
+      this.setState({rows: filteredRows, filtered: true})
+    }
+
+    clearFilter = () => {
+      // Reset rows to originalRows when clearing the filter
+      this.setState((prevState) => ({ rows: prevState.originalRows, filtered: false}));
     };
     
     render() {
@@ -344,9 +427,14 @@ class AdminUserTable extends Component {
                           <IconButton color="primary" aria-label="Download Table" onClick={this.handleDownloadClick}>
                             <SaveAltIcon />
                           </IconButton>
+                          <IconButton color="primary" aria-label="Filter" onClick={this.openFilter}>
+                            <FilterAltIcon />
+                          </IconButton>
                         </div>
                       </div>
-                      {this.state.selectedRow > -1 && (<Button variant="contained" onClick={this.openChatWindow}>Chat with {this.state.rows[this.state.selectedRow - 1]['talentName']}</Button>)}
+
+                      <FilterForm open={this.state.openFilter} columns={this.state.columns} onApplyFilter={this.updateFilter} onClose={this.openFilter} onClearFilter={this.clearFilter}/>
+                      {this.state.selectedRows.length > 0 && (<Button variant="contained" onClick={this.openChatWindow}>Send Message</Button>)}
                       <button onClick={this.addNewRow}>Add Row</button>
                       <button onClick={this.handleSave}>Save Data</button>
                       <DataGrid
@@ -383,19 +471,105 @@ class AdminUserTable extends Component {
                         rowsPerPageOptions={[10]}
                         autoHeight
                         checkboxSelection={this.props.showCheckbox}
-                        selectionModel={this.state.selectedRow ? [this.state.selectedRow] : []}
-                        onSelectionModelChange={(newSelection) => {
-                          if (newSelection[0] == this.state.selectedRow) {
-                            this.setState({ selectedRow: newSelection.slice(-1)[0], openChatWindow: false });
-                          } else {
-                            this.setState({ selectedRow: newSelection[0], openChatWindow: false });
-                          }
-                        }}
+                        onSelectionModelChange={(newSelection) => this.setState({ selectedRows: newSelection, openChatWindow: false })}
                         onRowClick = {this.onRowClick}
-                        filterModel = {this.state.filterModel}
-                        onFilterModelChange={(model) => this.onFilterModelChange(model)}
+                        // filterModel = {this.state.filterModel}
+                        // onFilterModelChange={(model) => this.onFilterModelChange(model)}
                         getRowClassName={(params) => params.row.id % 2 === 0 ? 'even-row' : 'odd-row'}
                       />
+                      {this.props.showAnnouncements &&
+                        <div
+                          style={{
+                            width: "100%",
+                            height: "500px",
+                            backgroundColor: '#727278',
+                            display: "flex",
+                            flexDirection: 'column',
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            position: "relative"
+                          }}
+                        >                                     
+                          <div
+                            style={{
+                              width: '100%',
+                              height: "100px",
+                              display: 'flex',
+                              alignItems: 'center',
+                              backgroundColor: '#075E54',
+                              color: 'white',
+                              fontSize: '24px',
+                              left: 10 
+                            }}
+                          >
+                            Announcements
+                          </div>   
+                              
+                          <div
+                          style={{
+                            width: "100%",
+                            height: "calc(100% - 100px)",
+                            borderRadius: "5px",
+                            backgroundColor: '#d3d3d3',
+                          }}
+                          >
+
+                            <List
+                              style={{
+                                flex: 1, // Takes all available vertical space above the input area
+                                overflowY: "auto", // Enables scrolling for messages
+                                height: "342px"
+                              }}
+                            >
+                              {this.state.announcements.filter((announcement) => {
+                                  const is_for_talent = announcement.forClient == false;
+
+                                  return is_for_talent;
+                              }).map((announcement) =>(
+                                <ListItem
+                                  key = {announcement.announcementContent}
+                                >
+                                
+                                
+                                <Box
+                                sx={{
+                                  marginBottom: "10px",
+                                  width: '100%'
+                                }}
+                                >
+                                  
+                                  <Box
+                                    sx={{
+                                      backgroundColor: "white", 
+                                      color: "black",
+                                      padding: "10px",
+                                      borderRadius: "10px",
+                                      wordWrap: "break-word",
+                                      whiteSpace: "pre-wrap",
+                                      marginRight: "auto",           
+                                      position: "relative",
+                                    }}
+                                  >
+                                    <ListItemText 
+                                      primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
+                                    />
+                                  </Box>
+                                  
+                                </Box>
+
+                                
+                                </ListItem>
+                              ))}
+                            </List>
+
+                            <br />
+                            <TextField id="title-textfield" name="announcementContent" multiline minRows={1} maxRows={3} style={{backgroundColor: "white", position: "absolute", width: "75%", bottom: 0, left: 0}} onChange={this.handleChange} onClick={this.handleClick} placeholder="Make announcement here..." />
+                            <br />
+                            <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendAnnouncement()}>Send Announcement</Button><br />
+                            
+                          </div>
+                        </div>
+                      }
                       {this.state.openChatWindow && 
                         <div
                           style={{
@@ -426,13 +600,20 @@ class AdminUserTable extends Component {
                                 height: "368px"
                               }}
                             >
-                              {this.state.talentMessages[this.state.rows[this.state.selectedRow - 1]['uniqId']].map((message) =>(
+                              {this.state.talentMessages[this.state.rows[this.state.selectedRows[0] - 1]['uniqId']].filter((message) => {
+                                    // Get the list of selected talent names
+                                    const selectedTalentNames = this.state.selectedRows.map(rowIndex => this.state.rows[rowIndex - 1]['talentName']);
+                                    // Check if `message.messageTo` has the exact same talents as `selectedTalentNames`
+                                    const isExactMatch = selectedTalentNames.length === message.messageTo.length && selectedTalentNames.every(talentName => message.messageTo.includes(talentName));
+
+                                    return isExactMatch;
+                                }).map((message) =>(
                                     <ListItem
                                       key = {message.messageContent}
                                     >
                                     
 
-                                    {message.messageFrom === properties.name &&
+                                    {message.messageFrom === "Producer" &&
                                       <Box
                                       sx={{
                                         display: "flex",              // Align the message and timestamp together
@@ -473,7 +654,7 @@ class AdminUserTable extends Component {
                                       </Box>
 
                                     }
-                                    {message.messageFrom != properties.name &&
+                                    {message.messageFrom != "Producer" &&
                                       <Box
                                       sx={{
                                         display: "flex",
@@ -492,7 +673,7 @@ class AdminUserTable extends Component {
                                             color: "gray",                 // Lighter color for the timestamp
                                           }}
                                         >
-                                          {`${this.state.rows[this.state.selectedRow - 1]['talentName']}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                          {`${message.messageFrom}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                                         </Typography>
                                         <Box
                                           sx={{

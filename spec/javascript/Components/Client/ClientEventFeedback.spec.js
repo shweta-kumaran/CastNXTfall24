@@ -180,3 +180,59 @@ test('open the chat window', () => {
       expect(view.state.openChatWindow).toBe(false);
 })
 
+test('renders announcements', () => {
+    const properties = {
+        ...PROPERTIES_CLIENT_FEEDBACK,
+        data: { announcements: [{ announcementContent: "Event Update", timeSent: new Date() }] }
+    };
+    const view = ReactTestUtils.renderIntoDocument(<ClientEventFeedback properties={properties} />);
+    const announcementList = view.state.announcements;
+    expect(announcementList.length).toBeGreaterThan(0);
+});
+
+test('chat window toggle and messaging', async () => {
+    const properties = { ...PROPERTIES_CLIENT_FEEDBACK };
+    const view = ReactTestUtils.renderIntoDocument(<ClientEventFeedback properties={properties} />);
+    
+    act(() => {
+        view.openChatWindow();
+    });
+    expect(view.state.openChatWindow).toBe(true);
+
+    axios.post.mockResolvedValue({
+        data: { message: "message sent successful" }
+    });
+
+    await act(async () => {
+        view.setState({ messageContent: "Test Message" });
+        await view.sendMessage();
+    });
+
+    expect(view.state.message).toBe("message sent successful");
+});
+
+
+test('pagination functionality', () => {
+    const view = ReactTestUtils.renderIntoDocument(<ClientEventFeedback properties={PROPERTIES_CLIENT_FEEDBACK} />);
+    act(() => view.handleChangePage({}, 1));
+    expect(view.state.page).toBe(1);
+});
+
+test('renders comments dynamically', () => {
+    const properties = {
+        ...PROPERTIES_CLIENT_FEEDBACK,
+        data: {
+            ...PROPERTIES_CLIENT_FEEDBACK.data,
+            announcements: [
+                { announcementContent: "Event Update", timeSent: new Date().toISOString() }
+            ]
+        }
+    };
+
+    const view = ReactTestUtils.renderIntoDocument(<ClientEventFeedback properties={properties} />);
+    const announcements = view.state.announcements;
+
+    expect(announcements.length).toBe(1);
+    expect(announcements[0].announcementContent).toBe("Event Update");
+});
+

@@ -67,9 +67,8 @@ group :test do
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
-  gem 'chromedriver-helper'
   gem 'mongoid-rspec'
-  gem 'simplecov', '~> 0.21.2', require: false
+  gem 'simplecov'
   gem "simplecov_json_formatter", "~> 0.1.4", require: false
 end
 
@@ -78,7 +77,17 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'sendinblue'
 
-gem 'nokogiri', '1.13.10'
+gem 'oauth2'
+gem 'omniauth'
+gem 'omniauth-oauth2'
+gem 'omniauth-rails_csrf_protection'
+
+gem 'devise', '~> 4.9.2' # Or the latest stable version
+gem 'dotenv-rails', groups: [:development, :test]
+
+gem 'loofah', '2.19.1'
+gem 'nokogiri', '1.10.10'
+
 # source 'https://rubygems.org'
 # git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 

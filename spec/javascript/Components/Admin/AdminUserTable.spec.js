@@ -2,6 +2,14 @@ import AdminUserTable from "../../../../app/javascript/components/Admin/AdminUse
 import {propsDefault, CLIENT_DESK_PROP} from '../../__mocks__/props.mock';
 import renderer, { act }from 'react-test-renderer';
 import { saveAs } from 'file-saver';
+import ReactTestUtils from 'react-dom/test-utils';
+import axios from 'axios';
+
+// In your test setup or beforeEach block
+jest.mock('axios');
+axios.post.mockImplementation(() => Promise.resolve({ data: { comment: 'Success' } }));
+axios.delete.mockImplementation(() => Promise.resolve({ status: 200 }));
+
 
 jest.mock('@material-ui/data-grid', () => ({
     DataGrid: (props) => {
@@ -26,7 +34,19 @@ jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
 global.window.open = jest.fn();
 
+// When creating an instance of the component in your tests
+const instance = renderer.create(
+    <AdminUserTable {...propsDefault} filter_curated={true} />
+).getInstance();
 
+// In your component methods where you access `uniqId` or similar properties
+deleteRow = () => {
+    if (this.state.selectedRow > 0 && this.state.selectedRow <= this.state.rows.length) {
+        const baseURL = window.location.href.split("#")[0];
+        const uniqId = this.state.rows[this.state.selectedRow - 1]['uniqId'];
+        axios.delete(baseURL + '/slides/' + uniqId);
+    }
+}
 
 
 test('Admin Table Load', () =>{
@@ -329,34 +349,129 @@ describe('AdminUserTable Component', () => {
         const tree = component.toJSON();
         expect(tree).toMatchSnapshot();
     });
+
+    test('sending message to talents', async () => {
+        const view = ReactTestUtils.renderIntoDocument(<AdminUserTable properties={propsDefault.properties}/>);
+        view.setState({
+            messageContent: "Hello world"
+        })
+        axios.post.mockResolvedValue({
+           data: { message: "message sent successful" }
+        })
+        await act(async () => {
+            await view.sendMessage();
+        });
+        expect(view.state.disableSubmit).toBe(true)
+        expect(view.state.status).toBe(true)
+    });
+
+    test('sending announcement to talents', async () => {
+        const view = ReactTestUtils.renderIntoDocument(<AdminUserTable properties={propsDefault.properties}/>);
+        view.setState({
+            announcementContent: "test talent announcement"
+        })
+        axios.post.mockResolvedValue({
+           data: { message: "announcement sent successful" }
+        })
+        await act(async () => {
+            await view.sendAnnouncement();
+        });
+        expect(view.state.disableSubmit).toBe(true)
+        expect(view.state.status).toBe(true)
+    });
 });
 
 
+describe('AdminUserTable Filter', () => {
+    let instance;
+    beforeEach(() => {
+        instance = renderer.create(
+            <AdminUserTable properties={propsDefault.properties} />
+        ).getInstance();
+        instance.setState({
+            openFilter: false,
+            rows: [
+                { id: 1, name: 'Test Name 1', email: 'test1@example.com' },
+                { id: 2, name: 'Test Name 2', email: 'test2@example.com' },
+            ],
+        });
+    });
 
-// test('should correctly find and concatenate assigned clients names', () => {
-//     const props = {
-//       properties: {
-//         data: {
-//           clients: {
-//             client1: { name: 'Client One', finalizedIds: ['1', '2'] },
-//             client2: { name: 'Client Two', finalizedIds: ['2'] },
-//             client3: { name: 'Client Three', finalizedIds: ['3'] },
-//           }
-//         }
-//       }
-//     };
-  
-//     act(() => {
-//       const component = renderer.create(<AdminEventSummary {...props} />);
-//       const instance = component.getInstance();
-  
-//       // Test different scenarios
-//       expect(instance.findAssignedClients('1')).toBe('Client One');
-//       expect(instance.findAssignedClients('2')).toBe('Client One, Client Two');
-//       expect(instance.findAssignedClients('3')).toBe('Client Three');
-//       expect(instance.findAssignedClients('4')).toBe(''); // No clients with this ID
-//     });
-//   });
+    test('applyFilter equals operator', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'equals',
+            value: 'Test Name 2'
+        }
+        expect(instance.applyFilterToRows(filter).length).toBe(1)
+    })
+
+    test('applyFilter contains operator', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'contains',
+            value: 'Test Name'
+        }
+        expect(instance.applyFilterToRows(filter).length).toBe(2)
+    })
+
+    test('updateFilter when no filtered rows', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'equals',
+            value: 'Mary'
+        }
+        instance.updateFilter(filter)
+        expect(instance.state.selectedRows.length).toBe(0)
+    })
+
+    test('clear filters', () => {
+        const filter = {
+            columnField: 'name',
+            operatorValue: 'equals',
+            value: 'Test Name 2'
+        }
+        expect(instance.applyFilterToRows(filter).length).toBe(1)
+        instance.clearFilter()
+        expect(instance.state.rows.length).toBe(4)
+    })
+
+})
+
+describe('AdminUserTable Additional Tests', () => {
+    let instance;
+    let mockWindow;
+    
+    beforeEach(() => {
+        mockWindow = {
+            location: {
+                href: 'http://test.com/events/123',
+                reload: jest.fn()
+            }
+        };
+        global.window = mockWindow;
+        
+        instance = renderer.create(
+            <AdminUserTable properties={propsDefault.properties} />
+        ).getInstance();
+    });
+
+    test('handleSave should handle missing state/city correctly', () => {
+        instance.newRow = {
+            talentName: 'Test Name',
+            email: 'test@example.com',
+            state: 'InvalidState',
+            city: 'InvalidCity'
+        };
+        
+        instance.handleSave();
+        
+        expect(instance.newRow.state).toBe('Oregon');
+        expect(instance.newRow.city).toBe('Portland');
+    });
+});
+
+
   
 
 

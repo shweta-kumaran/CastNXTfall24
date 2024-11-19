@@ -3,6 +3,7 @@ import UserHomepage from "../../../../app/javascript/components/User/UserHomepag
 import ReactTestUtils, {act} from 'react-dom/test-utils';
 import renderer from 'react-test-renderer';
 import axios from "axios";
+import ReactDOM from "react-dom";
 //import { render, fireEvent } from '@testing-library/react'; // Add this import
 import { USER_PROPERTIES_WITH_SUBMISSIONS, USER_PROPERTIES_WITH_ACCEPTING } from '../../__mocks__/props.mock'
 
@@ -43,6 +44,7 @@ afterEach(() => {
 
 describe('UserHomepage component', () => {
     // Mock props
+    let container;
     const mockPropsWithDeletedEvent = {
       submittedTableData: [
         {
@@ -53,7 +55,21 @@ describe('UserHomepage component', () => {
       ],
       acceptingTableData: [],
     };
+
+    beforeEach(() => {
+      // Initialize the container before each test
+      container = document.createElement('div');
+      document.body.appendChild(container);
+      global.properties = USER_PROPERTIES_WITH_SUBMISSIONS;
+    });
   
+    afterEach(() => {
+      // Clean up after each test
+      document.body.removeChild(container);
+      container = null;
+      jest.clearAllMocks();
+    });
+
     test('renders UserHomepage with deleted event', () => {
         const view = ReactTestUtils.renderIntoDocument(
           <UserHomepage properties={mockPropsWithDeletedEvent} />
@@ -152,6 +168,78 @@ describe('UserHomepage component', () => {
   
     // Add more test cases for onSubmit, onCategoryFilterValueSelected, onIsPaidFilterSelected,
     // renderAcceptingEventList, and renderSubmittedEventList methods
+    test('constructor initializes state with deleted event flag', () => {
+      const mockProps = {
+        submittedTableData: [
+          {
+            status: 'DELETED',
+            delete_time: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+            title: 'Deleted Event'
+          }
+        ],
+        acceptingTableData: [],
+        events_near_user: [],
+        user_state: 'Texas',
+        user_city: 'Austin'
+      };
+      
+      const component = ReactTestUtils.renderIntoDocument(<UserHomepage {...mockProps} />);
+      expect(component.state.eventDeletedFlag).toBeTruthy();
+    });
+
+    test('handleDateChange properly validates date ranges', () => {
+      const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+      
+      // Set start date
+      const startEvent = {
+        target: {
+          name: 'eventdateStart',
+          value: '2024-01-01'
+        }
+      };
+      view.handleDateChange(startEvent);
+      expect(view.state.eventdateStart).toBe('2024-01-01');
+      
+      // Set end date before start date
+      const endEvent = {
+        target: {
+          name: 'eventdateEnd',
+          value: '2023-12-31'
+        }
+      };
+      view.handleDateChange(endEvent);
+      expect(view.state.dateRangeWarning).toBe('Event end date must be greater than start date');
+    });
+
+    test('renderEventBoxes displays events correctly', () => {
+      const mockEvents = [
+        {
+          id: 1,
+          title: 'Test Event 1',
+          category: 'Music',
+          date: '2024-12-01',
+          location: 'Austin',
+          statename: 'Texas',
+          ispaid: 'Yes'
+        },
+        {
+          id: 2,
+          title: 'Test Event 2',
+          category: 'Dance',
+          date: '2024-12-02',
+          location: 'Dallas',
+          statename: 'Texas',
+          ispaid: 'No'
+        }
+      ];
+  
+      const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+      view.setState({ eventsNearUser: mockEvents });
+      
+      const result = view.renderEventBoxes();
+      expect(result.props.children.length).toBe(2);
+    });
+
   });
 
 test('Selected filter is updated in state', ()=> {
@@ -239,6 +327,95 @@ test('Filter by end date', () => {
   expect(view.state.filteredTableData.length).toBe(1);
 })
 
+test('messages are properly grouped together into same data structure if have same participants', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const sample_messages = [
+    { messageTo: ['Alice', 'Bob', 'Charlie', 'David'], messageFrom: 'Charlie', messageContent: 'Hello' },
+    { messageTo: ['Bob', 'Alice', 'David', 'Charlie'], messageFrom: 'David', messageContent: 'Hi' },
+  ];
+
+  const result = view.groupEventMessages(sample_messages);
+  expect(result).toHaveLength(1); // Only one group since the recipients are the same
+  expect(result[0].talentNames).toEqual(['Alice', 'Bob', 'Charlie', 'David']);
+  expect(result[0].messages).toHaveLength(2);
+})
+
+test('returns different groups for messages with different participants', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const sample_messages = [
+    { messageTo: ['Alice', 'Bob', 'Charlie', 'David'], messageFrom: 'Charlie', messageContent: 'Hello' },
+    { messageTo: ['Alice', 'Bob', 'Charlie', 'David'], messageFrom: 'David', messageContent: 'Hi' },
+    { messageTo: ['Bob', 'Charlie', 'Eve'], messageFrom: 'Eve', messageContent: 'Hey' },
+  ];
+
+  const result = view.groupEventMessages(sample_messages);
+  expect(result).toHaveLength(2);
+});
+
+it('openInbox should sort message groups by the time of the last message', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  const messages = [
+    { messageContent: 'Hello' , messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:00:00Z' },
+    { messageContent: 'Hi', messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:01:00Z' },
+  ];
+
+  const group1 = { talentNames: ['Alice', 'Bob'], messages: messages };
+  const group2 = { talentNames: ['Alice', 'Charlie'], messages: [ { messageContent: 'Hi', messageTo: ['Alice', 'Charlie'], timeSent: '2024-11-14T12:02:00Z' } ] };
+
+  view.setState({
+    eventToMessage: {
+      id: 1,
+      slideId: 'slide123',
+      messages: [...group1.messages, ...group2.messages]
+    },
+  })
+
+  expect(view.state.openInbox).toBe(false)
+  expect(view.state.openChatWindow).toBe(false)
+  expect(view.state.messageGroups).toBe(null)
+
+  // Call the function to test
+  view.openMessageInbox();
+
+  // Check that setState was called with the correct arguments
+  expect(view.state.openInbox).toBe(true)
+  expect(view.state.openChatWindow).toBe(false)
+  expect(view.state.openAnnouncementWindow).toBe(false)
+  expect(view.state.messageGroups).toEqual([group2, group1])
+});
+
+test('Properly open the chat window for messages when group chat is selected from inbox', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
+  
+  const messages = [
+    { messageContent: 'Hello' , messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:00:00Z' },
+    { messageContent: 'Hi', messageTo: ['Alice', 'Bob'], timeSent: '2024-11-14T12:01:00Z' },
+  ];
+
+  const group1 = { talentNames: ['Alice', 'Bob'], messages: messages };
+  const group2 = { talentNames: ['Alice', 'Charlie'], messages: [ { messageContent: 'Hi', messageTo: ['Alice', 'Charlie'], timeSent: '2024-11-14T12:02:00Z' } ] };
+
+  view.setState({
+    messageGroups: [group2, group1]
+  })
+
+  view.setState({
+    openChatWindow: false, 
+    openInbox: true,
+  })
+
+  expect(view.state.openChatWindow).toBe(false)
+  expect(view.state.openInbox).toBe(true)
+  expect(view.state.selectedGroupMessages).toEqual([])
+
+  view.selectMessageGroup(group1)
+
+  expect(view.state.openChatWindow).toBe(true)
+  expect(view.state.openInbox).toBe(false)
+  expect(view.state.selectedGroupMessages).toEqual(messages)
+})
+
+
 test('Open and close Chat Window when clicked', () => {
   const view = ReactTestUtils.renderIntoDocument(<UserHomepage />);
   view.setState({
@@ -275,6 +452,20 @@ test('send message successful', async () => {
   expect(view.state.disableSubmit).toBe(true)
   expect(view.state.status).toBe(true)
 })
+
+test('renders announcements', () => {
+  const view = ReactTestUtils.renderIntoDocument(<UserHomepage/>);
+  view.setState({
+    eventToMessage: {
+      id: 1,
+      announcements: [{ announcementContent: "Talent Event Update", forClient: false, timeSent: new Date()}]
+    }
+  })
+  view.openAnnouncement();
+  expect(view.state.openInbox).toBe(false)
+  expect(view.state.openChatWindow).toBe(false)
+  expect(view.state.openAnnouncementWindow).toBe(true)
+});
 
 test('failed to send message', async () => {
   delete window.location; 

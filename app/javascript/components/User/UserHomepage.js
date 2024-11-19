@@ -17,6 +17,7 @@ import TextField from "@mui/material/TextField";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Header from "../Navbar/Header";
@@ -29,8 +30,10 @@ const commonStyle = {marginTop: "20px", marginBottom: "20px"}
 class UserHomepage extends Component {
     constructor(props) {
         super(props)
-        
-        const submittedTableData = properties.submittedTableData || []
+        console.log("Props received in constructor:", props);
+
+        //const submittedTableData = properties.submittedTableData || []
+        const { acceptingTableData = [], submittedTableData = [], events_near_user = [], user_state = '', user_city = '' } = props;
         const eventDeletedFlag = submittedTableData.find((event)=>{
             if(event.status === 'DELETED'){
                 let currTime = new Date();
@@ -50,20 +53,25 @@ class UserHomepage extends Component {
         this.state = {
             acceptingTableData: properties.acceptingTableData ? properties.acceptingTableData : [],
             submittedTableData: properties.submittedTableData ? properties.submittedTableData : [],
+            eventsNearUser: properties.events_near_user || [],
             eventDeletedFlag,
             tabValue: savedTabValue,
             categoryFilterTextValue: 'All', 
-            stateName: '', 
-            cityName: '', 
+            stateName: user_state, 
+            cityName: user_city, 
             title:'',
             eventdateStart:'',
             eventdateEnd:'',
             filteredTableData: savedTabValue===0 ? (properties.acceptingTableData ? properties.acceptingTableData : []):(properties.submittedTableData ? properties.submittedTableData : []),
             isPaidFilterValue: 'None',
+            openInbox: false,
             openChatWindow: false,
+            openAnnouncementWindow: false,
             disableSubmit: false,
             messageContent: '',
-            eventToMessage: null
+            eventToMessage: null,
+            messageGroups: null,
+            selectedGroupMessages: [],
         }
     }
     
@@ -127,11 +135,62 @@ class UserHomepage extends Component {
         }
     };
 
+    groupEventMessages = (messages) => {
+        const grouped = {};
+      
+        messages.forEach((message) => {
+          const recipientKey = message.messageTo.sort().join(","); // Generate a unique key for each group
+          if (!grouped[recipientKey]) {
+            grouped[recipientKey] = {
+              talentNames: message.messageTo, // Array of recipient names
+              messages: [],
+            };
+          }
+          grouped[recipientKey].messages.push(message);
+        });
+      
+        return Object.values(grouped); // Convert to an array of group objects
+      }
+
+    selectMessageGroup = (group) => {
+        this.setState({
+            openChatWindow: true,
+            openInbox: false,
+            selectedGroupMessages: group.messages
+        })
+      }
+
+    openMessageInbox = () => {
+        const groupedMessages = this.groupEventMessages(this.state.eventToMessage.messages).sort((group1Messages, group2Messages) => {
+            // Access the `timeSent` of the last message in each group
+
+            const group1LastMessageTime = new Date(group1Messages.messages.slice(-1)[0].timeSent);
+            const group2LastMessageTime = new Date(group2Messages.messages.slice(-1)[0].timeSent);
+
+        
+            // Sort in descending order (most recent first)
+            return group2LastMessageTime - group1LastMessageTime;
+          })
+        this.setState({
+          openInbox: !this.state.openInbox,
+          openChatWindow: false,
+          messageGroups: groupedMessages,
+        })
+      }
+
     openChatWindow = () => {
         this.setState({
           openChatWindow: !this.state.openChatWindow
         })
       }
+
+    openAnnouncement = () => {
+        this.setState({
+            openAnnouncementWindow: !this.state.openAnnouncementWindow,
+            openInbox: false,
+            openChatWindow: false,
+        })
+    }
   
       handleChange = (e, value) => {
         this.setState({
@@ -140,14 +199,18 @@ class UserHomepage extends Component {
       }
   
       sendMessage = () => {
+
+        let messageTo = this.state.selectedGroupMessages.length > 0 ? this.state.selectedGroupMessages[0].messageTo : []; 
+        let userIds = this.state.selectedGroupMessages.length > 0 ? this.state.selectedGroupMessages[0].userIds : [];
+
+
         const payload = {
           content: this.state.messageContent,
           sender: properties.name,
-          receiver: 'Producer',
+          receiver: messageTo,
           event_id: this.state.eventToMessage.id,
-          user_id: this.state.eventToMessage.slideId,
+          user_id: userIds,
         }
-  
         const baseURL = window.location.href.split("#")[0]
         
         this.setState({
@@ -320,7 +383,10 @@ class UserHomepage extends Component {
                                 {event.status}
                             </TableCell>
                             <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openChatWindow();}}>Chat with Producer of {event.title}</Button>
+                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openMessageInbox();});}}>Open Event Inbox</Button>
+                            </TableCell>
+                            <TableCell align="center">
+                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openAnnouncement();});}}>Open Event Announcements</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -334,7 +400,10 @@ class UserHomepage extends Component {
                                 {event.status}
                             </TableCell>
                             <TableCell align="center">
-                                <Button variant="contained" onClick={() => {this.setState({eventToMessage : event }); this.openChatWindow();}}>Chat with Producer of {event.title}</Button>
+                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openMessageInbox();});}}>Open Event Inbox</Button>
+                            </TableCell>
+                            <TableCell align="center">
+                                <Button variant="contained" onClick={() => {this.setState({ eventToMessage: event }, () => {this.openAnnouncement();});}}>Open Event Announcements</Button>
                             </TableCell>
                         </TableRow>
                     )
@@ -344,7 +413,67 @@ class UserHomepage extends Component {
         return rows;
     }
 
+    renderEventBoxes() {
+        const { eventsNearUser } = this.state;
+    
+        if (!eventsNearUser || eventsNearUser.length === 0) {
+            return <Typography>No nearby events available</Typography>;
+        }
+    
+        const isScrollable = eventsNearUser.length <= 3;
+    
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    overflowX: isScrollable ? "auto" : "scroll",
+                    padding: "10px",
+                    justifyContent: isScrollable ? "center" : "flex-start",
+                    whiteSpace: isScrollable ? "normal" : "nowrap",
+                }}
+            >
+                {eventsNearUser.map((event, index) => (
+                    <Box
+                        key={index}
+                        sx={{
+                            border: "1px solid #ccc",
+                            borderRadius: "10px",
+                            padding: "10px",
+                            marginRight: "10px",
+                            cursor: "pointer",
+                            width: "200px",
+                            minHeight: "150px",
+                            display: "inline-block",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            backgroundColor: "#f9f9f9",
+                        }}
+                        onClick={() => window.location.href = `/user/events/${event.id}`}
+                    >
+                        <Typography variant="h6" gutterBottom>
+                            {event.title}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {event.category}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {new Date(event.date).toLocaleDateString()}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {event.location}, {event.statename}
+                        </Typography>
+                        <Typography variant="body2" color={event.ispaid ? "green" : "red"}>
+                            {event.ispaid ? "Paid" : "Free"}
+                        </Typography>
+                    </Box>
+                ))}
+            </div>
+        );
+    }    
+
     render() {
+        const { eventsNearUser = [] } = this.state;
         return(
             <div>
                 <div>
@@ -355,6 +484,7 @@ class UserHomepage extends Component {
                         {
                             this.state.eventDeletedFlag ? <MuiAlert onClick={() => (this.setState({eventDeletedFlag: false}))} severity="warning" elevation={6} variant="filled">Note: Certain events have been cancelled. Please check submissions for more details. Sorry for the inconvenience.</MuiAlert> : null
                         }
+                
                         <div className="row">
                             <h2> CastNXT Events</h2>
                         </div>
@@ -367,6 +497,11 @@ class UserHomepage extends Component {
                                     </Tabs>
                                     <hr style={{ color: "black" }} />
                                 </div>
+                                {this.state.tabValue === 0 &&
+                                    (<div className="row">
+                                    <h4>Events Near Me</h4>
+                                    {this.renderEventBoxes()}
+                                </div>)}
                                 
                                 <div><b>Category Filter</b></div>
                                 <CategoryFilter categoryFilterValueSelected = {this.onCategoryFilterValueSelected}></CategoryFilter>
@@ -388,10 +523,8 @@ class UserHomepage extends Component {
                                         {this.state.dateRangeWarning}
                                     </div>
                                 )}
-                                    
-                                {this.state.tabValue === 0 &&
                                     <TableContainer component={Paper}>
-                                        <Table aria-label="simple table">
+                                        <Table aria-label="simple table" id="events">
                                             <TableHead style={{ backgroundColor: "#3498DB" }}>
                                                 <TableRow>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Event</TableCell>
@@ -406,7 +539,6 @@ class UserHomepage extends Component {
                                             </TableBody>
                                         </Table>
                                     </TableContainer>
-                                }
                                 
                                 {this.state.tabValue === 1 &&
                                     <div>
@@ -416,7 +548,8 @@ class UserHomepage extends Component {
                                                 <TableRow>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Event</TableCell>
                                                     <TableCell align="center" style={{fontSize: "12pt"}}>Status</TableCell>
-                                                    <TableCell align="center" style={{fontSize: "12pt"}}>Chat</TableCell>
+                                                    <TableCell align="center" style={{fontSize: "12pt"}}>Inbox</TableCell>
+                                                    <TableCell align="center" style={{fontSize: "12pt"}}>Announcements</TableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -425,6 +558,65 @@ class UserHomepage extends Component {
                                         </Table>
                                     </TableContainer>
                                     <div>
+                                    {this.state.openInbox &&
+                                        <div
+                                            style={{
+                                            width: "540px",
+                                            height: "550px",
+                                            backgroundColor: '#727278',
+                                            display: "flex",
+                                            flexDirection: 'column',
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            position: "relative",
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                width: "90%",
+                                                height: "450px",
+                                                borderRadius: "5px",
+                                                backgroundColor: 'white',
+                                                display: "flex",
+                                                position: "relative",
+                                                }}
+                                            >
+
+                                                <List
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    overflowY: "auto",
+                                                }}
+                                                >
+                                                {this.state.messageGroups.map((group, index) => {
+                                                    const lastMessage = group.messages.slice(-1)[0]; // Get the last message in the group
+                                                    const messageFrom = lastMessage.messageFrom;
+                                                    const messagePreview = lastMessage.messageContent.slice(0,35);
+                                                    const timeSent = new Date(lastMessage.timeSent); 
+                                                    const formattedTime = timeSent.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                                                    return (<React.Fragment key={index}>
+                                                        <ListItem
+                                                        button
+                                                        onClick={() => this.selectMessageGroup(group)}
+                                                        >
+                                                        <ListItemText   
+                                                            primary={`${["Producer", ...group.talentNames].join(', ')}`} 
+                                                            secondary={`${messageFrom}: ${messagePreview}`} />
+                                                            <span style={{ marginLeft: 'auto', color: 'gray' }}>
+                                                                {formattedTime}
+                                                            </span>
+                                                        </ListItem>
+                                                        
+                                                        {index < this.state.messageGroups.length - 1 && <Divider />} 
+                                                    </React.Fragment>);
+                                                    })}
+                                                </List>
+                                            </div>
+                                        </div>
+                                        
+                                    }
                                     {this.state.openChatWindow && 
                                         <div
                                         style={{
@@ -455,7 +647,7 @@ class UserHomepage extends Component {
                                                 height: "368px"
                                             }}
                                             >
-                                            {this.state.eventToMessage.messages.map((message) =>(
+                                            {this.state.selectedGroupMessages.map((message) =>(
                                                     <ListItem
                                                     key = {message.messageContent}
                                                     >
@@ -521,7 +713,7 @@ class UserHomepage extends Component {
                                                             color: "gray",                 // Lighter color for the timestamp
                                                         }}
                                                         >
-                                                        {`Producer     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                                                        {`${message.messageFrom}     ${new Date(message.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                                                         </Typography>
                                                         <Box
                                                         sx={{
@@ -542,7 +734,7 @@ class UserHomepage extends Component {
                                                         </Box>
                                                         
                                                     </Box>
-                                                    }
+    }
 
                                                     </ListItem>
                                             ))}
@@ -553,6 +745,88 @@ class UserHomepage extends Component {
                                             <br />
                                             <Button disabled={this.state.disableSubmit} variant="contained" style={{position: "absolute", bottom: 0, right: 0}} onClick={() => this.sendMessage()}>Send Message</Button><br />
                                         </div>
+                                        </div>
+                                    }
+                                    {this.state.openAnnouncementWindow && 
+                                        
+                                        <div
+                                            style={{
+                                                width: "540px",
+                                                height: "550px",
+                                                backgroundColor: '#727278',
+                                                display: "flex",
+                                                flexDirection: 'column',
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                position: "relative",
+                                            }}
+                                        >  
+                                            <div
+                                                style={{
+                                                width: '100%',
+                                                height: "100px",
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                backgroundColor: '#075E54',
+                                                color: 'white',
+                                                fontSize: '24px',
+                                                left: 10 
+                                                }}
+                                            >
+                                                Announcements
+                                            </div>
+
+                                            <div
+                                            style={{
+                                                width: "100%",
+                                                height: "calc(100% - 100px)",
+                                                borderRadius: "5px",
+                                                backgroundColor: '#d3d3d3',
+                                                overflowY: "auto"
+                                            }}
+                                            >
+                                                <List>
+                                                    {this.state.eventToMessage.announcements.filter((announcement) => {
+                                                        const is_for_talent = announcement.forClient == false;
+
+                                                        return is_for_talent;
+                                                    }).map((announcement) =>(
+                                                    <ListItem
+                                                        key = {announcement.announcementContent}
+                                                    >
+                                                    
+                                                    
+                                                    <Box
+                                                    sx={{
+                                                        marginBottom: "10px",
+                                                        width: '100%'
+                                                    }}
+                                                    >
+                                                        
+                                                        <Box
+                                                        sx={{
+                                                            backgroundColor: "white", 
+                                                            color: "black",
+                                                            padding: "10px",
+                                                            borderRadius: "10px",
+                                                            wordWrap: "break-word",
+                                                            whiteSpace: "pre-wrap",
+                                                            marginRight: "auto",           
+                                                            position: "relative",
+                                                        }}
+                                                        >
+                                                        <ListItemText 
+                                                            primary={announcement.announcementContent} secondary={new Date(announcement.timeSent).toLocaleDateString([], {year: 'numeric', month: 'long', day: 'numeric'})}
+                                                        />
+                                                        </Box>
+                                                        
+                                                    </Box>
+
+                                                    
+                                                    </ListItem>
+                                                    ))}
+                                                </List>
+                                            </div>
                                         </div>
                                     }
                                     </div>
