@@ -89,6 +89,90 @@ class HomeController < ApplicationController
     end
   end
 
+  def role_selection
+
+    
+    begin
+      
+      duser = Duser.find_by(_id: session[:userId])
+  
+      # Handle case if the user doesn't exist
+      if duser.nil?
+        render json: { error: "User not found" }, status: 404
+        return
+      end
+  
+      # Step 2: Check if the user's role is 'new_user'
+      if duser.user_type == 'new_user'
+        # Step 3: Based on the role parameter, create the appropriate role-based object
+        case params[:role].upcase
+        when 'ADMIN'
+          # Check if Producer already exists, otherwise create
+          begin
+          producer = Producer.find_by(_id: session[:userId])
+          rescue Mongoid::Errors::DocumentNotFound => e
+          producer = nil
+          end
+          session[:userType] = 'ADMIN'
+          if producer
+            producer.update(name: session[:userName], email: session[:userEmail], is_valid: true)
+          else
+            Producer.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
+          end
+          redirect_to admin_index_path
+  
+        when 'CLIENT'
+          session[:userType] = 'CLIENT'
+          # Check if Client already exists, otherwise create
+          begin
+          client = Client.find_by(_id: session[:userId])
+          rescue Mongoid::Errors::DocumentNotFound => e
+          client = nil
+          end
+          if client
+            client.update(name: session[:userName], email: session[:userEmail], is_valid: true)
+          else
+            Client.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
+          end
+          redirect_to client_index_path
+
+  
+        when 'TALENT'
+          session[:userType] = 'USER'
+
+          # Check if Talent already exists, otherwise create
+          begin
+          talent = Talent.find_by(_id: session[:userId])
+          rescue Mongoid::Errors::DocumentNotFound => e
+            talent = nil
+          end
+          if talent
+            talent.update(name: session[:userName], email: session[:userEmail], is_valid: true)
+          else
+            Talent.create(_id: session[:userId], name: session[:userName], email: session[:userEmail], is_valid: true)
+          end
+          redirect_to user_index_path
+  
+        else
+          # Return error if role is invalid
+          render json: { error: "Invalid role specified" }, status: 400
+          return
+        end
+  
+        # Update the user's role to reflect they have selected a role
+        duser.update(user_type: params[:role])
+  
+      else
+        render json: { error: "User is not a new_user" }, status: 400
+      end
+    rescue => e
+      # Catch any unexpected errors and return a 500 server error response
+      Rails.logger.error "Error in role_selection: #{e.message}"
+      render json: { error: "Something went wrong" }, status: 500
+    end
+  end
+  
+
   # POST /home/forgotPassword
   def forgotPassword
     # begin
@@ -112,7 +196,7 @@ class HomeController < ApplicationController
     end
   end
   
-  private
+  
   
   def get_user email, password
     return Auth.find_by(:email => email, :password => password)
@@ -149,6 +233,12 @@ class HomeController < ApplicationController
   #   return rCode
   # end
   
+    # You can add any logic needed for first-time users here
+    # For example, tracking analytics, setting flags, etc.
+
+  end
+
+
   def create_user params
     puts (params)
     user = Auth.create(:name => params[:name], :email => params[:email], :password => params[:password], :user_type => params[:type], :is_valid => true)
@@ -170,4 +260,4 @@ class HomeController < ApplicationController
       return "/user"
     end
   end
-end
+

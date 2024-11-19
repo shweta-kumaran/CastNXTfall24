@@ -1,10 +1,8 @@
-# spec/channels/channels_spec.rb
-
+# spec/channels/application_cable/channel_spec.rb
 require 'rails_helper'
 
 RSpec.describe ApplicationCable::Channel, type: :channel do
-  let(:user) { create(:user) } # Assuming you have a User factory
-
-  # Test for a successful connection
- 
+  it 'inherits from ActionCable::Channel::Base' do
+    expect(ApplicationCable::Channel.superclass).to eq(ActionCable::Channel::Base)
+  end
 end
