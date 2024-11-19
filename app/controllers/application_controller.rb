@@ -7,7 +7,8 @@ class ApplicationController < ActionController::Base
     flag = flag && ( userType.casecmp? session[:userType] )
     return flag
   end
-  
+
+    
   def is_session_valid?
     flag = session.key?(:userEmail) && session.key?(:userType) && session.key?(:userName)
     flag = flag && !session[:userEmail].nil? && !session[:userType].nil? && !session[:userName].nil?

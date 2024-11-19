@@ -6,63 +6,74 @@ class Dusers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   # You should also create an action method in this controller like this:
   def events360
-    Rails.logger.info "Here viewed"
+    ##Rails.logger.info "Here viewed"
     
     auth = request.env['omniauth.auth']
     Duser.from_omniauth_events360(auth)
 
     email = auth.info.email
+    name = auth.info.name
+    @user = Duser.where(email: email).first
+
+    if @user.nil?
+      # If user does not exist, create a new user
+      @user = Duser.new(email: email, name: name, user_type: "new_user")
     
-    render json: { comment: "Successful Oauth login for this email. Role selection and Session creation capability is still in progress. Please come back later.", email: email }, status: 400
-
-
-#     ## at this point we have an entry in duser - to be completed in next phase of the feature
+      if @user.save
+        # User successfully saved to the database
+        puts "User successfully created: #{@user.inspect}"
     
-#   session[:userEmail] = currentUser.email
-#  session[:userType] = currentUser.user_type
-#  session[:userName] = currentUser.name
-#  session[:userId] = currentUser._id.to_str
+        # Retrieve the user from the DB after save
+        @user = Duser.find_by(id: @user.id)
+    
+        if @user.nil?
+          puts "Failed to retrieve user after saving: User ID #{@user.id} not found."
+          return { error: "Failed to retrieve user after saving", details: "User not found in the database" }
+        else
+          # Successfully retrieved user from DB
+          puts "User successfully retrieved from DB: #{@user.inspect}"
+        end
+      else
+        # If user is not saved, log error and return failure response
+        puts "Failed to save user: #{@user.errors.full_messages.join(", ")}"
+        return { error: "Failed to create user", details: @user.errors.full_messages }
+      end
+    end
+    
 
-# if @user.user_type == "new_user"
-#   # Redirect for new users
-#   redirect_to "/home/first-time-user"
-# else
-#   # Additional actions for existing users can go here if needed
-#   redirect_to get_redirect_path
-  
-# end
+    # Set session values
+    session[:userEmail] = @user.email
+    session[:userType] = @user.user_type
+    session[:userName] = @user.name
+    session[:userId] = @user.id.to_s
 
+    # Redirect based on user type
+    if @user.user_type == "new_user"
+      redirect_to "/home/first_time_user"
+    else
+      redirect_to get_redirect_path(@user.user_type)
+    end
+    
+    
+
+    
+    
      
   end
 
-  # More info at:
-  # https://github.com/heartcombo/devise#omniauth
+    
 
-  # GET|POST /resource/auth/twitter
-  # def passthru
-  #   super
-  # end
+  def get_redirect_path(role)
+    case role&.upcase
+    when "ADMIN"
+      return "/admin"
+    when "CLIENT"
+      return "/client"
+    else
+      return "/user"
+    end
+  end
 
-  # GET|POST /users/auth/twitter/callback
-  # def failure
-  #   super
-  # end
-
-  # protected
-
-  # The path used when OmniAuth fails
-  # def after_omniauth_failure_path_for(scope)
-  #   super(scope)
-  # end
 end
 
 ## function copied from homecontroller class - check for reuse 
-def get_redirect_path
-  if "ADMIN".casecmp? session[:userType]
-    return "/admin"
-  elsif "CLIENT".casecmp? session[:userType]
-    return "/client"
-  else
-    return "/user"
-  end
-end
