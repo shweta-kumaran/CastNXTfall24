@@ -74,6 +74,10 @@ Database
 
 This application is deployed to Heroku using [Github Actions](.github/workflows/deploy.yaml) under the FashioNxt account.
 
+You should have the following env vars in Heroku : 
+![image](https://github.com/user-attachments/assets/04fda194-90da-4618-b304-0d2cf7b873b3)
+
+
 
 ### Team contacts :
 Rituparna Mandal <rituparna@tamu.edu>,
