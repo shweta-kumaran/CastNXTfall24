@@ -786,7 +786,11 @@ class UserHomepage extends Component {
                                             }}
                                             >
                                                 <List>
-                                                    {this.state.eventToMessage.announcements.map((announcement) =>(
+                                                    {this.state.eventToMessage.announcements.filter((announcement) => {
+                                                        const is_for_talent = announcement.forClient == false;
+
+                                                        return is_for_talent;
+                                                    }).map((announcement) =>(
                                                     <ListItem
                                                         key = {announcement.announcementContent}
                                                     >

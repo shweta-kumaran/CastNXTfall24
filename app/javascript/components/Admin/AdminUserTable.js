@@ -314,7 +314,7 @@ class AdminUserTable extends Component {
     sendAnnouncement = () => {
       const payload = {
         content: this.state.announcementContent,
-        sender: properties.name,
+        sender: "Producer",
         for_client: false,
         event_id: window.location.href.split("/")[-1],
       }
@@ -331,9 +331,7 @@ class AdminUserTable extends Component {
           status: true,
           message: res.data.announcement
         })
-        setTimeout(() => {
-          window.location.href = ""
-        }, 2500)
+        setTimeout(() => (window.location.href = ""), 2500)
       })
       .catch((err) => {
         this.setState({
@@ -341,9 +339,7 @@ class AdminUserTable extends Component {
           message: "Failed to send announcement!"
         })
         
-        if(err.response.status === 403) {
-          window.location.href = err.response.data.redirect_path
-        }
+        err.response.status === 403 && (window.location.href = err.response.data.redirect_path)
       })
     }
   
@@ -525,7 +521,11 @@ class AdminUserTable extends Component {
                                 height: "342px"
                               }}
                             >
-                              {this.state.announcements.map((announcement) =>(
+                              {this.state.announcements.filter((announcement) => {
+                                  const is_for_talent = announcement.forClient == false;
+
+                                  return is_for_talent;
+                              }).map((announcement) =>(
                                 <ListItem
                                   key = {announcement.announcementContent}
                                 >
@@ -604,8 +604,7 @@ class AdminUserTable extends Component {
                                     // Get the list of selected talent names
                                     const selectedTalentNames = this.state.selectedRows.map(rowIndex => this.state.rows[rowIndex - 1]['talentName']);
                                     // Check if `message.messageTo` has the exact same talents as `selectedTalentNames`
-                                    const isExactMatch = selectedTalentNames.length === message.messageTo.length &&
-                                        selectedTalentNames.every(talentName => message.messageTo.includes(talentName));
+                                    const isExactMatch = selectedTalentNames.length === message.messageTo.length && selectedTalentNames.every(talentName => message.messageTo.includes(talentName));
 
                                     return isExactMatch;
                                 }).map((message) =>(
