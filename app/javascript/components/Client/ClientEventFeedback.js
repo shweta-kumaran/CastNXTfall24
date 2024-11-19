@@ -246,7 +246,11 @@ class ClientEventFeedback extends Component {
                                             }}
                                             >
                                               <List>
-                                                {this.state.announcements.map((announcement) =>(
+                                                {this.state.announcements.filter((announcement) => {
+                                                  const is_for_client = announcement.forClient == true;
+
+                                                  return is_for_client;
+                                                }).map((announcement) =>(
                                                   <ListItem
                                                     key = {announcement.announcementContent}
                                                   >

@@ -38,7 +38,7 @@ const AdminSubmittedDocs = (props) =>{
     return (
         <>
             <p>Use this page to create a master slide deck for this event.</p>
-            <AdminUserTable heading="Registered Users" properties={props.properties} handleRowClick={onRowClick} showCheckbox={true}/>
+            <AdminUserTable heading="Registered Users" properties={props.properties} handleRowClick={onRowClick} showCheckbox={true} showAnnouncements={true}/>
             {
                 showRowData || stack.length>0 ? <AdminCreateStack 
                 properties={props.properties} 
