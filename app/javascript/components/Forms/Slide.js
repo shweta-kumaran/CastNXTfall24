@@ -120,6 +120,11 @@ class Slide extends Component {
       return modifiedUISchema;
     };
   
+    togglePreviewMode = () => {
+      this.setState((prevState) => ({
+        isPreview: !prevState.isPreview,
+       }));
+    };
   
   render() {
     // schema and uiSchema are to be used from state and not props since image preview is being added in state
@@ -137,10 +142,22 @@ class Slide extends Component {
               onChange={this.props.onFormDataChange}
               formData={this.state.formData}
               submitButtonMessage={"Submit"}
-              onSubmit={this.props.onSubmit}
-              widgets={widgets} 
-              {...restProps}
-            />
+              onSubmit={isPreview ? undefined : this.props.onSubmit} // Disable submit in preview
+        >
+          <button
+            type="submit"
+            style={
+              {
+              backgroundColor: "#1976d2", // Change color based on preview
+              color: "white", // Set text color to white
+              cursor: isPreview ? "not-allowed" : "pointer",
+            }
+          }
+            disabled={isPreview} // Disable button in preview
+          >
+            Submit
+          </button>
+        </Form>
         </div>
     );
   }
