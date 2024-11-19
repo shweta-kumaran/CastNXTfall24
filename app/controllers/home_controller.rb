@@ -102,7 +102,7 @@ class HomeController < ApplicationController
 
       render json: {redirect_path: get_redirect_path}, status: 200
     end  
-     
+
   # POST /home/forgotPassword
   def forgotPassword
     # begin
@@ -126,7 +126,7 @@ class HomeController < ApplicationController
     end
   end
   
-  private
+  
   
   def get_user email, password
     return Auth.find_by(:email => email, :password => password)
