@@ -1,33 +1,23 @@
-
-ARG RUBY_VERSION=3.3.5
-FROM ruby:${RUBY_VERSION}
+FROM ruby:2.6.6
 
 WORKDIR /home
+COPY Gemfile package.json yarn.lock ./
 
-ENV RAILS_LOG_TO_STDOUT="1" \
-    RAILS_SERVE_STATIC_FILES="true" \
-    RAILS_ENV="development"
-
-COPY Gemfile Gemfile.lock package.json package-lock.json ./
-RUN bundle install
-
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - 
 RUN apt-get install -y nodejs
 
-RUN npm install -g npm@10.9.0
-RUN npm install -g n
-RUN n stable
-RUN hash -r
-RUN npm install -g yarn@1.22.22
+RUN npm install -g yarn
+
+RUN gem install bundler -v 2.2.31
+RUN bundle config set force_ruby_platform true
+RUN bundle install
 
 COPY . .
-RUN mv config/mongoid.Docker.config config/mongoid.yml
+COPY config/mongoid.Docker.config config/mongoid.yml
+RUN yarn install
 
-RUN rails webpacker:install
-RUN rails webpacker:compile
+RUN ./bin/webpack
 
 RUN rm -rf tmp/
 
-RUN rails db:migrate
-
-EXPOSE 3000
+CMD rails s -b 0.0.0.0 -p 3000
