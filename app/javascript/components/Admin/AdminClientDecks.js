@@ -254,10 +254,10 @@ class AdminClientDecks extends Component {
     sendMessage = () => {
       const payload = {
         content: this.state.messageContent,
-        sender: properties.name,
+        sender: "Producer",
         receiver: this.state.clientList[this.state.client].name,
         event_id: window.location.href.split("/")[-1],
-        user_id: this.state.client
+        user_id: [this.state.client]
       }
 
       const baseURL = window.location.href.split("#")[0]
@@ -353,7 +353,6 @@ class AdminClientDecks extends Component {
                       <AdminUserTable heading="Talents" properties={this.props.properties} currentTab="Client Decks" showCheckbox={false} currentClient={this.state.client} currentTalents={this.state.clientDecks} finalizeTalent={this.finalizeTalent}/>
 
                         <div className="col-md-8 offset-md-2">
-
                             {this.state.expandSlides &&
                             <Paper>
                               <TableContainer>
@@ -491,7 +490,7 @@ class AdminClientDecks extends Component {
                                                             >
                                                             
 
-                                                            {message.messageFrom === properties.name &&
+                                                            {message.messageFrom === "Producer" &&
                                                               <Box
                                                               sx={{
                                                                 display: "flex",              // Align the message and timestamp together
@@ -532,7 +531,7 @@ class AdminClientDecks extends Component {
                                                               </Box>
 
                                                             }
-                                                            {message.messageFrom != properties.name &&
+                                                            {message.messageFrom != "Producer" &&
                                                               <Box
                                                               sx={{
                                                                 display: "flex",

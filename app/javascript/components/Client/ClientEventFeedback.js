@@ -146,7 +146,7 @@ class ClientEventFeedback extends Component {
         receiver: 'Producer',
         sender: this.props.properties.name,
         event_id: window.location.href.split("/")[-1],
-        user_id: this.state.clientId
+        user_id: [this.state.clientId]
       }
 
       const baseURL = window.location.href.split("#")[0]
