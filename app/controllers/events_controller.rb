@@ -249,7 +249,7 @@ class EventsController < ApplicationController
 
     data[:clientId] = client._id.to_str
     data[:messages] = []
-    messages = get_event_user_messages(event._id, client._id)
+    messages = get_event_user_messages(event._id, client._id.to_str)
     messages.each do |message|
       data[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
     end
@@ -298,7 +298,7 @@ class EventsController < ApplicationController
         clientObject[:preferenceSubmitted] = true
       end
 
-      messages = get_event_user_messages(event._id, client._id)
+      messages = get_event_user_messages(event._id, client._id.to_str)
       messages.each do |message|
         clientObject[:messages].push({:messageContent => message.message, :messageFrom => message.from, :messageTo => message.to, :timeSent => message.created_at})
       end
