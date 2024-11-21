@@ -14,15 +14,10 @@ defineFeature(feature, (test) => {
     });
 
     afterEach(async () => {
-        try {
-            const logoutButton = await driver.findElement(By.id('logoutBtn'));
-            await logoutButton.click();
-        } catch (error) {
-            console.warn('Logout button not found, skipping logout.');
-        }
+        await driver.findElement(By.id('logoutBtn')).click();
     });
 
-    test('Client can see list of events', ({ given, when, then }) => {
+    test('the client should see a table of events and corresponding status', ({ given, when, then }) => {
         given(/^a client with email \"(.+)\" and password \"(\w+)\" is logged in as a \"client\"$/, async (email, password) => {
             // Navigate to the login page
             await driver.get('http://127.0.0.1:3000/home');
@@ -34,7 +29,7 @@ defineFeature(feature, (test) => {
             await driver.findElement(By.id('login')).click();
 
             // Wait for the page to load
-            await driver.wait(until.elementLocated(By.id('events')), 10000); // Increased timeout
+            //await driver.wait(until.elementLocated(By.id('events')), 10000); // Increased timeout
         });
 
         when('the client navigates to the Client Homepage', async () => {
@@ -43,15 +38,21 @@ defineFeature(feature, (test) => {
         });
 
         then('the client should see a list of events', async () => {
-            // Verify that the page contains event information
-            const eventsTable = await driver.findElement(By.id('events'));
-            const eventsText = await eventsTable.getText();
+            // Wait for the events table to be located
+            const eventsTable = await driver.wait(until.elementLocated(By.css('table')), 15000); // Locate the table
+            const rows = await eventsTable.findElements(By.css('tr'));
 
-            expect(eventsText).toContain("Miu Miu Event");
+            // Check if the table has the expected number of rows (including header)
+            expect(rows.length).toBeGreaterThan(1);
 
-            // Verify the statuses
-            expect(eventsText).toContain("REVIEWING");
+            // Check the content of the first data row
+            const firstRow = await rows[1].findElements(By.css('td'));
+            const eventName = await firstRow[0].getText();
+            const eventStatus = await firstRow[1].getText();
+
+            expect(eventName).toBe("Miu Miu");
+            expect(eventStatus).toBe("ACCEPTING");
         });
 
-    }, 15000); // Set a specific timeout for this test
+    }, 15000);  // Set a specific timeout for this test
 });
