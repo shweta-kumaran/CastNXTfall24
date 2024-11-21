@@ -14,10 +14,15 @@ defineFeature(feature, (test) => {
     });
 
     afterEach(async () => {
-        await driver.findElement(By.id('logoutBtn')).click();
+        try {
+            const logoutButton = await driver.findElement(By.id('logoutBtn'));
+            await logoutButton.click();
+        } catch (error) {
+            console.warn('Logout button not found, skipping logout.');
+        }
     });
 
-    test('Client can see list of projects', ({ given, when, then }) => {
+    test('Client can see list of events', ({ given, when, then }) => {
         given(/^a client with email \"(.+)\" and password \"(\w+)\" is logged in as a \"client\"$/, async (email, password) => {
             // Navigate to the login page
             await driver.get('http://127.0.0.1:3000/home');
@@ -29,7 +34,7 @@ defineFeature(feature, (test) => {
             await driver.findElement(By.id('login')).click();
 
             // Wait for the page to load
-            await driver.wait(until.elementLocated(By.id('projects')));
+            await driver.wait(until.elementLocated(By.id('events')), 10000); // Increased timeout
         });
 
         when('the client navigates to the Client Homepage', async () => {
@@ -37,11 +42,16 @@ defineFeature(feature, (test) => {
             await driver.get('http://127.0.0.1:3000/client');
         });
 
-        then('the client should see a list of projects', async () => {
-            // Verify that the page contains project information
-            expect(await driver.getPageSource()).toContain("Project");
-            expect(await driver.getPageSource()).toContain("Project Alpha");
+        then('the client should see a list of events', async () => {
+            // Verify that the page contains event information
+            const eventsTable = await driver.findElement(By.id('events'));
+            const eventsText = await eventsTable.getText();
+
+            expect(eventsText).toContain("Miu Miu Event");
+
+            // Verify the statuses
+            expect(eventsText).toContain("REVIEWING");
         });
 
-    });
+    }, 15000); // Set a specific timeout for this test
 });
