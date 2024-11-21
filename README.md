@@ -43,26 +43,28 @@ bundle exec rspec
 ```
 
 #### For Cucumber tests,
-### For Admin:
+##### For Admin:
 1. Setup the application locally (without docker compose)
 2. Create an admin with email: `admin@example.com` and password: `123456qt`
 3. Create an event:
+
 | Event title | Event description | Date | State | Location | Category | Paid |
 |--------|--------|--------|--------|--------|--------|--------|
 | Miu Miu | Miu Miu showcase  | 2024-12-19 | New York | Albany   | Fashion  | Yes  |
+
 4. Log out from the Admin account.
 
-### For User:
+##### For User:
 1. Setup the application locally (without docker compose)
 2. Create an admin with email: `user@example.com` and password: `123456qt`
 3. Go to the event named `Miu Miu` and click to register for the event with the created user.
 4. Click Submit to complete the registration for the event `Miu Miu`
 
-### For Client:
+##### For Client:
 1. Setup the application locally (without docker compose)
 2. Create an admin with email: `client@example.com` and password: `client123`
 
-### Additional Steps:
+##### Additional Steps:
 1. Log in as Admin.
 2. Navigate to the event named `Miu Miu`.
 3. Click Submitted Docs, where you'll find the user created earlier.
