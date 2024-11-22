@@ -13,9 +13,9 @@ defineFeature(feature, (test) => {
         await driver.quit();
     });
 
-    afterEach(async () => {
-        await driver.findElement(By.id('logoutBtn')).click();
-    });
+    // afterEach(async () => {
+    //     await driver.findElement(By.id('logoutBtn')).click();
+    // });
 
     test('the client should see a table of events and corresponding status', ({ given, when, then }) => {
         given(/^a client with email \"(.+)\" and password \"(\w+)\" is logged in as a \"client\"$/, async (email, password) => {
@@ -29,7 +29,7 @@ defineFeature(feature, (test) => {
             await driver.findElement(By.id('login')).click();
 
             // Wait for the page to load
-            //await driver.wait(until.elementLocated(By.id('events')), 10000); // Increased timeout
+            await driver.wait(until.elementLocated(By.id('events'))); // Increased timeout
         });
 
         when('the client navigates to the Client Homepage', async () => {
@@ -39,7 +39,7 @@ defineFeature(feature, (test) => {
 
         then('the client should see a list of events', async () => {
             // Wait for the events table to be located
-            const eventsTable = await driver.wait(until.elementLocated(By.css('table')), 15000); // Locate the table
+            const eventsTable = await driver.wait(until.elementLocated(By.css('table'))); // Locate the table
             const rows = await eventsTable.findElements(By.css('tr'));
 
             // Check if the table has the expected number of rows (including header)
@@ -54,5 +54,5 @@ defineFeature(feature, (test) => {
             expect(eventStatus).toBe("ACCEPTING");
         });
 
-    }, 15000);  // Set a specific timeout for this test
+    });  // Set a specific timeout for this test
 });
