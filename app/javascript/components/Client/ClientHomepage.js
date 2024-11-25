@@ -61,7 +61,7 @@ class ClientHomepage extends Component {
                         <div className="row">
                             <div className="col-md-6 offset-md-3">
                                 <TableContainer component={Paper}>
-                                    <Table aria-label="simple table">
+                                    <Table aria-label="simple table" id="events">
                                         <TableHead style={{ backgroundColor: "#3498DB" }}>
                                             <TableRow>
                                                 <TableCell align="center">Event</TableCell>
