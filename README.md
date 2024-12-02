@@ -103,6 +103,12 @@ Database
 
 This application is deployed to Heroku using [Github Actions](.github/workflows/deploy.yaml) under the FashioNxt account.
 
+To deploy :
+1. Create an Account in Heroku
+2. Create a new App <app-name> in Heroku.
+3. Modify the (.github/workflows/deploy.yaml) file to change the <app-name> and trigger the workflow from Github Actions.
+
+   
 You should have the following env vars in Heroku :
 
 ![image](https://github.com/user-attachments/assets/04fda194-90da-4618-b304-0d2cf7b873b3)
@@ -111,6 +117,8 @@ For EVENTS360 Integration:
 1. Navigate to the Events360 Deployment.
 2. Register your Castnxt App Deployment within Events360.
 3. Retrieve the OAuth Client URI and Secret provided upon registration.
+
+
 
 ### Team contacts :
 Rituparna Mandal <rituparna@tamu.edu>,
